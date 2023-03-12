@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 17:35:47 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/11 16:25:53 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/12 13:20:55 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,13 @@ void	displyReqeust(std::vector<std::pair<std::string, std::string> > req)
 	}
 }
 
-void	getRequestInfo(struct webserv& web, char* buffer)
+void	getRequestInfo(std::vector<client> clt, char* buffer)
 {
 	char	**lines;
 	int		index;
 	
-	if (web.reqIndex == 10)
-		web.reqIndex = 0;
 	index = 0;
-	if (buffer != NULL)
+	if (strlen(buffer))
 	{
 		lines = ft_split(buffer, '\n');
 		if (lines != NULL)
@@ -116,26 +114,20 @@ void	getRequestInfo(struct webserv& web, char* buffer)
 			{
 				if (index == 0)
 				{
-					getMethod(web.request[web.reqIndex], lines[index]);
+					getMethod(clt[0].request, lines[index]);
 				}
 				else
 				{
-					getHeaders(web.request[web.reqIndex], lines[index]);
+					getHeaders(clt[0].request, lines[index]);
 				}
 				index++;
 			}
 			free(lines);
 		}
-		web.reqIndex++;
 	}
 	else
 		printf("buffer is empty\n");
-	index = 0;
-	while (index < web.reqIndex)
-	{
-		std::cout << "----------------------------------" << std::endl;
-		displyReqeust(web.request[index]);
-		std::cout << "----------------------------------" << std::endl;
-		index++;
-	}
+	std::cout << "----------------------------------" << std::endl;
+	displyReqeust(clt[0].request);
+	std::cout << "----------------------------------" << std::endl;
 }

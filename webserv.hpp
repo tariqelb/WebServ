@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/11 15:29:24 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/12 11:49:17 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,24 @@
 
 struct client
 {
-	struct sockaddr_storage	client;
-	int						fd;
-	socklen_t				len;
+	std::vector<std::pair<std::string, std::string> >	request;
+	std::vector<std::pair<std::string, std::string> >	responce;
+	struct sockaddr_storage								addr;
+	socklen_t											len;
+	int													fd;
 };
-
 
 
 struct	webserv
 {
 	struct addrinfo			hints;
 	struct addrinfo			*server;
-	struct client			clients[10];
-	int						index;
+	std::vector<client>		clients;
 	int						socketFd;
 	int						status;
 	fd_set					reads;
 	fd_set					writes;
 	fd_set					exceps;
-
-	std::vector<std::pair<std::string, std::string> > request[100];
-	int						reqIndex;
 };
 
 // split.cpp
@@ -67,10 +64,10 @@ char	**ft_split(char const *s, char c);
 char	**ft_split_str(char *str, char *charset);
 // parseRequest.cpp
 
+
 void    getMethod(std::vector<std::pair<std::string, std::string> >& req, char *line);
 void    getHeaders(std::vector<std::pair<std::string, std::string> >& req, char *line);
+void    getRequestInfo(std::vector<client> client, char* buffer);
 void    displyReqeust(std::vector<std::pair<std::string, std::string> > req);
-void    getRequestInfo(struct webserv& web, char* buffer);
-
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/11 17:41:43 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/12 13:19:47 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ void	initWebStrcut(struct webserv& web)
 	web.hints.ai_socktype = SOCK_STREAM;
 	web.hints.ai_flags = AI_PASSIVE;
 	web.hints.ai_protocol = IPPROTO_TCP;
-	web.status = getaddrinfo(HOST, PORT, &web.hints, &web.server);
-	web.reqIndex = 0;
-	web.index = 0;
+	web.status = getaddrinfo(HOST, PORT, &web.hints, &web.server); 
 }
 void	displayHostPort(struct webserv& web)
 {
@@ -58,75 +56,79 @@ void	freedWeb(struct webserv& web)
 }
 
 
-void	readif(struct webserv& web, int index);
+// non_block
 void	handleConnection(struct webserv& web)
 {
-		int		i;
-		int		fd;
-		int		rd;
-		char 	*buffer;
+	struct client newClient;
+	printf("HC--->");
 
-		if (FD_ISSET(web.socketFd, &web.reads))
-		{
-				web.clients[web.index].len = sizeof(web.clients[web.index].client);
-				web.clients[web.index].fd = accept(web.socketFd, (struct sockaddr *)&web.clients[web.index].client, &web.clients[web.index].len);
-				printf("accepted %d\n", web.clients[web.index].fd);
-				if (web.clients[web.index].fd < 0)
-				{
-					write(2, "Error : Fail connecting to an client\n", 37);
-					return ;
-				}
-				else
-				{
-					FD_SET(web.clients[web.index].fd, &web.reads);
-					web.index++;
-				}
-		}	
-		printf("pass : %d   :  %d\n", web.clients[web.index - 1].fd, web.index);
-		i = 0;
-		while (i < web.index)
-		{
-			printf("i : %d\n", i);
-			fd = web.clients[i].fd;
-			if (FD_ISSET(fd, &web.reads))
+	if (FD_ISSET(web.socketFd, &web.reads))
+	{
+			newClient.len = sizeof(newClient.addr);
+			newClient.fd = accept(web.socketFd, (struct sockaddr *)&newClient.addr, &newClient.len);
+			printf("New connection accepted with fd :  %d\n", newClient.fd);
+			if (newClient.fd < 0)
 			{
-
-				printf("start\n");
-				buffer	= (char *) malloc(2048);
-				rd = recv(web.clients[i].fd, buffer, 2048, MSG_PEEK);
-				printf("middle\n");
-				if (rd == 0)
-				{
-					printf("%s\n", "connection is ends\n");
-					close(web.clients[i].fd);
-					FD_CLR(web.clients[i].fd , &web.reads);
-					web.index--;
-				}
-				else
-				{
-					int rt = 0;
-					printf("Clients request statrt here :\n -------------------------------------------\n");
-					rt = printf("[%s\n]", buffer);
-					printf(" -------------------------------------------\nThe size is : %d\n", rt);
-					//getRequestInfo(web, buffer);
-					if (buffer != NULL)
-						free(buffer);
-					memset(buffer, 0, 2048);
-					send(web.clients[i].fd, temp, strlen(temp), 0);
-					FD_CLR(web.clients[i].fd , &web.reads);
-					printf("accepted send %d\n", web.clients[i].fd);
-				}
-				printf("Done\n");
+				write(2, "Error : Fail connecting to an client\n", 37);
+				return ;
 			}
-			i++;
+			else
+			{
+				FD_SET(newClient.fd, &web.reads);
+				web.clients.push_back(newClient);
+			}
+	}	
+}
+void	handlerequest(struct webserv& web)
+{
+	int								i;
+	int								fd;
+	int								rd;
+	char 							buffer[2050];
+	std::vector<client>::iterator	it;
+	printf("HR--->");
+
+
+	i = 0;
+	while (i < web.clients.size())
+	{
+		it = web.clients.begin();
+		memset(buffer, 0, 2050);
+		fd = web.clients[i].fd;
+		if (FD_ISSET(fd, &web.reads))
+		{
+			printf("start\n");
+			rd = recv(web.clients[i].fd, buffer, 2049, 0);
+			printf("middle\n");
+			if (rd == 0)
+			{
+				printf("%s\n", "connection is ends\n");
+				close(web.clients[i].fd);
+				FD_CLR(web.clients[i].fd , &web.reads); // makhdamx
+				web.clients.erase(it + i);
+			}
+			else
+			{
+				int rt = 0;
+				printf("Clients request statrt here :\n -------------------------------------------\n");
+				rt = printf("[%s\n]", buffer);printf(" -------------------------------------------\n");
+				getRequestInfo(web.clients, buffer);
+				send(web.clients[i].fd, temp, strlen(temp), 0);
+				FD_CLR(web.clients[i].fd , &web.reads);
+				web.clients.erase(it + i);
+				printf("accepted send and finish %d\n", web.clients[i].fd);
+			}
+			printf("Done\n");
 		}
+		i++;
+	}
 }
 
 
 int	main(int ac, char **av)
 {
-	struct webserv	web;
-	struct timeval	tv;
+	struct	webserv	web;
+	struct	timeval	tv;
 	int				index;
 
 	index = 0;
@@ -155,7 +157,7 @@ int	main(int ac, char **av)
 	printf("status in bind %d : Errno : %d\n", web.status, errno);
 	if (web.status != 0)
 	{
-		write(2, "Error : Fail to bind socket to localhost\n", 42);
+		write(2, "Error : Fail to bind socket to localhost\n", 42); // perror
 		freedWeb(web);
 		return (1);
 	}
@@ -172,11 +174,8 @@ int	main(int ac, char **av)
 	FD_ZERO(&web.writes);
 	FD_ZERO(&web.exceps);
 	FD_SET(web.socketFd, &web.reads);
-	//web.max_socket = web.socketFd;
 	while (1)
 	{
-		fd_set	newConn;
-		newConn = web.reads;
 		web.status = -1;
 		printf("Wait in select:\n");
 		web.status = select(MAX_CLIENTS + 1, &web.reads, &web.writes, &web.exceps, &tv);
@@ -187,13 +186,14 @@ int	main(int ac, char **av)
 		}
 		if (web.status < 0)
 		{
-			write(2, "Error : Fail occur on select function\n", 39);
+			write(2, "Error : Fail occur on select function\n", 39); // perror
 			freedWeb(web);
 			return (1);
 
 		}
 		else //(web.status == 0)
 			handleConnection(web);
+		handlerequest(web);
 	}
 	freedWeb(web);
 	return (0);
