@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/12 13:19:47 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/12 17:07:51 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,9 @@ int	main(int ac, char **av)
 	struct	webserv	web;
 	struct	timeval	tv;
 	int				index;
+	int 			reuse;
 
+	reuse = 1;
 	index = 0;
 	tv.tv_sec = 120;
 	tv.tv_usec = 0;
@@ -151,6 +153,15 @@ int	main(int ac, char **av)
 		close(web.socketFd);
 		write(2, "Error : create webserv socket\n", 31);
 		return (1);
+	}
+	//set bind to reuse the some local address even if she is in Time Wait mode
+	web.status = setsockopt(web.socketFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+	if (web.status < 0)
+	{
+		close(web.socketFd);
+		write(2, "Error : set reuse opt error\n", 28);
+		return (1);
+
 	}
 	//Bind socket to localhost address stored in web.server for both version 
 	web.status = bind(web.socketFd, web.server->ai_addr, web.server->ai_addrlen);
