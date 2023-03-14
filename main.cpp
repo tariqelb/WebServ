@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/12 17:07:51 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:24:33 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ void	freedWeb(struct webserv& web)
 	freeaddrinfo(web.server);
 }
 
-
-// non_block
 void	handleConnection(struct webserv& web)
 {
 	struct client newClient;
@@ -79,15 +77,15 @@ void	handleConnection(struct webserv& web)
 			}
 	}	
 }
+
 void	handlerequest(struct webserv& web)
 {
 	int								i;
 	int								fd;
 	int								rd;
 	char 							buffer[2050];
+	char							line[100];
 	std::vector<client>::iterator	it;
-	printf("HR--->");
-
 
 	i = 0;
 	while (i < web.clients.size())
@@ -98,8 +96,26 @@ void	handlerequest(struct webserv& web)
 		if (FD_ISSET(fd, &web.reads))
 		{
 			printf("start\n");
-			rd = recv(web.clients[i].fd, buffer, 2049, 0);
-			printf("middle\n");
+			int	index = 0;
+			while (1)
+			{
+				index++;
+				rd = recv(web.clients[i].fd, line, 99, 0);
+				line[rd] = 0;
+				if (rd > 0)
+					strcat(buffer, line);
+				if (rd == -1)
+				{
+					printf("errno : %d\n", errno);
+					write(2, "Error in resv \n", 15);
+					return;
+				}
+				if (buffer[strlen(buffer) - 1] == '\n' && buffer[strlen(buffer) - 2] == '\r')
+				{
+					printf("yes\n");
+					break;
+				}
+			}
 			if (rd == 0)
 			{
 				printf("%s\n", "connection is ends\n");
@@ -111,9 +127,11 @@ void	handlerequest(struct webserv& web)
 			{
 				int rt = 0;
 				printf("Clients request statrt here :\n -------------------------------------------\n");
-				rt = printf("[%s\n]", buffer);printf(" -------------------------------------------\n");
+				rt = printf("[\n%s\n]\n", buffer);printf(" -------------------------------------------\n");
 				getRequestInfo(web.clients, buffer);
-				send(web.clients[i].fd, temp, strlen(temp), 0);
+				int snd = send(web.clients[i].fd, temp, strlen(temp), 0);
+				printf("send %d\n", snd);
+				close(web.clients[i].fd);
 				FD_CLR(web.clients[i].fd , &web.reads);
 				web.clients.erase(it + i);
 				printf("accepted send and finish %d\n", web.clients[i].fd);
@@ -124,15 +142,76 @@ void	handlerequest(struct webserv& web)
 	}
 }
 
+int	initServer(struct webserv& web)
+{
+	struct addrinfo	*ptr;
+	int				valide;
+	int				status;
+	int 			reuse;
+	
+	reuse = 1;
+	status = 0;
+	ptr = web.server;
+	while (ptr != NULL)
+	{
+		valide = 0;
+		//create socket listening to localhost in ipv4 and ipv6 
+		web.socketFd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+		if (web.socketFd < 0)
+			close(web.socketFd);
+		else
+		{
+			valide++;
+			//set file descriptor of the socket to non-blocking
+			int flags = fcntl(web.socketFd, F_GETFL, 0);
+			//printf("stt : %d %d %d\n", flags, O_NONBLOCK, (flags & O_NONBLOCK) == O_NONBLOCK);
+			errno = 0;
+			status = fcntl(web.socketFd, F_SETFL, flags & O_NONBLOCK);
+			if (status < 0)
+				close(web.socketFd);
+			else
+			{
+			//	printf("stt : %d %d %d %d\n", valide, status, O_NONBLOCK, (status & O_NONBLOCK) == O_NONBLOCK);
+				valide++;
+				//set bind to reuse the some local address even if she is in Time Wait mode
+				status = setsockopt(web.socketFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+				if (status < 0)
+					close(web.socketFd);
+				else
+				{
+					valide++;
+					//Bind socket to localhost address stored in web.server for both version 
+					status = bind(web.socketFd, ptr->ai_addr, ptr->ai_addrlen);
+					if (status < 0)
+						close(web.socketFd);
+					else
+					{
+						valide++;
+						//Turn sockets to passive mode (listen to incamming connection) max queue 5
+						status = listen(web.socketFd, 5);
+						if (status < 0)
+							close(web.socketFd);
+						else
+							valide++;
+					}
+				}
+			}
+		}
+		if (valide == 5)
+			return (0);
+		ptr = ptr->ai_next;
+	}
+	return (1);
+}
+
 
 int	main(int ac, char **av)
 {
-	struct	webserv	web;
-	struct	timeval	tv;
-	int				index;
-	int 			reuse;
+	struct	webserv		web;
+	struct	timeval		tv;
+	int					index;
+	int					flag;
 
-	reuse = 1;
 	index = 0;
 	tv.tv_sec = 120;
 	tv.tv_usec = 0;
@@ -145,38 +224,10 @@ int	main(int ac, char **av)
 	}
 	//Display IP and PORT
 	displayHostPort(web);
-	//create socket listening to localhost in ipv4 and ipv6 
-	web.socketFd = socket(web.server->ai_family, web.server->ai_socktype, web.server->ai_protocol);
-	//printf("fd : %d\nfd : %d\n", web.socketFd[0], web.socketFd[1]);
-	if (web.socketFd < 0)
+	flag = initServer(web);
+	if (flag)
 	{
-		close(web.socketFd);
-		write(2, "Error : create webserv socket\n", 31);
-		return (1);
-	}
-	//set bind to reuse the some local address even if she is in Time Wait mode
-	web.status = setsockopt(web.socketFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
-	if (web.status < 0)
-	{
-		close(web.socketFd);
-		write(2, "Error : set reuse opt error\n", 28);
-		return (1);
-
-	}
-	//Bind socket to localhost address stored in web.server for both version 
-	web.status = bind(web.socketFd, web.server->ai_addr, web.server->ai_addrlen);
-	printf("status in bind %d : Errno : %d\n", web.status, errno);
-	if (web.status != 0)
-	{
-		write(2, "Error : Fail to bind socket to localhost\n", 42); // perror
-		freedWeb(web);
-		return (1);
-	}
-	//Turn sockets to passive mode (listen to incamming connection)
-	web.status = listen(web.socketFd, 5);
-	if (web.status != 0)
-	{	
-		write(2, "Error : Fail to make socket listening to connection\n", 53);
+		write(2, "Error : initialing webserv\n", 27);
 		freedWeb(web);
 		return (1);
 	}
@@ -189,7 +240,7 @@ int	main(int ac, char **av)
 	{
 		web.status = -1;
 		printf("Wait in select:\n");
-		web.status = select(MAX_CLIENTS + 1, &web.reads, &web.writes, &web.exceps, &tv);
+		web.status = select(web.socketFd + 1, &web.reads, &web.writes, &web.exceps, &tv);
 		if (web.status == 0)
 		{
 			write(2, "server time listening out\n", 26);

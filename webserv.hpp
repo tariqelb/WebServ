@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/12 11:49:17 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/14 10:23:23 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 //# include <sys/epoll.h>
 # include <sys/event.h>
 # include <sys/time.h>
-//# include <fnctl.h>
+# include <fcntl.h>
 
 #include <vector>
 #include <iostream>
