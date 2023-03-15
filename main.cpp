@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/14 15:24:33 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/15 19:07:20 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 
 char	temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/html\r\n\r\n <html>hello, world</html>\r\n";
+
 
 void	initWebStrcut(struct webserv& web)
 {
@@ -58,7 +59,6 @@ void	freedWeb(struct webserv& web)
 void	handleConnection(struct webserv& web)
 {
 	struct client newClient;
-	printf("HC--->");
 
 	if (FD_ISSET(web.socketFd, &web.reads))
 	{
@@ -78,65 +78,58 @@ void	handleConnection(struct webserv& web)
 	}	
 }
 
+
 void	handlerequest(struct webserv& web)
 {
 	int								i;
 	int								fd;
 	int								rd;
-	char 							buffer[2050];
-	char							line[100];
+	char							line[1000];
+	std::string						buffer;
 	std::vector<client>::iterator	it;
 
 	i = 0;
 	while (i < web.clients.size())
 	{
 		it = web.clients.begin();
-		memset(buffer, 0, 2050);
 		fd = web.clients[i].fd;
 		if (FD_ISSET(fd, &web.reads))
 		{
-			printf("start\n");
 			int	index = 0;
 			while (1)
 			{
 				index++;
-				rd = recv(web.clients[i].fd, line, 99, 0);
+				memset(line, 0, 1000);
+				rd = recv(web.clients[i].fd, line, 999, 0);
 				line[rd] = 0;
 				if (rd > 0)
-					strcat(buffer, line);
+					buffer += line;
 				if (rd == -1)
 				{
-					printf("errno : %d\n", errno);
 					write(2, "Error in resv \n", 15);
 					return;
 				}
-				if (buffer[strlen(buffer) - 1] == '\n' && buffer[strlen(buffer) - 2] == '\r')
-				{
-					printf("yes\n");
+
+				if (handleContinue(line) == 0)
+					send(web.clients[i].fd, CONTINUE, strlen(CONTINUE), 0);
+				else if (endOfTheRequest(buffer) == 0)
 					break;
-				}
 			}
 			if (rd == 0)
 			{
 				printf("%s\n", "connection is ends\n");
-				close(web.clients[i].fd);
-				FD_CLR(web.clients[i].fd , &web.reads); // makhdamx
-				web.clients.erase(it + i);
+				closeConnection(web, it, i);
 			}
 			else
 			{
-				int rt = 0;
-				printf("Clients request statrt here :\n -------------------------------------------\n");
-				rt = printf("[\n%s\n]\n", buffer);printf(" -------------------------------------------\n");
-				getRequestInfo(web.clients, buffer);
-				int snd = send(web.clients[i].fd, temp, strlen(temp), 0);
-				printf("send %d\n", snd);
-				close(web.clients[i].fd);
-				FD_CLR(web.clients[i].fd , &web.reads);
-				web.clients.erase(it + i);
-				printf("accepted send and finish %d\n", web.clients[i].fd);
+				printf("Clients request :\n");
+				printf(" ----------------------------\n");
+				printf("%s\n", buffer.c_str());
+				printf(" ----------------------------\n");
+				//getRequestInfo(web.clients, buffer);
+				send(web.clients[i].fd, temp, strlen(temp), 0);
+				closeConnection(web, it, i);
 			}
-			printf("Done\n");
 		}
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/14 10:23:23 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/15 19:01:49 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define PORT "8080"
 # define HOST "localhost"
 # define MAX_CLIENTS 10
+# define CONTINUE "HTTP/1.0 100-continue"
 
 struct client
 {
@@ -69,5 +70,10 @@ void    getMethod(std::vector<std::pair<std::string, std::string> >& req, char *
 void    getHeaders(std::vector<std::pair<std::string, std::string> >& req, char *line);
 void    getRequestInfo(std::vector<client> client, char* buffer);
 void    displyReqeust(std::vector<std::pair<std::string, std::string> > req);
+
+//parseRequestData.cpp
+int		handleContinue(char *line); 
+int		endOfTheRequest(std::string& buffer);
+void    closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i);
 
 #endif
