@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 18:20:46 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/15 19:01:34 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/16 18:43:55 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,6 @@ int	endOfTheRequest(std::string& buffer)
 void	closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i)
 {
 	close(web.clients[client_i].fd);
-	FD_CLR(web.clients[client_i].fd , &web.reads);
+	FD_CLR(web.clients[client_i].fd , &web.cReads);
 	web.clients.erase(it + client_i);
 }

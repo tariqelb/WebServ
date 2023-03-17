@@ -6,197 +6,55 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/15 19:07:20 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/17 11:05:16 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 
-char	temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/html\r\n\r\n <html>hello, world</html>\r\n";
-
-
 void	initWebStrcut(struct webserv& web)
 {
+	int		i;
+	int		flag = MAX_PORT;
+
 	memset(&web.hints, 0, sizeof(web.hints));
 	web.hints.ai_family = AF_INET;
 	web.hints.ai_socktype = SOCK_STREAM;
 	web.hints.ai_flags = AI_PASSIVE;
 	web.hints.ai_protocol = IPPROTO_TCP;
-	web.status = getaddrinfo(HOST, PORT, &web.hints, &web.server); 
-}
-void	displayHostPort(struct webserv& web)
-{
-	struct addrinfo	*p;
-	char			str[32];
-	void			*addr;
-
-	p = web.server;
-	while (p != NULL)
+	i = 0;
+	while (i < MAX_PORT)
 	{
-		if (p->ai_family == AF_INET)
+		web.status = 0;
+		web.status = getaddrinfo(HOST, ports[i], &web.hints, &web.server[i]); 
+		if (web.status != 0)
 		{
-			addr = &((struct sockaddr_in *) p->ai_addr)->sin_addr;
-			inet_ntop(p->ai_family, addr, str, sizeof(str));
-			printf("HostIP4 : %s\nPost : %hu\n", str, ntohs(((struct sockaddr_in *) p->ai_addr)->sin_port));
+			flag--;
+			write(2, "error : init web struct in port ", 32);
+			write(2, ports[i], strlen(ports[i]));
+			write(2, "\n", 1);
 		}
-		else if (p->ai_family == AF_INET6)	
-		{
-			addr = &((struct sockaddr_in6 *) p->ai_addr)->sin6_addr;
-			inet_ntop(p->ai_family, addr, str, sizeof(str));
-			printf("HostIP6 : %s\nPost : %hu\n", str, ntohs(((sockaddr_in6 *) p->ai_addr)->sin6_port));
-		}
-		p = p->ai_next;
+		i++;
 	}
+	if (flag == 0)
+		web.status = 1;
+	else
+		web.status = 0;
 }
 
 void	freedWeb(struct webserv& web)
 {
-	close(web.socketFd);
-	freeaddrinfo(web.server);
-}
-
-void	handleConnection(struct webserv& web)
-{
-	struct client newClient;
-
-	if (FD_ISSET(web.socketFd, &web.reads))
-	{
-			newClient.len = sizeof(newClient.addr);
-			newClient.fd = accept(web.socketFd, (struct sockaddr *)&newClient.addr, &newClient.len);
-			printf("New connection accepted with fd :  %d\n", newClient.fd);
-			if (newClient.fd < 0)
-			{
-				write(2, "Error : Fail connecting to an client\n", 37);
-				return ;
-			}
-			else
-			{
-				FD_SET(newClient.fd, &web.reads);
-				web.clients.push_back(newClient);
-			}
-	}	
-}
-
-
-void	handlerequest(struct webserv& web)
-{
-	int								i;
-	int								fd;
-	int								rd;
-	char							line[1000];
-	std::string						buffer;
-	std::vector<client>::iterator	it;
+	int	i;
 
 	i = 0;
-	while (i < web.clients.size())
+	while (i < MAX_PORT)
 	{
-		it = web.clients.begin();
-		fd = web.clients[i].fd;
-		if (FD_ISSET(fd, &web.reads))
-		{
-			int	index = 0;
-			while (1)
-			{
-				index++;
-				memset(line, 0, 1000);
-				rd = recv(web.clients[i].fd, line, 999, 0);
-				line[rd] = 0;
-				if (rd > 0)
-					buffer += line;
-				if (rd == -1)
-				{
-					write(2, "Error in resv \n", 15);
-					return;
-				}
-
-				if (handleContinue(line) == 0)
-					send(web.clients[i].fd, CONTINUE, strlen(CONTINUE), 0);
-				else if (endOfTheRequest(buffer) == 0)
-					break;
-			}
-			if (rd == 0)
-			{
-				printf("%s\n", "connection is ends\n");
-				closeConnection(web, it, i);
-			}
-			else
-			{
-				printf("Clients request :\n");
-				printf(" ----------------------------\n");
-				printf("%s\n", buffer.c_str());
-				printf(" ----------------------------\n");
-				//getRequestInfo(web.clients, buffer);
-				send(web.clients[i].fd, temp, strlen(temp), 0);
-				closeConnection(web, it, i);
-			}
-		}
+		close(web.socketFd[i]);
+		freeaddrinfo(web.server[i]);
 		i++;
 	}
 }
-
-int	initServer(struct webserv& web)
-{
-	struct addrinfo	*ptr;
-	int				valide;
-	int				status;
-	int 			reuse;
-	
-	reuse = 1;
-	status = 0;
-	ptr = web.server;
-	while (ptr != NULL)
-	{
-		valide = 0;
-		//create socket listening to localhost in ipv4 and ipv6 
-		web.socketFd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-		if (web.socketFd < 0)
-			close(web.socketFd);
-		else
-		{
-			valide++;
-			//set file descriptor of the socket to non-blocking
-			int flags = fcntl(web.socketFd, F_GETFL, 0);
-			//printf("stt : %d %d %d\n", flags, O_NONBLOCK, (flags & O_NONBLOCK) == O_NONBLOCK);
-			errno = 0;
-			status = fcntl(web.socketFd, F_SETFL, flags & O_NONBLOCK);
-			if (status < 0)
-				close(web.socketFd);
-			else
-			{
-			//	printf("stt : %d %d %d %d\n", valide, status, O_NONBLOCK, (status & O_NONBLOCK) == O_NONBLOCK);
-				valide++;
-				//set bind to reuse the some local address even if she is in Time Wait mode
-				status = setsockopt(web.socketFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
-				if (status < 0)
-					close(web.socketFd);
-				else
-				{
-					valide++;
-					//Bind socket to localhost address stored in web.server for both version 
-					status = bind(web.socketFd, ptr->ai_addr, ptr->ai_addrlen);
-					if (status < 0)
-						close(web.socketFd);
-					else
-					{
-						valide++;
-						//Turn sockets to passive mode (listen to incamming connection) max queue 5
-						status = listen(web.socketFd, 5);
-						if (status < 0)
-							close(web.socketFd);
-						else
-							valide++;
-					}
-				}
-			}
-		}
-		if (valide == 5)
-			return (0);
-		ptr = ptr->ai_next;
-	}
-	return (1);
-}
-
 
 int	main(int ac, char **av)
 {
@@ -225,15 +83,13 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	//set select for incomming connections
-	FD_ZERO(&web.reads);
-	FD_ZERO(&web.writes);
-	FD_ZERO(&web.exceps);
-	FD_SET(web.socketFd, &web.reads);
+	activeSocket(web);
 	while (1)
 	{
 		web.status = -1;
+		web.tmp = web.reads;
 		printf("Wait in select:\n");
-		web.status = select(web.socketFd + 1, &web.reads, &web.writes, &web.exceps, &tv);
+		web.status = select(web.maxReadFd + 1, &web.tmp, &web.writes, &web.exceps, &tv);
 		if (web.status == 0)
 		{
 			write(2, "server time listening out\n", 26);
@@ -248,7 +104,7 @@ int	main(int ac, char **av)
 		}
 		else //(web.status == 0)
 			handleConnection(web);
-		handlerequest(web);
+		handleRequest(web);
 	}
 	freedWeb(web);
 	return (0);
