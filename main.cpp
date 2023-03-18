@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/17 11:05:16 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/18 17:46:35 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,13 @@ int	main(int ac, char **av)
 	index = 0;
 	tv.tv_sec = 120;
 	tv.tv_usec = 0;
+	//get data from config file
+	//parseConfigFile(web, ac, av);
+	if (web.status != 0)
+	{
+		write(2, "Error in config file\n", 21);
+		return (1);
+	}
 	//Fill the struct
 	initWebStrcut(web);
 	if (web.status != 0)
@@ -107,5 +114,6 @@ int	main(int ac, char **av)
 		handleRequest(web);
 	}
 	freedWeb(web);
+	
 	return (0);
 }

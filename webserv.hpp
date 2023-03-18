@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/17 11:04:10 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/18 15:33:30 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,38 @@
 # define HOST "localhost"
 # define MAX_CLIENTS 10
 # define CONTINUE "HTTP/1.0 100-continue"
-
+# define CONFIGFILE	"./server.conf";
 const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
+
+
+struct	location
+{
+	std::string		location;
+	std::string		allow[3];//methods allowed in a location
+	std::string		root;
+	std::string		index_file;
+	std::string		autoindex;
+	std::string		limit_except[3];
+	std::string		error_page[2];
+	std::string		upload;
+	std::string		upload_store;
+	std::string		cgi_ext;
+	std::string		cgi_path;
+};
+
+struct	serverfile
+{
+	std::string						listen;
+	std::string						server_name;
+	std::string						error_page[2];
+	std::string						max_body_size;
+	std::string						root;
+	std::string						index;
+	std::vector<struct location>	location;
+};
+
+
+
 
 struct client
 {
@@ -64,6 +94,7 @@ struct	webserv
 	int						maxWriteFd;
 	fd_set					cReads;
 	fd_set					tmp;
+	struct serverfile		config;
 };
 
 // split.cpp
@@ -99,7 +130,10 @@ void	activeExceptSocket(struct webserv& web);
 void	activeSocket(struct webserv& web);
 
 
+//parseConfigFile.cpp
 
+
+void    parseConfigFile(struct webserv& web, int ac, char **av);
 
 
 #endif
