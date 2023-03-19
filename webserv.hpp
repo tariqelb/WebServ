@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/19 17:20:58 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/19 18:01:19 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,19 +82,19 @@ struct client
 
 struct	webserv
 {
-	struct addrinfo			hints;
-	struct addrinfo			*server[MAX_PORT];
-	std::vector<client>		clients;
-	int						socketFd[MAX_PORT];
-	int						status;
-	fd_set					reads;
-	fd_set					writes;
-	fd_set					exceps;
-	int						maxReadFd;
-	int						maxWriteFd;
-	fd_set					cReads;
-	fd_set					tmp;
-	struct serverfile		config;
+	struct addrinfo						hints;
+	struct addrinfo						*server[MAX_PORT];
+	std::vector<client>					clients;
+	int									socketFd[MAX_PORT];
+	int									status;
+	fd_set								reads;
+	fd_set								writes;
+	fd_set								exceps;
+	int									maxReadFd;
+	int									maxWriteFd;
+	fd_set								cReads;
+	fd_set								tmp;
+	std::vector<serverfile>				config;
 };
 
 // split.cpp
@@ -131,8 +131,6 @@ void	activeSocket(struct webserv& web);
 
 
 //parseConfigFile.cpp
-
-
 int	isEmptyLines(std::string line);
 int	parseSyntax(std::ifstream& file);
 int	isComment(std::string line);
@@ -151,8 +149,13 @@ void	checkTitle(std::string line, int& title, int& brackets);
 void	removeEmptyLineAndComments(std::vector<std::string>& file);
 void	moveBracketsToNextLine(std::vector<std::string>& file);
 void	countServerBlock(std::vector<std::string> file, int& nbr_of_server);
-void	parseConfigData(std::vector<std::string>& file);
+int		parseConfigData(std::vector<std::string>& file);
 void    parseConfigFile(struct webserv& web, int ac, char **av);
 
+//checkForSemiColon.cpp
+int		checkForSemiColon(std::vector<std::string> file);
+
+//getConfigData.cpp
+void		getConfigData(struct webserv& web, std::vector<std::string> file);
 
 #endif

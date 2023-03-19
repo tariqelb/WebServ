@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/19 17:29:26 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/19 17:52:53 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -450,38 +450,15 @@ int	checkForPairBrackets(std::vector<std::string>& file)
 	return (0);
 }
 
-void	parseConfigData(std::vector<std::string>& file)
+int	parseConfigData(std::vector<std::string>& file)
 {
 	removeEmptyLineAndComments(file);
 	moveBracketsToNextLine(file);//only brackets thats come after server or location block
 	if (checkForPairBrackets(file))
-	{
-		int flag = checkForSemiColon(file);
-		std::cout << "from here : " << flag << std::endl;
-		/*{
-			std::vector<std::string>::iterator it = file.begin();
-			while (it != file.end())
-			{
-				std::cout << *it << std::endl;
-				it++;
-			}
-
-		}*/
-	}
+		if (checkForSemiColon(file))
+			return (0);
+	return (1);
 }
-
-/*void	getConfigData(struct webserv& web, char *filename)
-{
-	std::ifstream	file;
-
-	file.open(filename);
-	if (parseSyntax(file))
-	{
-		write(2, "Error in file syntax\n", 21);
-		web.status = 1;
-		return ;
-	}
-}*/
 
 void	parseConfigFile(struct webserv& web, int ac, char **av)
 {
@@ -512,7 +489,12 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 		web.status = 1;
 		return ;
 	}
-	parseConfigData(conf_file);
-	//getConfigData(web, conf_file);
+	if (parseConfigData(conf_file))
+	{
+		write(2, "Error in config file\n", 21);
+		web.status = 1;
+		return;
+	}
+	getConfigData(web, conf_file);
 	//checkConfigData(web);
 }
