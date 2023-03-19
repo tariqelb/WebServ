@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/18 17:40:02 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/19 17:29:26 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,35 @@ int	isaBlockWithBrackets(std::string& line)
 	return  (0);
 }
 
+
+int	isDirectiveWithbrackets(std::string& line)
+{
+	int	i;
+	int	size;
+
+	size = line.size() - 1;
+	i = 0;
+	while (size >= 0 && (line[size] == ' ' || line[size] == '\t'))
+		size--;
+	if (line[size] == '}')
+	{
+		if (size == 0)
+			return (0);
+		i = size;
+		--size;
+		while (size >= 0 && (line[size] == ' ' || line[size] == '\t'))
+			size--;
+		if (size == -1)
+			return (0);
+		else
+		{
+			line[i] = ' ';
+			return (1);
+		}
+	}
+	return (0);
+}
+
 void	moveBracketsToNextLine(std::vector<std::string>& file)
 {
 	int	i;
@@ -189,8 +218,11 @@ void	moveBracketsToNextLine(std::vector<std::string>& file)
 	int	tab;
 	std::vector<std::string>::iterator it;
 
+	//first part is to move open curly bracket in
+	//server and location blocks to a new line
 	it = file.begin();
 	size = file.size();
+	tab = 0;
 	i = 0;
 	while (i < size)
 	{
@@ -206,24 +238,235 @@ void	moveBracketsToNextLine(std::vector<std::string>& file)
 		}
 		i++;
 	}
+	//secound part is to move close curly brackets in
+	//the ends of directive value to a new line
+	it = file.begin();
+	size = file.size();
+	i = 0;
+	tab = 0;
+	while (i < size)
+	{
+		if ((tab = isDirectiveWithbrackets(file[i])))
+		{
+			file.insert(it + i + 1, "\t}");
+			size = file.size();
+			it = file.begin();
+		}
+		i++;
+	}
 }
 
+int	isServerBlock(std::string line)
+{
+	int i;
+	int size;
+
+	size = line.size();
+	i = 0;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (line.compare(i, 6, "server") == 0)
+	{
+		if (line[i + 6] == ' ' || line[i + 6] == '\t' || line[i + 6] == 0)
+			return (1);
+	}
+	return (0);
+}
+int	isLocationBlock(std::string line)
+{
+	int i;
+	int size;
+
+	size = line.size();
+	i = 0;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (line.compare(i, 8, "location") == 0)
+	{
+		if (line[i + 8] == ' ' || line[i + 6] == '\t')
+			return (1);
+	}
+	return (0);
+
+}
+int	isBracket(std::string line)
+{
+	int i;
+	int size;
+
+	size = line.size();
+	i = 0;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (line[i] == '{')
+		return (1);
+	if (line[i] == '}')
+		return (2);
+	return (0);
+
+}
+
+void	countServerBlock(std::vector<std::string> file, int& nbr_of_server)
+{
+	int 		i;
+	int			size;
+
+	size = file.size();
+	i = 0;
+	while (i < size)
+	{
+		if (isServerBlock(file[i]))
+			nbr_of_server++;
+		i++;
+	}
+}
+
+
+int	pairBrackets(std::vector<std::string> serv)
+{
+	int i;
+	int	size;
+	int nbr_bracket;
+
+	i = 0;
+	size = serv.size();
+	while (i < size)
+	{
+		if (isBracket(serv[i]))
+			nbr_bracket++;
+		i++;
+	}
+	if (nbr_bracket % 2 == 0)
+		return (1);
+	return (0);
+}
+
+int	nbrOfLocBlock(std::vector<std::string> file)
+{
+	int i;
+	int	size;
+	int count;
+
+	size = file.size();
+	i = 0;
+	count = 0;
+	while (i < size)
+	{
+		if (isLocationBlock(file[i]))
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+
+int	closedBlock(std::vector<std::string> file)
+{
+	int i;
+	int size;
+	int	flag;
+	int	nbr_of_loc_block;
+
+	nbr_of_loc_block = 0;
+	size = file.size();
+	flag = 0;
+	if (size > 3 && isServerBlock(file[0]) && isBracket(file[1]) == 1 && isBracket(file[size - 1]) == 2)
+	{
+		nbr_of_loc_block = nbrOfLocBlock(file);
+		i = 0;
+		while (i < size)
+		{
+			if (isLocationBlock(file[i]))
+			{
+				std::vector<std::string> loc;
+				int k = i;
+				while (k < size && isBracket(file[k]) != 2)
+				{
+					loc.push_back(file[k]);
+					k++;
+				}
+				loc.push_back(file[k]);
+				if (loc.size() > 3 && isBracket(loc[1]) == 1 && isBracket(loc[loc.size() - 1]) == 2)
+					flag++;
+			}
+			i++;
+		}
+		if (nbr_of_loc_block == flag)
+			return (1);
+		return (0);
+	}
+	else
+		return (0);
+}
+
+
+int	checkForPairBrackets(std::vector<std::string>& file)
+{
+	int	i;
+	int	j;
+	int	size;
+	int	nbr_of_server;
+	int	flag;
+
+	nbr_of_server = 0;
+	countServerBlock(file, nbr_of_server);
+	std::vector<std::string> servers[nbr_of_server];
+	size = file.size();
+	j = 0;
+	i = 0;
+	while (i < size)
+	{
+		if (isServerBlock(file[i]))
+		{
+			servers[j].push_back(file[i]);	
+			i++;
+			while (i < size &&  !isServerBlock(file[i]))
+				servers[j].push_back(file[i++]);
+			j++;
+		}
+		else
+			i++;
+	}
+	i = 0;
+	flag = 0;
+	while (i < nbr_of_server)
+	{
+		flag += pairBrackets(servers[i]);//check if each server have pair number of curly brackets
+		i++;
+	}
+	if (flag == nbr_of_server)
+	{
+		i = 0;
+		flag = 0;
+		while (i < nbr_of_server)
+		{
+			flag += closedBlock(servers[i]);
+			i++;
+		}
+		if (flag == nbr_of_server)
+			return (1);
+		return (0);
+	}
+	return (0);
+}
 
 void	parseConfigData(std::vector<std::string>& file)
 {
 	removeEmptyLineAndComments(file);
 	moveBracketsToNextLine(file);//only brackets thats come after server or location block
-	//checkForPairBrackets();
-	//checkForSemiColon();
-	//std::cout << "from here"  << std::endl;
+	if (checkForPairBrackets(file))
 	{
-		std::vector<std::string>::iterator it = file.begin();
-		while (it != file.end())
-		{
-			std::cout << *it << std::endl;
-			it++;
-		}
+		int flag = checkForSemiColon(file);
+		std::cout << "from here : " << flag << std::endl;
+		/*{
+			std::vector<std::string>::iterator it = file.begin();
+			while (it != file.end())
+			{
+				std::cout << *it << std::endl;
+				it++;
+			}
 
+		}*/
 	}
 }
 
