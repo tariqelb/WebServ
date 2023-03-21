@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/18 19:26:47 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/21 13:36:57 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ int	main(int ac, char **av)
 		write(2, "Error in config file\n", 21);
 		return (1);
 	}
-	/*//Fill the struct
-	initWebStrcut(web);
+	//Fill the struct
+	/*initWebStrcut(web);
 	if (web.status != 0)
 	{
 		write(2, "Error : init webserv struct\n", 29);
