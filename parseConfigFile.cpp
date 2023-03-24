@@ -6,15 +6,11 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/21 19:17:42 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/24 22:26:15 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <string>
 
 void	removeEmptyLineAndComments(std::vector<std::string>& file)
 {
@@ -118,8 +114,21 @@ int	parseConfigData(std::vector<std::string>& file)
 {
 	removeEmptyLineAndComments(file);
 	moveBracketsToNextLine(file);//only brackets thats come after server or location block
+	if (valideServersBlock(file))	//check also that there is no data outside servers 
+		std::cout << "Valide :" << std::endl;
+	else
+		std::cout << "Not a valide :" << std::endl;
+
+	
 	splitSemiColons(file);
 	removeEmptySemiColons(file);
+	if (valideDirectiveName(file))
+	{
+		write(2, "Error : invalide directive name in config file.\n", 48);
+		return (1);
+	}
+	//valide directive value
+	//valideDirectiveValue(file);
 	//if (checkForPairBrackets(file)) // check for closed block
 	//	if (checkForSemiColon(file)) // ckeck for ends with semi-colon
 	//		return (0);

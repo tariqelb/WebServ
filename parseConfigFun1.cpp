@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 11:40:24 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/21 18:47:29 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/22 18:25:56 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,15 @@
 int	isEmptyLines(std::string line)
 {
 	int	i;
+	int size;
 
+	size = line.size();
 	i = 0;
-	if (line.size() == 0)
+	if (size == 0)
 		return (0);
-	while (i < line.size() && (line[i] == ' ' || line[i] == '\t'))
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
 		i++;
-	if (i == line.size())
+	if (i == size)
 		return (0);
 	return (1);
 }
@@ -86,10 +88,10 @@ int	isLocationBlock(std::string line)
 	int find;
 	int	i;
 
-	find = line.find("server");
+	find = line.find("location");
 	if (find >= 0)
 	{
-		i = find + 6;//Index of the character after server word in the string
+		i = find + 8;//Index of the character after server word in the string
 		if (find == 0 && (line[i] == ' ' || line[i] == '\t' || line[i] == 0 ))
 			return (1);
 		if (find > 0)
@@ -134,3 +136,16 @@ int	isBracket(std::string line)
 	return (0);
 
 }
+
+int	endsWithSemiColon(std::string line)
+{
+	int size;
+
+	size = line.size() - 1;
+	while (size >= 0 && (line[size] == ' ' || line[size] == '\t'))
+		size--;
+	if (line[size] == ';')
+		return (1);
+	return (0);
+}
+

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/21 19:10:08 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/24 22:26:20 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@
 #include <vector>
 #include <iostream>
 #include <stdio.h>
-
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <cctype>
 
 # define MAX_CONNECTION 5
 # define MAX_PORT 3
@@ -136,7 +139,7 @@ int		isComment(std::string line);
 int		isServerBlock(std::string line);
 int		isLocationBlock(std::string line);
 int		isBracket(std::string line);
-
+int		endsWithSemiColon(std::string line);
 
 //parseConfigFun2.cpp
 int		checkForPairBrackets(std::vector<std::string>& file);
@@ -166,4 +169,25 @@ void		getConfigData(struct webserv& web, std::vector<std::string> file);
 void    removeDoubleSemiColons(std::string& line);
 void	splitSemiColons(std::vector<std::string>& file);
 void    removeEmptySemiColons(std::vector<std::string>& file);
+
+
+int		valideServersBlock(std::vector<std::string> file);
+
+
+//valideDirectiveName.cpp
+std::string 	getDirectiveKey(std::string line);
+std::string		getDirectiveValue(std::string line, std::string key);
+int 			valideDirectiveValue(std::string line, std::string key);
+int				valideDirectiveName(std::vector<std::string> file);
+
+//valides.cpp
+int		getNbr(std::string line);
+int		validePort(std::string line);
+int		alphaDigit(char c);
+int		valideDomainName(std::string line);
+int		valideFile(std::string line);
+int		valideUnit(std::string line);
+int		valideOnOff(std::string line);
+int		valideExtension(std::string line);
+
 #endif
