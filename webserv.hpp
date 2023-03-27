@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/24 22:26:20 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/26 22:23:35 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 #include <fstream>
 #include <string>
 #include <cctype>
+#include <sys/stat.h>
 
 # define MAX_CONNECTION 5
 # define MAX_PORT 3
@@ -46,28 +47,28 @@ const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
 
 struct	location
 {
-	std::string		location;
-	std::string		allow[3];//methods allowed in a location
-	std::string		root;
-	std::string		index_file;
-	std::string		autoindex;
-	std::string		limit_except[3];
-	std::string		error_page[2];
-	std::string		upload;
-	std::string		upload_store;
-	std::string		cgi_ext;
-	std::string		cgi_path;
+	std::string											location;
+	std::vector<std::string>							allow;//methods allowed in a location
+	std::string											root;
+	std::string											index_file;
+	std::string											autoindex;
+	std::vector<std::string>							limit_except;
+	std::vector<std::pair<std::string, std::string> >	error_page;
+	std::string											upload;
+	std::string											upload_store;
+	std::string											cgi_ext;
+	std::string											cgi_path;
 };
 
 struct	serverfile
 {
-	std::string						listen;
-	std::string						server_name;
-	std::string						error_page[2];
-	std::string						max_body_size;
-	std::string						root;
-	std::string						index;
-	std::vector<struct location>	location;
+	std::vector<std::string>							listen;
+	std::vector<std::string>							server_name;
+	std::vector<std::pair<std::string, std::string> >	error_page;
+	std::string											max_body_size;
+	std::string											root;
+	std::string											index;
+	std::vector<struct location>						location;
 };
 
 
@@ -181,13 +182,15 @@ int 			valideDirectiveValue(std::string line, std::string key);
 int				valideDirectiveName(std::vector<std::string> file);
 
 //valides.cpp
+int		alphaDigit(char c);
 int		getNbr(std::string line);
 int		validePort(std::string line);
-int		alphaDigit(char c);
 int		valideDomainName(std::string line);
 int		valideFile(std::string line);
 int		valideUnit(std::string line);
 int		valideOnOff(std::string line);
 int		valideExtension(std::string line);
+int		valideScript(std::string line);
+int		validePath(std::string line);
 
 #endif

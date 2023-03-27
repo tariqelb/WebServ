@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 18:39:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/24 22:26:11 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/25 18:27:14 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,6 +264,70 @@ int	valideExtension(std::string line)
 	return (0);
 }
 
+int	valideScript(std::string line)
+{
+	int i;
+	int j;
+	int size;
+	std::string name;
 
+	i = 0;
+	size = line.size();
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	j = 0;	
+	while (i + j < size && line[i + j] != ' ' && line[i + j] != '\t')
+		j++;
+	if (j == 0)
+		return (0);
+	name = line.substr(i, j);
+	i = i + j;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (i != size)
+		return (0);
+	j = access(name.c_str(), X_OK);
+	if (j == 0)
+	{
+		std::cout << "Valide excutable" << std::endl;
+		return (1);
+	}
+	return (0);
+}
 
+int	validePath(std::string line)
+{
+	int i;
+	int j;
+	int size;
+	std::string path;
+	struct stat buffer;
 
+	i = 0;
+	size = line.size();
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	j = 0;
+	while (i + j < size && line[i + j] != ' ' && line[i + j] != '\t')
+		j++;
+	if (j == 0)
+		return (0);
+	path = line.substr(i, j);
+	i = i + j;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (i != size)
+		return (0);
+	j = stat(path.c_str(), &buffer);
+	if (j == 0)
+	{
+		if (S_ISDIR(buffer.st_mode))
+		{
+			std::cout << "Valide directory path" << std::endl;
+			return (1);
+		}
+		return (0);
+	}
+	else
+		return (0);
+}

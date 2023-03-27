@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/24 22:26:15 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/26 22:23:31 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,6 @@ int	parseConfigData(std::vector<std::string>& file)
 	else
 		std::cout << "Not a valide :" << std::endl;
 
-	
 	splitSemiColons(file);
 	removeEmptySemiColons(file);
 	if (valideDirectiveName(file))
@@ -174,12 +173,6 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 		return;
 	}
 	//test
-	int i = 0;
-	while (i < conf_file.size())
-	{
-		std::cout << "Line : " << conf_file[i] << std::endl; 
-		i++;
-	}
-	//getConfigData(web, conf_file);
+	getConfigData(web, conf_file);
 	//checkConfigData(web);
 }

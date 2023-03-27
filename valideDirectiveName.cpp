@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 10:58:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/24 22:26:13 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/26 22:23:28 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,13 @@ int	valideDirectiveValue(std::string line, std::string key)
 		return (0);
 	if (key == "cgi" && valideExtension(value) == 0)
 		return (0);
-	if (key == "cgi" && valideExecutable(value) == 0)
+	if (key == "script_filename" && valideScript(value) == 0)
+		return (0);
+	if (key == "upload_store" && validePath(value) == 0)
+		return (0);
+	if (key == "root" && validePath(value) == 0)
+		return (0);
+	if (key == "location" && validePath(value) == 0)
 		return (0);
 	return (2);
 }
@@ -116,11 +122,11 @@ int valideDirectiveName(std::vector<std::string> file)
 				return (1);
 				
 			}
-			if (valideDirectiveValue(file[i], key) == 0)
+			/*if (valideDirectiveValue(file[i], key) == 0)
 			{
 			std::cout << "unvalide Directive value " << file[i] << std::endl;
 				return (1);	
-			}
+			}*/
 		}
 		i++;
 	}

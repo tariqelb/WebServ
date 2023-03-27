@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 11:48:44 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/21 19:17:45 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/26 21:18:21 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	splitSemiColons(std::vector<std::string>& file)
 	i = 0;
 	while (i < size)
 	{
-		find = file[i].find(";");
 		removeDoubleSemiColons(file[i]);
+		find = file[i].find(";");
 		if (find >= 0)
 		{
 			flag = file[i].find("server");
