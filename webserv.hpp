@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/26 22:23:35 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/27 22:22:20 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,11 @@ const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
 
 struct	location
 {
-	std::string											location;
+	std::string											pattern;
 	std::vector<std::string>							allow;//methods allowed in a location
 	std::string											root;
-	std::string											index_file;
+	std::string											index;
 	std::string											autoindex;
-	std::vector<std::string>							limit_except;
 	std::vector<std::pair<std::string, std::string> >	error_page;
 	std::string											upload;
 	std::string											upload_store;

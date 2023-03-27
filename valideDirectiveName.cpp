@@ -6,14 +6,14 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 10:58:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/26 22:23:28 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/27 22:29:41 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 
-char dirctives[14][21] = {"listen", "servername", "error_page", "client_max_body_size", "location", "allow", "root", "autoindex", "index", "limit_except", "upload", "upload_store", "cgi", "script_filename"};
+char dirctives[14][21] = {"listen", "servername", "error_page", "client_max_body_size", "location", "allow", "root", "autoindex", "index", "upload", "upload_store", "cgi", "script_filename"};
 
 
 std::string	getDirectiveKey(std::string line)
@@ -110,7 +110,7 @@ int valideDirectiveName(std::vector<std::string> file)
 			flag = 0;
 			key = getDirectiveKey(file[i]);
 			j = 0;
-			while (j < 14 && flag == 0)
+			while (j < 13 && flag == 0)
 			{
 				if (key.compare(0, key.size() , dirctives[j]) == 0)
 					flag = 1;
