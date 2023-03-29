@@ -6,85 +6,11 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:44:50 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/27 22:35:03 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/29 01:06:05 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-
-
-void	displayConfigFile(std::vector<struct serverfile> conf)
-{
-	int i;
-
-	i = 0;
-	while (i < conf.size())
-	{
-		std::cout << "***********************************" << std::endl;
-		{
-			int j = 0;
-			while (j < conf[i].listen.size())
-			{
-				std::cout << "listen : " << conf[i].listen[j] << std::endl;
-				j++;
-			}
-		}
-		{
-			int j = 0;
-			while (j < conf[i].server_name.size())
-			{
-				std::cout << "servername : " << conf[i].server_name[j] << std::endl;
-				j++;
-			}
-		}
-		{
-			int j = 0;
-			while (j < conf[i].error_page.size())
-			{
-			std::cout << "error_code: " << conf[i].error_page[j].first;
-			std::cout << " error_page: " << conf[i].error_page[j].second;
-			std::cout << std::endl;
-				j++;
-			}
-		}
-		std::cout << "Max Body Size : " << conf[i].max_body_size << "\n";
-		std::cout << "Root : " << conf[i].root << std::endl;
-		std::cout << "Index : " << conf[i].index << std::endl;
-		std::cout << "-------------------" << std::endl;
-		{
-			int j = 0;
-			while (j < conf[i].location.size())
-			{
-				std::cout << "pattern : " << conf[i].location[j].pattern << std::endl;
-				std::cout << "root : " << conf[i].location[j].root << std::endl;
-				std::cout << "index : " << conf[i].location[j].index << std::endl;
-				std::cout << "autoindex : " << conf[i].location[j].autoindex << std::endl;
-				std::cout << "upload : " << conf[i].location[j].upload << std::endl;
-				std::cout << "upload_store : " << conf[i].location[j].upload_store << std::endl;
-				std::cout << "cgi : " << conf[i].location[j].cgi_ext << std::endl;
-				std::cout << "cgi_path : " << conf[i].location[j].cgi_path << std::endl;
-				int k = 0;
-				while (k < conf[i].location[j].error_page.size())
-				{
-					std::cout << "error code : " << conf[i].location[j].error_page[k].first << std::endl; 
-					std::cout << "error file : " << conf[i].location[j].error_page[k].second << std::endl; 
-					k++;
-				}
-				k = 0;
-				while (k < conf[i].location[j].allow.size())
-				{
-					std::cout << "allow : " << conf[i].location[j].allow[k] << "\n";
-					k++;
-				}
-				j++;
-			}
-		}
-		std::cout << "-------------------" << std::endl;
-		i++;
-	}
-}
-
 
 
 int	nbrOfServerBlock(std::vector<std::string> file)
@@ -126,7 +52,7 @@ void	getKeyandValue(std::string& key, std::string& value, std::string line)
 	j = size - 1;
 	while (j > 0 && (line[j] == ' ' || line[j] == '\t' || line[j] == ';'))
 		--j;
-	if (j > i)
+	if (j >= i)
 		value = line.substr(i, j - i + 1);
 }
 
@@ -228,7 +154,10 @@ void	fillServerBlock(struct webserv& web, std::vector<std::string> serv)
 			while (i < size && isBracket(serv[i]) != 2)
 			{
 				if (key == "location")
+				{
+					std::cout << "val : {" << value << "}" << std::endl;
 					loc.pattern.assign(value);
+				}
 				if (key == "root")
 					loc.root.assign(value);
 				if (key == "cgi")
@@ -257,7 +186,6 @@ void	fillServerBlock(struct webserv& web, std::vector<std::string> serv)
 		i++;
 	}
 	web.config.push_back(conf);
-	displayConfigFile(web.config);
 }
 
 void	getConfigData(struct webserv& web, std::vector<std::string> file)
@@ -281,11 +209,4 @@ void	getConfigData(struct webserv& web, std::vector<std::string> file)
 		else
 			i++;
 	}
-	/*size = file.size();
-	i = 0;
-	while (i < size)
-	{
-		std::cout << file[i] << std::endl;
-		i++;
-	}*/
 }

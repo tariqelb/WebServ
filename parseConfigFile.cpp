@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/27 22:25:43 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/29 00:39:27 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,20 +112,27 @@ int	closedBlock(std::vector<std::string> file)
 
 int	parseConfigData(std::vector<std::string>& file)
 {
-	removeEmptyLineAndComments(file);
+	removeEmptyLineAndComments(file);//remove empty lines and comment from config file
 	moveBracketsToNextLine(file);//only brackets thats come after server or location block
-	if (valideServersBlock(file))	//check also that there is no data outside servers 
-		std::cout << "Valide :" << std::endl;
-	else
-		std::cout << "Not a valide :" << std::endl;
-
-	splitSemiColons(file);
-	removeEmptySemiColons(file);
-	if (valideDirectiveName(file))
+	if (valideServersBlock(file) == 0)	//check also that there is no data outside servers 
 	{
-		write(2, "Error : invalide directive name in config file.\n", 48);
+		std::cerr << "Data outside server block:" << std::endl;
 		return (1);
 	}
+
+
+
+
+
+
+
+	/*splitSemiColons(file);//if there is multiple directive in the same line move it to next one
+	removeEmptySemiColons(file);// remove lines that have only semi colons
+	if (valideDirectiveName(file))// check for directive is valid mean known directive
+	{
+		std::cerr << "Error : invalide directive name in config file." << std::endl;
+		return (1);
+	}*/
 	//valide directive value
 	//valideDirectiveValue(file);
 	//if (checkForPairBrackets(file)) // check for closed block
@@ -151,7 +158,7 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 	file.open(filename);
 	if (file.is_open() == false)
 	{
-		write(2, "Error opening config file\n", 26);
+		std::cerr << "Error opening config file" << std::endl;
 		web.status = 1;
 		return ;
 	}
@@ -162,17 +169,16 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 	file.close();
 	if (conf_file.size() == 0)
 	{
-		write(2, "Error Empty file\n", 17);
+		std::cerr << "Error Empty file" << std::endl;
 		web.status = 1;
 		return ;
 	}
 	if (parseConfigData(conf_file))
 	{
-		write(2, "Error in config file\n", 21);
+		std::cerr << "Error in config file" << std::endl;
 		web.status = 1;
 		return;
 	}
-	//test
 	getConfigData(web, conf_file);
-	//checkConfigData(web);
+	checkConfigData(web);
 }

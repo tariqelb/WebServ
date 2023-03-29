@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 12:46:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/20 18:59:53 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/29 00:32:38 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,14 +105,16 @@ void	moveBracketsToNextLine(std::vector<std::string>& file)
 			if (tab > 0)
 			{
 				file.insert(it + i + 1, "{");
-				file.insert(it + i + 2, file[i].substr(tab + 1, file[i].size() - tab));
+				if ((file[i].substr(tab + 1, file[i].size() - tab)).size())
+					file.insert(it + i + 2, file[i].substr(tab + 1, file[i].size() - tab));
 				file[i].assign(file[i].substr(0, tab));
 			}
 			else
 			{
 				tab = tab * - 1;
 				file.insert(it + i + 1, "\t{");
-				file.insert(it + i + 2, file[i].substr(tab + 1, file[i].size() - tab));
+				if ((file[i].substr(tab + 1, file[i].size() - tab)).size())
+					file.insert(it + i + 2, file[i].substr(tab + 1, file[i].size() - tab));
 				file[i].assign(file[i].substr(0, tab));
 			}
 			size = file.size();
