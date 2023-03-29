@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 00:40:35 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/29 22:18:36 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,47 +163,18 @@ void	activeExceptSocket(struct webserv& web);
 void	activeSocket(struct webserv& web);
 
 
-//parseConfigFun1.cpp
-int		isEmptyLines(std::string line);
-int		isComment(std::string line);
-int		isServerBlock(std::string line);
-int		isLocationBlock(std::string line);
-int		isBracket(std::string line);
-int		endsWithSemiColon(std::string line);
 
-//parseConfigFun2.cpp
+
+
+
+// parse configue file functions
+
+//parseConfigfun3.cpp // not used
 int		checkForPairBrackets(std::vector<std::string>& file);
 int		pairBrackets(std::vector<std::string> serv);
-void	moveBracketsToNextLine(std::vector<std::string>& file);
-int		isaBlockWithOpenBrackets(std::string& line);
-int		isDirectiveWithCloseBrackets(std::string& line);
 
-
-//parseConfigfun3.cpp
-void	removeEmptyLineAndComments(std::vector<std::string>& file);
-void	countServerBlock(std::vector<std::string> file, int& nbr_of_server);
-int		nbrOfLocBlock(std::vector<std::string> file);
-int		closedBlock(std::vector<std::string> file);
+//checkForSemiColon.cpp  // not used
 int		checkForSemiColon(std::vector<std::string> file);
-
-//parseConfigFile.cpp
-int		parseConfigData(std::vector<std::string>& file);
-void    parseConfigFile(struct webserv& web, int ac, char **av);
-
-//checkForSemiColon.cpp
-int		checkForSemiColon(std::vector<std::string> file);
-
-//getConfigData.cpp
-void		getConfigData(struct webserv& web, std::vector<std::string> file);
-
-//splitSemicolons.cpp
-void    removeDoubleSemiColons(std::string& line);
-void	splitSemiColons(std::vector<std::string>& file);
-void    removeEmptySemiColons(std::vector<std::string>& file);
-
-//valideServersBlock.cpp
-int		valideServersBlock(std::vector<std::string> file);
-
 
 //valideDirectiveName.cpp
 std::string 	getDirectiveKey(std::string line);
@@ -223,8 +194,50 @@ int		valideExtension(std::string line);
 int		valideScript(std::string line);
 int		validePath(std::string line);
 
-// displayServerFile.cpp
-void	displayServerFile(std::vector<struct serverfile> conf);
+
+
+
+//parseConfigFile.cpp
+int		parseConfigData(std::vector<std::string>& file);
+void    parseConfigFile(struct webserv& web, int ac, char **av);
+
+//getConfigData.cpp
+void		getConfigData(struct webserv& web, std::vector<std::string> file);
+
+//parseConfigFun1.cpp
+int		isEmptyLines(std::string line);
+int		isComment(std::string line);
+int		isServerBlock(std::string line);
+int		isLocationBlock(std::string line);
+int		isBracket(std::string line);
+int		endsWithSemiColon(std::string line);
+void	countServerBlock(std::vector<std::string> file, int& nbr_of_server);
+int		nbrOfLocBlock(std::vector<std::string> file);
+int		closedBlock(std::vector<std::string> file);
+void	removeEmptyLineAndComments(std::vector<std::string>& file);
+
+//moveBracketsToNextLine.cpp
+void	moveBracketsToNextLine(std::vector<std::string>& file);
+int		isaBlockWithOpenBrackets(std::string& line);
+int		isDirectiveWithCloseBrackets(std::string& line);
+
+//splitSemicolons.cpp
+void    removeDoubleSemiColons(std::string& line);
+void	splitSemiColons(std::vector<std::string>& file);
+int		isAloneSemiColon(std::string  line);
+void    removeEmptySemiColons(std::vector<std::string>& file);
+
+//valideServersBlock.cpp
+int		valideServerName(std::string line);
+int		isAclosedServer(std::vector<std::string> file, int line_index);
+int		valideServersBlock(std::vector<std::string> file);
+
 //checkConfigData.cpp
 int	checkConfigData(struct webserv web);
+
+// displayServerFile.cpp
+void	displayServerFile(std::vector<struct serverfile> conf);
+
+
+
 #endif
