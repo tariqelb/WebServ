@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 00:24:30 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/01 22:38:50 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	getServerConfig(struct webserv& web)
 		{
 			struct addrinfo	*info;
 			web.servers[i].socket.push_back(info);
+			web.servers[i].socketFd.push_back(-1);
 			j++;
 		}
 		i++;
@@ -80,19 +81,30 @@ void	initWebStrcut(struct webserv& web)
 	else
 		web.status = 0;
 }
-/*
+
 void	freedWeb(struct webserv& web)
 {
 	int	i;
+	int j;
 
 	i = 0;
-	while (i < MAX_PORT)
+	while (i < web.servers.size())
 	{
-		close(web.socketFd[i]);
-		freeaddrinfo(web.server[i]);
+		j = 0;
+		while (j < web.servers[i].socketFd.size())
+		{
+			close(web.servers[i].socketFd[j]);
+			j++;
+		}
+		j = 0;
+		while (j < web.servers[i].socket.size())
+		{
+			freeaddrinfo(web.servers[i].socket[j]);
+			j++;
+		}
 		i++;
 	}
-}*/
+}
 
 int	main(int ac, char **av)
 {
@@ -115,15 +127,15 @@ int	main(int ac, char **av)
 	initWebStrcut(web);
 	if (web.status != 0)
 	{
-		write(2, "Error : init webserv struct\n", 29);
+		std::cerr << "Error : init webserv struct" << std::endl;
 		return (1);
 	}
 	//Display IP and PORT
 	displayHostPort(web);
-	/*flag = initServer(web);
+	flag = initServer(web);
 	if (flag)
 	{
-		write(2, "Error : initialing webserv\n", 27);
+		std::cerr << "Error : initialing webserv" << std::endl;
 		freedWeb(web);
 		return (1);
 	}
@@ -137,12 +149,13 @@ int	main(int ac, char **av)
 		web.status = select(web.maxReadFd + 1, &web.tmp, &web.writes, &web.exceps, &tv);
 		if (web.status == 0)
 		{
-			write(2, "server time listening out\n", 26);
+			std::cerr << "server time listening out" << std::endl;
+			freedWeb(web);
 			return (1);
 		}
 		if (web.status < 0)
 		{
-			write(2, "Error : Fail occur on select function\n", 39); // perror
+			std::cerr << "Error : Fail occur on select function" << std::endl; 
 			freedWeb(web);
 			return (1);
 
@@ -151,7 +164,8 @@ int	main(int ac, char **av)
 			handleConnection(web);
 		handleRequest(web);
 	}
-	freedWeb(web);*/
+	
+	freedWeb(web);
 	
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/31 23:59:50 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/01 22:20:54 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ struct	webserv
 	fd_set								cReads;
 	fd_set								tmp;
 	std::vector<serverfile>				config;
+	int									nbr_of_connections;
 };
 
 // split.cpp // must be removed cause not allwed
