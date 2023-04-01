@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 21:59:58 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/31 00:29:08 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 	const char 					*filename;
 	std::string					line;
 	std::vector<std::string>	conf_file;//fill in with line from server.conf
+	int ports;
+	int i;
 
 	if (ac == 2)
 		filename = av[1];
@@ -84,4 +86,13 @@ void	parseConfigFile(struct webserv& web, int ac, char **av)
 	}
 	getConfigData(web, conf_file);
 	checkConfigData(web);
+	ports = 0;
+	i = 0;
+	while (i < web.config.size())
+	{
+		ports = ports + web.config[i].listen.size();
+		i++;
+	}
+	if (ports == 0)
+		web.status = 1;
 }

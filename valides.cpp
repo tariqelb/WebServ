@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 18:39:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/25 18:27:14 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/31 00:08:19 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,11 @@ int	validePort(std::string line)
 	else
 		nbr = getNbr(line);
 	if (nbr >= 1024 && nbr <= 65535)
-	{
-		std::cout << "Valide port " << std::endl;
 		return (1);
-	}
 	return (0);
 }
 
-int	alphaDigit(char c)
+int	alphaDigit(int c)
 {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
 		return (1);

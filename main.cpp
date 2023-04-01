@@ -6,43 +6,81 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/28 21:07:59 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/01 00:24:30 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 
+void	getServerConfig(struct webserv& web)
+{
+	int i;
+	int size;
+
+	i = 0;
+	size = web.config.size();
+	while (i < size)
+	{
+		struct server	serv;
+		
+		serv.serverConfig = web.config[i];
+		web.servers.push_back(serv);
+		int j = 0;
+		while (j < serv.serverConfig.listen.size())
+		{
+			struct addrinfo	*info;
+			web.servers[i].socket.push_back(info);
+			j++;
+		}
+		i++;
+	}
+}
+
 void	initWebStrcut(struct webserv& web)
 {
 	int		i;
-	int		flag = MAX_PORT;
+	int		j;
+	int 	len;
+	int		flag;
+	int		size;
 
+	flag = 0;
+	getServerConfig(web);
+	size = web.servers.size();
 	memset(&web.hints, 0, sizeof(web.hints));
 	web.hints.ai_family = AF_INET;
 	web.hints.ai_socktype = SOCK_STREAM;
 	web.hints.ai_flags = AI_PASSIVE;
 	web.hints.ai_protocol = IPPROTO_TCP;
 	i = 0;
-	while (i < MAX_PORT)
+	while (i < size)
 	{
-		web.status = 0;
-		web.status = getaddrinfo(HOST, ports[i], &web.hints, &web.server[i]); 
-		if (web.status != 0)
+		j = 0;
+		len = web.servers[i].serverConfig.listen.size();
+		while (j < len)
 		{
-			flag--;
-			write(2, "error : init web struct in port ", 32);
-			write(2, ports[i], strlen(ports[i]));
-			write(2, "\n", 1);
+			char *port = const_cast<char*>( web.servers[i].serverConfig.listen[j].c_str());
+			web.status = 0;
+			web.status = getaddrinfo(HOST, port, &web.hints, &web.servers[i].socket[j]); 
+			if (web.status != 0)
+			{
+				std::cerr << "error : init web struct in port ";
+				std::cout << web.servers[i].serverConfig.listen[j] << std::endl;
+			}
+			else
+				flag++;
+			j++;
 		}
 		i++;
 	}
+
 	if (flag == 0)
 		web.status = 1;
 	else
 		web.status = 0;
 }
-
+/*
 void	freedWeb(struct webserv& web)
 {
 	int	i;
@@ -54,7 +92,7 @@ void	freedWeb(struct webserv& web)
 		freeaddrinfo(web.server[i]);
 		i++;
 	}
-}
+}*/
 
 int	main(int ac, char **av)
 {
@@ -69,9 +107,12 @@ int	main(int ac, char **av)
 	//get data from config file
 	parseConfigFile(web, ac, av);
 	if (web.status != 0)
+	{
+		std::cerr << "No valid server found" << std::endl;
 		return (1);
+	}
 	//Fill the struct
-	/*initWebStrcut(web);
+	initWebStrcut(web);
 	if (web.status != 0)
 	{
 		write(2, "Error : init webserv struct\n", 29);
@@ -79,7 +120,7 @@ int	main(int ac, char **av)
 	}
 	//Display IP and PORT
 	displayHostPort(web);
-	flag = initServer(web);
+	/*flag = initServer(web);
 	if (flag)
 	{
 		write(2, "Error : initialing webserv\n", 27);

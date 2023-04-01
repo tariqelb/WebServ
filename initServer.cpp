@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:12:36 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/16 19:30:42 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/31 22:31:59 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	initServer(struct webserv& web)
 {
-	struct addrinfo	*ptr;
+/*	struct addrinfo	*ptr;
 	int				valide;
 	int				status;
 	int 			reuse;
@@ -77,6 +77,6 @@ int	initServer(struct webserv& web)
 		i++;
 	}
 	if (connected_socket == MAX_PORT)
-		return (0);
+		return (0);*/
 	return (1);
 }

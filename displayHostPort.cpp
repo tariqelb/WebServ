@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:01:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/16 14:31:40 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/01 00:00:07 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,28 @@ void	displayHostPort(struct webserv& web)
 	int				i;
 
 	i = 0;
-	while (i < MAX_PORT)
+	while (i < web.servers.size())
 	{
-		p = web.server[i];
+		int j = 0;
+		while (j < web.servers[i].socket.size())
+		{
+		p = web.servers[i].socket[j];
 		while (p != NULL)
 		{
 			if (p->ai_family == AF_INET)
 			{
 				addr = &((struct sockaddr_in *) p->ai_addr)->sin_addr;
 				inet_ntop(p->ai_family, addr, str, sizeof(str));
-				printf("HostIP4 : %s\nPost : %hu\n", str, ntohs(((struct sockaddr_in *) p->ai_addr)->sin_port));
-			}
-			else if (p->ai_family == AF_INET6)
-			{
-				addr = &((struct sockaddr_in6 *) p->ai_addr)->sin6_addr;
-				inet_ntop(p->ai_family, addr, str, sizeof(str));
-				printf("HostIP6 : %s\nPost : %hu\n", str, ntohs(((sockaddr_in6 *) p->ai_addr)->sin6_port));
+				std::cout << "HostIP4 : " << str << std::endl; 
+				std::cout << "Port    : ";
+				std::cout << ntohs(((struct sockaddr_in *) p->ai_addr)->sin_port) << std::endl; 
 			}
 			p = p->ai_next;
 		}
+		j++;
+		}
 		memset(str, 0, 32);
-		memset(str, 0, sizeof(addr));
+		memset(addr, 0, sizeof(addr));
 		i++;
 	}
 }

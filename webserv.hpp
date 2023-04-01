@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 22:18:36 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/03/31 23:59:50 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,8 @@ struct	serverfile
 };
 
 
-// client struct the shall be hold the information about the request or responce 
-// reqest and respoce is std::vector that take pair as its template arg so you can save key value from the reqest and responce
+// client struct the shall be hold the information about the request or response 
+// reqest and response is std::vector that take pair as its template arg so you can save key value from the reqest and response
 // addr is a sockaddr_storage struct the can serve ipv4 and ipv6 address but we can change it to ipv4 struct cause we just handle ipv4 connections
 // len is the length of the addr struct a variable that we need it in a call of some functions
 // fd is the file descriptor of the client returned from  accept function
@@ -99,7 +99,7 @@ struct	serverfile
 struct client
 {
 	std::vector<std::pair<std::string, std::string> >	request;
-	std::vector<std::pair<std::string, std::string> >	responce;
+	std::vector<std::pair<std::string, std::string> >	response;
 	struct sockaddr_storage								addr;
 	socklen_t											len;
 	int													fd;
@@ -107,16 +107,17 @@ struct client
 
 struct server
 {
-	struct	addrinfo	*socket;
-	int					socketFd;
-	std::string			port;
+	std::vector<struct	addrinfo *>	socket;
+	std::vector<int>				socketFd;
+	struct serverfile				serverConfig;
 };
 
 //
 struct	webserv
 {
 	struct addrinfo						hints;
-	struct addrinfo						*server[MAX_PORT];
+	//struct addrinfo						*server[MAX_PORT];
+	std::vector<server>					servers;
 	std::vector<client>					clients;
 	int									socketFd[MAX_PORT];
 	int									status;
@@ -183,7 +184,7 @@ int 			valideDirectiveValue(std::string line, std::string key);
 int				valideDirectiveName(std::vector<std::string> file);
 
 //valides.cpp
-int		alphaDigit(char c);
+int		alphaDigit(int c);
 int		getNbr(std::string line);
 int		validePort(std::string line);
 int		valideDomainName(std::string line);
@@ -233,7 +234,7 @@ int		isAclosedServer(std::vector<std::string> file, int line_index);
 int		valideServersBlock(std::vector<std::string> file);
 
 //checkConfigData.cpp
-int	checkConfigData(struct webserv web);
+int	checkConfigData(struct webserv& web);
 
 // displayServerFile.cpp
 void	displayServerFile(std::vector<struct serverfile> conf);
