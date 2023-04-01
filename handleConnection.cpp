@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 22:42:26 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/01 23:34:17 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,5 @@ void	handleConnection(struct webserv& web)
 		}
 		i++;
 	}
+	std::cout << "End of handle connection" << std::endl;
 }
