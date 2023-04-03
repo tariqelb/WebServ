@@ -6,15 +6,15 @@
 #    By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/03/29 22:10:21 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/04/03 00:53:24 by tel-bouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv.out
 
-SRCS = ./main.cpp ./handleRequest.cpp ./handleConnection.cpp ./parseRequest.cpp \
-	   ./parseRequestData.cpp ./displayHostPort.cpp ./initServer.cpp ./split.cpp \
-	   ./activeSocket.cpp \
+SRCS = ./main.cpp ./handleRequest.cpp ./handleConnection.cpp  \
+	   ./init/displayHostPort.cpp ./init/initServer.cpp \
+	   ./init/initWebStructAndFree.cpp ./init/activeSocket.cpp\
 	   ./parseConfigFile/parseConfigFile.cpp \
 	   ./parseConfigFile/getConfigData.cpp \
 	   ./parseConfigFile/parseConfigFun1.cpp \
@@ -23,7 +23,7 @@ SRCS = ./main.cpp ./handleRequest.cpp ./handleConnection.cpp ./parseRequest.cpp 
 	   ./parseConfigFile/displayServerFile.cpp \
 	   ./parseConfigFile/checkConfigData.cpp \
 	   ./parseConfigFile/splitSemiColons.cpp \
-	   ./valides.cpp 
+	   ./parseConfigFile/valides.cpp 
 
 INCLUDES = .
 

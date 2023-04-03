@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:43:10 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/31 00:29:08 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/03 00:54:20 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,6 @@ int	parseConfigData(std::vector<std::string>& file)
 		std::cerr << "Data outside server block:" << std::endl;
 		return (1);
 	}
-
-
-
-
-
-
-
-	/*if (valideDirectiveName(file))// check for directive is valid mean known directive
-	{
-		std::cerr << "Error : invalide directive name in config file." << std::endl;
-		return (1);
-	}*/
-	//valide directive value
-	//valideDirectiveValue(file);
-	//if (checkForPairBrackets(file)) // check for closed block
-	//	if (checkForSemiColon(file)) // ckeck for ends with semi-colon
-	//		return (0);
-	//		check for valide directive
-	//		check if at least there a valide server neccesary directive and valide value
-	//
 	return (0);
 }
 

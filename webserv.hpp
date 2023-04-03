@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 22:20:54 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/03 00:54:28 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include <cctype>
 #include <sys/stat.h>
 
-# define MAX_CONNECTION 5
+# define MAX_CONNECTION 100
 # define MAX_PORT 3
 # define HOST "localhost"
 # define MAX_CLIENTS 10
@@ -116,10 +116,8 @@ struct server
 struct	webserv
 {
 	struct addrinfo						hints;
-	//struct addrinfo						*server[MAX_PORT];
 	std::vector<server>					servers;
 	std::vector<client>					clients;
-	int									socketFd[MAX_PORT];
 	int									status;
 	fd_set								reads;
 	fd_set								writes;
@@ -132,57 +130,37 @@ struct	webserv
 	int									nbr_of_connections;
 };
 
-// split.cpp // must be removed cause not allwed
-char	**ft_split(char const *s, char c);
-
-// parseRequest.cpp
-void    getMethod(std::vector<std::pair<std::string, std::string> >& req, char *line);
-void    getHeaders(std::vector<std::pair<std::string, std::string> >& req, char *line);
-void    getRequestInfo(std::vector<client> client, char* buffer);
-void    displyReqeust(std::vector<std::pair<std::string, std::string> > req);
-
-//parseRequestData.cpp
-int		handleContinue(char *line); 
-int		endOfTheRequest(std::string& buffer);
-void    closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i);
-
-//displayHostPort.cpp
-void    displayHostPort(struct webserv& web);
 
 //handleconnection.cpp
 void    handleConnection(struct webserv& web);
 
-//initServer.cpp
-int 	initServer(struct webserv& web);
-
 //handleRequest.cpp
+int		handleContinue(char *line); 
+int		endOfTheRequest(std::string& buffer);
+void    closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i);
 void    handleRequest(struct webserv& web);
 
-//activeSocket.cpp
+
+//init/initwebStructAndFree.cpp
+void	getServerConfig(struct webserv& web);
+void	initWebStrcut(struct webserv& web);
+void	freedWeb(struct webserv& web);
+
+//init/displayHostPort.cpp
+void    displayHostPort(struct webserv& web);
+
+//init/activeSocket.cpp
 void	activeReadSocket(struct webserv& web);
 void	activeWriteSocket(struct webserv& web);
 void	activeExceptSocket(struct webserv& web);
 void	activeSocket(struct webserv& web);
 
-
-
-
-
+//init/initServer.cpp
+int 	initServer(struct webserv& web);
 
 // parse configue file functions
 
-//parseConfigfun3.cpp // not used
-int		checkForPairBrackets(std::vector<std::string>& file);
-int		pairBrackets(std::vector<std::string> serv);
 
-//checkForSemiColon.cpp  // not used
-int		checkForSemiColon(std::vector<std::string> file);
-
-//valideDirectiveName.cpp
-std::string 	getDirectiveKey(std::string line);
-std::string		getDirectiveValue(std::string line, std::string key);
-int 			valideDirectiveValue(std::string line, std::string key);
-int				valideDirectiveName(std::vector<std::string> file);
 
 //valides.cpp
 int		alphaDigit(int c);
@@ -197,14 +175,18 @@ int		valideScript(std::string line);
 int		validePath(std::string line);
 
 
-
-
 //parseConfigFile.cpp
 int		parseConfigData(std::vector<std::string>& file);
 void    parseConfigFile(struct webserv& web, int ac, char **av);
 
 //getConfigData.cpp
-void		getConfigData(struct webserv& web, std::vector<std::string> file);
+std::string 	getDirectiveKey(std::string line);
+int 			nbrOfServerBlock(std::vector<std::string> file);
+void    		getKeyandValue(std::string& key, std::string& value, std::string line);
+void    		getMultivalue(std::vector<std::string>& holder, std::string values);
+void    		getPairValue(std::vector<std::pair<std::string, std::string> >& holder, std::string value    );
+void    		fillServerBlock(struct webserv& web, std::vector<std::string> serv);
+void			getConfigData(struct webserv& web, std::vector<std::string> file);
 
 //parseConfigFun1.cpp
 int		isEmptyLines(std::string line);

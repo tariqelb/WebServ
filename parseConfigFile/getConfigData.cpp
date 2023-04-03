@@ -6,12 +6,34 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:44:50 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 21:59:09 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/03 00:51:31 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+char directives[14][21] = {"listen", "servername", "error_page", "client_max_body_size", "location"    , "allow", "root", "autoindex", "index", "upload", "upload_store", "cgi", "script_filename"};
 
+std::string	getDirectiveKey(std::string line)
+{
+	int i;
+	int size;
+	int pos;
+	int len;
+
+	size = line.size();
+	pos = 0;
+	len = 0;
+	i = 0;
+	while (i < size && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	pos = i;
+	while (i < size && line[i] != ' ' && line[i] != '\t')
+	{
+		i++;
+		len++;
+	}
+	return (line.substr(pos, len));
+}
 
 int	nbrOfServerBlock(std::vector<std::string> file)
 {
@@ -188,20 +210,50 @@ void	fillServerBlock(struct webserv& web, std::vector<std::string> serv)
 void	getConfigData(struct webserv& web, std::vector<std::string> file)
 {
 	int i;
+	int j;
+	int k;
+	int flag;
 	int size;
+	int valid;
+	std::string	key;
+
 	
 	size = file.size();
 	i = 0;
+	k = 0;
 	while (i < size)
 	{
 		if (isServerBlock(file[i]))
 		{
+			k++;
 			std::vector<std::string> serv;
 			serv.push_back(file[i]);
 			i++;
+			valid = 1;
 			while (i < size && !isServerBlock(file[i]))
+			{
+				if (isBracket(file[i]) == 0)
+				{
+					key = getDirectiveKey(file[i]);
+					flag = 0;
+					j = 0;
+					while (j < 13)
+					{
+						if (key.compare(0, key.size(), directives[j]) == 0)
+							flag = 1;
+						j++;
+					}
+					if (flag == 0)
+					{
+						std::cerr << "Error : unvalide Directive key [" << key;
+					   	std::cerr << "] in server nbr : " << k << std::endl;
+						valid = 0;
+					}
+				}
 				serv.push_back(file[i++]);
-			fillServerBlock(web, serv);
+			}
+			if (valid)
+				fillServerBlock(web, serv);
 		}
 		else
 			i++;
