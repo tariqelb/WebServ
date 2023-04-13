@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/03 00:54:28 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/12 23:32:58 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,14 @@
 # define CONFIGFILE	"./server.conf";
 const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
 
+
+struct respReslt
+{
+	std::string	root;
+	std::string	index;
+	int			error;
+	int			autoindex;
+};
 
 struct	location
 {
@@ -100,6 +108,7 @@ struct client
 {
 	std::vector<std::pair<std::string, std::string> >	request;
 	std::vector<std::pair<std::string, std::string> >	response;
+	std::string											rsp;
 	struct sockaddr_storage								addr;
 	socklen_t											len;
 	int													fd;
@@ -222,6 +231,21 @@ int	checkConfigData(struct webserv& web);
 // displayServerFile.cpp
 void	displayServerFile(std::vector<struct serverfile> conf);
 
+//response
+//getRequestData.cpp
+void    getRequestData(struct webserv& web, std::string buff, int index);
+
+//response.cpp
+std::string		getRequestValue(struct client clt, std::string key);
+struct server   getServerForResponse(struct webserv web, std::string port);
+void			getResponse(struct webserv web, struct client& clt);
+void			response(struct webserv& web, int fd);
+void			responseToRequest(struct server serv, struct client clt, struct respReslt& hepl);
+
+//parseRequest.cpp
+int isRequestWellFormed(struct webserv web, std::string buff);
+void    fillRequestData(struct client& clt, std::stringstream& buff);
+void    parseRequest(struct webserv web, struct client& clt, std::stringstream& buffer);
 
 
 #endif

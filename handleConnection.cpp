@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 23:34:17 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/03 22:21:22 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,11 @@ void	handleConnection(struct webserv& web)
 					else
 					{
 						FD_SET(newClient.fd, &web.cReads);
-						printf("client fd %d\n", newClient.fd);
 						web.clients.push_back(newClient);
 					}
-					printf("is_set %d\n", web.servers[i].socketFd[j]);
 			}
 			j++;
 		}
 		i++;
 	}
-	std::cout << "End of handle connection" << std::endl;
 }

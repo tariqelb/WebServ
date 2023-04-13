@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/02 23:57:30 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/03 22:15:36 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	main(int ac, char **av)
 	}
 	//Display IP and PORT
 	displayHostPort(web);
-/*	flag = initServer(web);
+	flag = initServer(web);
 	if (flag)
 	{
 		std::cerr << "Error : initialing webserv" << std::endl;
@@ -74,6 +74,6 @@ int	main(int ac, char **av)
 	}
 	
 	freedWeb(web);
-*/	
+	
 	return (0);
 }
