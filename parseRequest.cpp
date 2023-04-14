@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 21:03:09 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/13 00:41:58 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/04/13 23:01:35 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,11 @@ void	fillRequestData(struct client& clt, std::stringstream& buffer)
 	size = clt.request.size();
 	while (i < size)
 	{
-		std::cout << "Key : " << clt.request[i].first   << std::endl;
-		std::cout << "val : " << clt.request[i].second  << std::endl;
+		if (clt.request[i].first == "Body")
+		{
+			std::cout << "Key : " << clt.request[i].first   << std::endl;
+			std::cout << "val : " << clt.request[i].second  << std::endl;
+		}
 		i++;
 	}
 }
