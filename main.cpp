@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/03 22:15:36 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/10 22:00:57 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	main(int ac, char **av)
 		std::cerr << "No valid server found" << std::endl;
 		return (1);
 	}
-	//Fill the struct
+	//Fill  struct
 	initWebStrcut(web);
 	if (web.status != 0)
 	{
@@ -40,6 +40,7 @@ int	main(int ac, char **av)
 	}
 	//Display IP and PORT
 	displayHostPort(web);
+	//Launch servers
 	flag = initServer(web);
 	if (flag)
 	{
@@ -47,7 +48,7 @@ int	main(int ac, char **av)
 		freedWeb(web);
 		return (1);
 	}
-	//set select for incomming connections
+	//Set select for incomming connections
 	activeSocket(web);
 	while (1)
 	{
@@ -71,6 +72,7 @@ int	main(int ac, char **av)
 		else //(web.status == 0)
 			handleConnection(web);
 		handleRequest(web);
+
 	}
 	
 	freedWeb(web);

@@ -6,13 +6,15 @@
 #    By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/04/07 21:40:00 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/05/10 22:12:11 by tel-bouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv.out
 
-SRCS = ./main.cpp ./handleRequest.cpp ./handleConnection.cpp  \
+SRCS = ./main.cpp \
+	   ./acceptConnectionAndGetRequestData/handleRequest.cpp \
+	   ./acceptConnectionAndGetRequestData/handleConnection.cpp  \
 	   ./init/displayHostPort.cpp ./init/initServer.cpp \
 	   ./init/initWebStructAndFree.cpp ./init/activeSocket.cpp\
 	   ./parseConfigFile/parseConfigFile.cpp \
@@ -23,8 +25,8 @@ SRCS = ./main.cpp ./handleRequest.cpp ./handleConnection.cpp  \
 	   ./parseConfigFile/displayServerFile.cpp \
 	   ./parseConfigFile/checkConfigData.cpp \
 	   ./parseConfigFile/splitSemiColons.cpp \
-	   ./parseConfigFile/valides.cpp ./getRequestData.cpp \
-	   ./parseRequest.cpp
+	   ./parseConfigFile/valides.cpp  \
+	   ./parseRequest/parseRequests.cpp
 
 INCLUDES = .
 

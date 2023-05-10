@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/12 23:32:58 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/10 22:10:48 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,18 @@
 # define CONTINUE "HTTP/1.0 100-continue"
 # define CONFIGFILE	"./server.conf";
 const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
+
+
+struct body
+{
+	int				chunks_flag;
+	int				boundary_flag;
+	int				content_length_flag;
+	int				cr_nl_flag;
+	unsigned long	chunks_len;
+	unsigned long	content_len;
+	std::string		boundary;
+};
 
 
 struct respReslt
@@ -246,6 +258,9 @@ void			responseToRequest(struct server serv, struct client clt, struct respReslt
 int isRequestWellFormed(struct webserv web, std::string buff);
 void    fillRequestData(struct client& clt, std::stringstream& buff);
 void    parseRequest(struct webserv web, struct client& clt, std::stringstream& buffer);
+
+// parse request // 
+void	parseRequests(struct webserv web, std::stringstream& buffer);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:12:36 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 22:21:39 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/07 17:00:50 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int	initServer(struct webserv& web)
 			while (ptr != NULL)
 			{
 				valide = 0;
-				//create socket listening to localhost in ipv4 and ipv6
+				//create socket listening to localhost in ipv4
 				web.servers[i].socketFd[j] = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 				if (web.servers[i].socketFd[j] > 0)
 				{
@@ -132,7 +132,7 @@ int	initServer(struct webserv& web)
 						else
 						{
 							valide++;
-							//Bind socket to localhost address stored in web.server for both version
+							//Bind socket to localhost address stored in web.server 
 							status = bind(web.servers[i].socketFd[j], ptr->ai_addr, ptr->ai_addrlen);
 							if (status < 0)
 								close(web.servers[i].socketFd[j]);
