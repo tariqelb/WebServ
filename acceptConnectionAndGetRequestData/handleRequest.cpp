@@ -6,13 +6,49 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/10 22:05:44 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/12 20:58:16 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 char    temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/html\r\n\r\n <html>hello, world    </html>\r\n";
+
+int				hexIndex(char c)
+{
+	std::string			base = "0123456789abcdef";
+	int					i;
+	
+	i = 0;
+	while (i < 16)
+	{
+		if (i < 10 && c == base[i])
+			return (i);
+		if (i > 10 && (c == base[i] || c == (base[i] - 32)))
+			   return (i);
+		i++;
+	}
+	return (-1);
+}
+
+unsigned long	hexToDec(std::string hex)
+{
+	int 			i;
+	unsigned long	rst;
+	int				size;
+
+	rst = 0;
+	i = 0;
+	size = hex.size();
+	if (size == 0)
+		return (0);
+	while (i < size)
+	{
+		rst = rst + (hexIndex(hex[i]) * (int)pow(16, (size - i - 1)));
+		i++;
+	}
+	return (rst);
+}
 
 
 
@@ -122,6 +158,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 	int				size;
 	int				find;
 	std::string		temp;
+	std::string		hex;
 
 	find = buffer.find("Content-Type:");
 	if (find >= 0)
@@ -144,7 +181,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 			return;
 		}
 	}
-	find = buffer.find("Transfer-Encouding:");
+	find = buffer.find("Transfer-Encoding:");
 	if (find >= 0)
 	{
 		i = find + 19;
@@ -172,6 +209,26 @@ void	getBodyType(std::string buffer, struct body& bodys)
 					return;
 				}
 			}
+			else
+			{
+				find = buffer.find("\r\n\r\n");
+				i = find + 4;
+				j = 0;
+				size = buffer.size();
+				while (i < size && buffer[i] == ' ')
+					i++;
+				while (i + j < size && buffer[i + j] != '\r' && buffer[i + j] != ' ' && buffer[i + j] != '\t' && buffer[i + j] != '\n')
+					j++;
+				hex = buffer.substr(i, j);
+				bodys.cr_index = find + 4 + hex.size() + 2;
+				bodys.chunks_len = hexToDec(hex);
+				if (bodys.chunks_len > 0)
+				{
+					bodys.chunks_flag = 1;
+					bodys.n_chunks = 1;
+					return;
+				}
+			}
 		}
 	}
 	find = buffer.find("Content-Length:");
@@ -185,8 +242,8 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		while (i + j < size && (buffer[i + j] >= '0' && buffer[i + j] <= '9'))
 			j++;
 		bodys.content_len = toInt(buffer.substr(i, j));
-		std::cout << "get to here pls inform me fkmndfkln\n";
-		std::cout << "content length  ========================= > "  <<  bodys.content_len << std::endl;
+		//std::cout << "get to here pls inform me fkmndfkln\n";
+		//std::cout << "content length  ========================= > "  <<  bodys.content_len << std::endl;
 		if (bodys.content_len > 0)
 			bodys.content_length_flag = 1;
 		else
@@ -195,12 +252,74 @@ void	getBodyType(std::string buffer, struct body& bodys)
 }
 
 
+int	endOfChunks(std::string	buffer, struct body& bodys)
+{
+	int i;
+	int j;
+	int size;
+	std::string	hex;
+	i = 0;
+	size = buffer.size();
+	//std::cout << "=================> start in "  << std::endl;
+	while (1)
+	{
+		if (size >= (bodys.cr_index + bodys.chunks_len))
+		{
+				//std::cout << "=================> start med "  << std::endl;
+				//std::cout << "Data : " << size <<  " " <<  (bodys.cr_index + bodys.chunks_len);
+				//std::cout << " " << bodys.cr_index << " " <<  bodys.chunks_len << std::endl;
+				i = bodys.cr_index + bodys.chunks_len;
+				while (i < size && (buffer[i] == '\r' || buffer[i] == '\n'))
+					i++;
+				//std::cout << "index :: " << i << std::endl;
+				j = 0;
+				while (i + j < size && buffer[i + j] != '\n' && buffer[i + j] != '\r')
+					j++;
+				//std::cout << "Size : " << j << " " << buffer.substr(i, 4) << std::endl;
+				if (j && buffer[i + j] == '\r')
+				{
+					hex = buffer.substr(i , j);
+					bodys.chunks_len = hexToDec(hex);
+				//	std::cout << "Next chunks is : [" << hex << "] " << bodys.chunks_len << " " << j<< std::endl;
+					if (bodys.chunks_len == 0)
+					{
+				//		std::cout << "=================> out 1 "  << std::endl;
+						return (1);
+					}
+					else
+					{
+						i = i + j;
+						while (i < size && (buffer[i] == '\r' || buffer[i] == '\n'))
+							i++;
+				//		std::cout << "index : " << i << std::endl;
+						bodys.cr_index = i;
+						//bodys.cr_index = bodys.cr_index + bodys.chunks_len + hex.size() + 2;
+					}
+				}
+				else
+					break;
+		}
+		else
+			break;
+		if (buffer.size() > 6 && (buffer.substr(buffer.size() - 8, 7) == "0\r\n\r\n\r\n"))
+		{
+			//std::cout << "=================> out 1 "  << std::endl;
+			return (1);
+		}
+	}
+	//std::cout << "=================> out 0 "  << std::endl;
+	return (0);
+}
+
+
+
+
 int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::string& boundary, unsigned long& content_len)
 {
 	int find;
 	int i;
 	int len;
-	std::cout << "_______________________________________________________________________________________ end" << std::endl;
+	//std::cout << "_______________________________________________________________________________________ end" << std::endl;
 	getBodyType(buffer, bodys);
 	/*if (bodys.boundary_flag)
 		std::cout << "1 " << bodys.boundary << std::endl;
@@ -210,7 +329,7 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 		std::cout << "3 " << bodys.content_len << std::endl;
 	if (bodys.cr_nl_flag)
 		std::cout << "4 " << bodys.cr_nl_flag << std::endl;
-	
+	*/
 	if (bodys.boundary_flag)
 	{
 		if (buffer.find(boundary) != -1)
@@ -218,7 +337,8 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 	}
 	if (bodys.chunks_flag)
 	{
-		;
+		if (endOfChunks(buffer, bodys))
+			return (0);
 	}
 	if (bodys.content_length_flag)
 	{
@@ -230,10 +350,11 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 	{
 		if (buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
-			std::cout << "rrrsss\n" ;
+			//std::cout << "rrrsss\n" ;
 			return (0);
 		}
-	}*/	
+	}
+	/*
 	if (boundary.size() == 0)
 	{
 		find = getBoundary(buffer, boundary);
@@ -262,7 +383,8 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 			std::cout << "rrrsss\n" ;
 			return (0);
 		}
-	}
+	}*/
+	//std::cout << "_________________________________________________________________  return 1" << std::endl;
 	return (1);
 }
 
@@ -295,12 +417,15 @@ void	handleRequest(struct webserv& web)
 	bodys.cr_nl_flag = 0;
 	bodys.chunks_len = 0;
 	bodys.content_len = 0;
+	bodys.n_chunks = 0;
+	bodys.cr_index = -1;
+	//int j = 0;//remove
 	i = 0;
 	while (i < web.clients.size())
 	{
 		it = web.clients.begin();
 		fd = web.clients[i].fd;
-		std::cout << "FD :" << fd << std::endl;
+		//std::cout << "FD :" << fd << std::endl;
 		if (FD_ISSET(fd, &web.cReads))
 		{
 			while (1)
@@ -309,11 +434,26 @@ void	handleRequest(struct webserv& web)
 				memset(line, 0, 100000);
 				rd = recv(web.clients[i].fd, line, 99999, 0);
 				line[rd] = 0;
-				std::cout << "*****************************" << std::endl;
-				std::cout << "rd: {" << rd << "} Line [" << line << "]" << std::endl;
-				std::cout << "*****************************" << std::endl;
+				//std::cout << "*****************************" << std::endl;
+				//std::cout << "rd: {" << rd << "} Line [" << line << "]" << std::endl;
+				//std::cout << "*****************************" << std::endl;
 				if (rd > 0)
 					buffer << line;
+				//if (j == 0)//remove
+				//	std::cout << buffer.str().substr(0, 600) << std::endl;//remove
+				//j++;//remove
+				//std::cout << "read " << j << " " << rd << std::endl;
+				/*if  (rd > 0)
+				{
+					int k = 0;
+					while (k < 7)
+					{
+						if (rd + k - 7 > 0)
+							std::cout << " Line : " << (unsigned int) line[ rd + k - 7]; 
+						k++;
+					}
+					std::cout << std::endl;
+				}*/
 				if (rd == -1)
 				{
 					std::cerr << "Error in recv" << std::endl;;
@@ -326,14 +466,14 @@ void	handleRequest(struct webserv& web)
 				}
 				else if (endOfTheRequest(buffer.str(), bodys, flag, boundary, content_len) == 0)
 				{
-					std::cout << "go Get out" << std::endl;
+					std::cout << "end of request" << std::endl;
 					break;
 				}
 				if (rd == 0)
 				{
-					std::cout << "*--------------------------*" << std::endl;
-					std::cout << buffer << std::endl;
-					std::cout << "*--------------------------*" << std::endl;
+					//std::cout << "*--------------------------*" << std::endl;
+					//std::cout << buffer << std::endl;
+					//std::cout << "*--------------------------*" << std::endl;
 					break;
 				}
 			}
@@ -344,11 +484,11 @@ void	handleRequest(struct webserv& web)
 			}
 			else
 			{
-				std::cout << "Clients request : " << std::endl;
-				std::cout << " ----------------------------" << std::endl;
-				std::cout << buffer.str() << std::endl;;
+				//std::cout << "Clients request : " << std::endl;
+				//std::cout << " ----------------------------" << std::endl;
+				//std::cout << buffer.str() << std::endl;;
 				parseRequests(web, buffer);
-				std::cout << " ----------------------------" << std::endl;
+				//std::cout << " ----------------------------" << std::endl;
 			//	parseRequest(web, web.clients[i], buffer);
 				//getRequestData(web, buffer, fd);
 				/*response(web, i);
