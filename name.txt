@@ -3,14 +3,14 @@ Host: 127.0.0.1:8090
 User-Agent: curl/7.54.0
 Accept: */*
 Transfer-Encoding: chunked
-Content-Type: application/octet-stream
-Connection: keep-alive
-Content-Disposition: attachment; filename="main.cpp"
-Content-Disposition: attachment; filename="webserv.hpp"
-Content-Length:     9638
-X-File-Name: webserv.hpp
+Content-Type: multipart/form-data; boundary=---------------------------7d3a1d3e043d4
+Expect: 100-continue
 
-2e16
+2f5e
+-----------------------------7d3a1d3e043d4
+Content-Disposition: form-data; name="file1"; filename="main.cpp"
+Content-Type: text/plain
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -92,7 +92,11 @@ int	main(int ac, char **av)
 	
 	return (0);
 }
-&/* ************************************************************************** */
+-----------------------------7d3a1d3e043d4
+Content-Disposition: form-data; name="file2"; filename="webserv.hpp"
+Content-Type: text/plain
+
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
@@ -361,6 +365,7 @@ void	parseRequests(struct webserv web, std::stringstream& buffer);
 
 
 #endif
+-----------------------------7d3a1d3e043d4--
 
 0
 

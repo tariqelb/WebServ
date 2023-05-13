@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/13 15:28:00 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/13 21:06:32 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,8 +241,12 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		if (bodys.content_len > 0)
 			bodys.content_length_flag = 1;
 		else
-			bodys.cr_nl_flag = 1;	
+			bodys.cr_nl_flag = 1;
+		return ;	
 	}
+	else
+		bodys.cr_nl_flag = 1;
+
 }
 
 
@@ -326,7 +330,7 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 	
 	if (bodys.boundary_flag)
 	{
-		if (buffer.find(boundary) != -1)
+		if (buffer.find(bodys.boundary) != -1)
 			return (0);
 	}
 	if (bodys.chunks_flag)
