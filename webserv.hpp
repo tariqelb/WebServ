@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/11 18:23:59 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/13 15:24:04 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ struct body
 	int				n_chunks;
 	int				cr_index;
 	unsigned long	chunks_len;
+	unsigned long	chunks_con_len;
 	unsigned long	content_len;
 	std::string		boundary;
 };

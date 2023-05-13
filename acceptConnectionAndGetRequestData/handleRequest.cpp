@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/12 20:58:16 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/13 15:28:00 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,32 +202,26 @@ void	getBodyType(std::string buffer, struct body& bodys)
 				j = 0;
 				while (i + j < size && (buffer[i + j] >= '0' && buffer[i + j] <= '9'))
 					j++;
-				bodys.chunks_len = toInt(buffer.substr(i, j));
-				if (bodys.chunks_len > 0)
-				{
+				bodys.chunks_con_len = toInt(buffer.substr(i, j));
+				if (bodys.chunks_con_len > 0)
 					bodys.chunks_flag = 1;
-					return;
-				}
 			}
-			else
+			find = buffer.find("\r\n\r\n");
+			i = find + 4;
+			j = 0;
+			size = buffer.size();
+			while (i < size && buffer[i] == ' ')
+				i++;
+			while (i + j < size && buffer[i + j] != '\r' && buffer[i + j] != ' ' && buffer[i + j] != '\t' && buffer[i + j] != '\n')
+				j++;
+			hex = buffer.substr(i, j);
+			bodys.cr_index = find + 4 + hex.size() + 2;
+			bodys.chunks_len = hexToDec(hex);
+			if (bodys.chunks_len > 0)
 			{
-				find = buffer.find("\r\n\r\n");
-				i = find + 4;
-				j = 0;
-				size = buffer.size();
-				while (i < size && buffer[i] == ' ')
-					i++;
-				while (i + j < size && buffer[i + j] != '\r' && buffer[i + j] != ' ' && buffer[i + j] != '\t' && buffer[i + j] != '\n')
-					j++;
-				hex = buffer.substr(i, j);
-				bodys.cr_index = find + 4 + hex.size() + 2;
-				bodys.chunks_len = hexToDec(hex);
-				if (bodys.chunks_len > 0)
-				{
-					bodys.chunks_flag = 1;
-					bodys.n_chunks = 1;
-					return;
-				}
+				bodys.chunks_flag = 1;
+				bodys.n_chunks = 1;
+				return;
 			}
 		}
 	}
@@ -319,9 +313,9 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 	int find;
 	int i;
 	int len;
-	//std::cout << "_______________________________________________________________________________________ end" << std::endl;
+	std::cout << "_______________________________________________________________________________________ end" << std::endl;
 	getBodyType(buffer, bodys);
-	/*if (bodys.boundary_flag)
+	if (bodys.boundary_flag)
 		std::cout << "1 " << bodys.boundary << std::endl;
 	if (bodys.chunks_flag)
 		std::cout << "2 " << bodys.chunks_len << std::endl;
@@ -329,7 +323,7 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 		std::cout << "3 " << bodys.content_len << std::endl;
 	if (bodys.cr_nl_flag)
 		std::cout << "4 " << bodys.cr_nl_flag << std::endl;
-	*/
+	
 	if (bodys.boundary_flag)
 	{
 		if (buffer.find(boundary) != -1)
@@ -416,6 +410,7 @@ void	handleRequest(struct webserv& web)
 	bodys.content_length_flag = 0;
 	bodys.cr_nl_flag = 0;
 	bodys.chunks_len = 0;
+	bodys.chunks_con_len = 0;
 	bodys.content_len = 0;
 	bodys.n_chunks = 0;
 	bodys.cr_index = -1;
@@ -434,9 +429,9 @@ void	handleRequest(struct webserv& web)
 				memset(line, 0, 100000);
 				rd = recv(web.clients[i].fd, line, 99999, 0);
 				line[rd] = 0;
-				//std::cout << "*****************************" << std::endl;
-				//std::cout << "rd: {" << rd << "} Line [" << line << "]" << std::endl;
-				//std::cout << "*****************************" << std::endl;
+				std::cout << "*****************************" << std::endl;
+				std::cout << "rd: {" << rd << "} Line [" << line << "]" << std::endl;
+				std::cout << "*****************************" << std::endl;
 				if (rd > 0)
 					buffer << line;
 				//if (j == 0)//remove
