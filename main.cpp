@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/10 22:00:57 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/15 13:57:04 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int ac, char **av)
 	tv.tv_sec = 120;
 	tv.tv_usec = 0;
 	//get data from config file
+	web.status = 0;
 	parseConfigFile(web, ac, av);
 	if (web.status != 0)
 	{
@@ -53,9 +54,11 @@ int	main(int ac, char **av)
 	while (1)
 	{
 		web.status = -1;
-		web.tmp = web.reads;
-		printf("Wait in select:\n");
-		web.status = select(web.maxReadFd + 1, &web.tmp, &web.writes, &web.exceps, &tv);
+		web.tmp_read = web.reads;
+		web.tmp_write = web.writes;
+		std::cout << "Wait in select : " << std::endl;
+		web.status = select(web.maxReadFd + 1, &web.tmp_read, &web.tmp_write, 0, &tv);
+		std::cout << "move away from select : " << std::endl;
 		if (web.status == 0)
 		{
 			std::cerr << "server time listening out" << std::endl;
@@ -64,14 +67,14 @@ int	main(int ac, char **av)
 		}
 		if (web.status < 0)
 		{
-			std::cerr << "Error : Fail occur on select function" << std::endl; 
+			std::cerr << "Error : Fail occur on select function : " << web.status << std::endl; 
 			freedWeb(web);
 			return (1);
 
 		}
 		else //(web.status == 0)
 			handleConnection(web);
-		handleRequest(web);
+	//	handleRequest(web);
 
 	}
 	

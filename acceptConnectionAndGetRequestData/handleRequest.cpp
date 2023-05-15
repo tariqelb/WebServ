@@ -6,13 +6,13 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/13 21:06:32 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/15 13:58:17 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-char    temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/html\r\n\r\n <html>hello, world    </html>\r\n";
+//char    temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/html\r\n\r\n <html>hello, world    </html>\r\n";
 
 int				hexIndex(char c)
 {
@@ -312,7 +312,7 @@ int	endOfChunks(std::string	buffer, struct body& bodys)
 
 
 
-int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::string& boundary, unsigned long& content_len)
+int	endOfTheRequest(std::string buffer, struct body& bodys)
 {
 	int find;
 	int i;
@@ -389,7 +389,7 @@ int	endOfTheRequest(std::string buffer, struct body& bodys, int& flag , std::str
 void	closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i)
 {
 	close(web.clients[client_i].fd);
-	FD_CLR(web.clients[client_i].fd , &web.cReads);
+	FD_CLR(web.clients[client_i].fd , &web.reads);
 	web.clients.erase(it + client_i);
 }
 
@@ -425,8 +425,11 @@ void	handleRequest(struct webserv& web)
 		it = web.clients.begin();
 		fd = web.clients[i].fd;
 		//std::cout << "FD :" << fd << std::endl;
-		if (FD_ISSET(fd, &web.cReads))
+		if (FD_ISSET(fd, &web.tmp_read))
 		{
+			std::cout << "Handle request : " << fd << std::endl;
+			//send(web.clients[i].fd, temp, strlen(temp), 0);
+			return ;
 			while (1)
 			{
 				rd = 0;
@@ -463,11 +466,11 @@ void	handleRequest(struct webserv& web)
 					std::cout << CONTINUE << std::endl;
 					send(web.clients[i].fd, CONTINUE, strlen(CONTINUE), 0);
 				}
-				else if (endOfTheRequest(buffer.str(), bodys, flag, boundary, content_len) == 0)
+				/*else if (endOfTheRequest(buffer.str(), bodys) == 0)
 				{
 					std::cout << "end of request" << std::endl;
 					break;
-				}
+				}*/
 				if (rd == 0)
 				{
 					//std::cout << "*--------------------------*" << std::endl;
@@ -495,7 +498,7 @@ void	handleRequest(struct webserv& web)
 				std::cout << web.clients[i].rsp << std::endl;
 				send(web.clients[i].fd, web.clients[i].rsp.c_str(), strlen(web.clients[i].rsp.c_str()), 0);
 				std::cout << "--------------------------------" << std::endl;*/
-				send(web.clients[i].fd, temp, strlen(temp), 0);
+			//	send(web.clients[i].fd, temp, strlen(temp), 0);
 				closeConnection(web, it, i);
 			}
 		}	

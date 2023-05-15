@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/13 15:24:04 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/15 13:54:46 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,37 @@ struct client
 	struct sockaddr_storage								addr;
 	socklen_t											len;
 	int													fd;
+	bool												request_is_ready;
+	bool												response_is_ready;
+	std::stringstream									buffer;
+	client(){};
+	client(const client& other)
+    {
+        request = other.request;
+        response = other.response;
+        rsp = other.rsp;
+        addr = other.addr;
+        len = other.len;
+        fd = other.fd;
+        request_is_ready = other.request_is_ready;
+        response_is_ready = other.response_is_ready;
+        buffer.str("");  // Initialize the stringstream with an empty string
+    }
+	client& operator=(const client& other)
+	{
+		if (this != &other) {
+			request = other.request;
+			response = other.response;
+			rsp = other.rsp;
+			addr = other.addr;
+			len = other.len;
+			fd = other.fd;
+			request_is_ready = other.request_is_ready;
+			response_is_ready = other.response_is_ready;
+			buffer.str("");  // Initialize the stringstream with an empty string
+		}
+    	return *this;
+	}
 };
 
 struct server
@@ -149,7 +180,8 @@ struct	webserv
 	int									maxReadFd;
 	int									maxWriteFd;
 	fd_set								cReads;
-	fd_set								tmp;
+	fd_set								tmp_read;
+	fd_set								tmp_write;
 	std::vector<serverfile>				config;
 	int									nbr_of_connections;
 };
@@ -160,7 +192,7 @@ void    handleConnection(struct webserv& web);
 
 //handleRequest.cpp
 int		handleContinue(char *line); 
-int		endOfTheRequest(std::string& buffer);
+int		endOfTheRequest(std::string buffer, struct body& bodys);
 void    closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i);
 void    handleRequest(struct webserv& web);
 
@@ -264,6 +296,6 @@ void    parseRequest(struct webserv web, struct client& clt, std::stringstream& 
 
 // parse request // 
 void	parseRequests(struct webserv web, std::stringstream& buffer);
-
+void    receiveRequest(struct webserv& web, struct client& clt, int i);
 
 #endif
