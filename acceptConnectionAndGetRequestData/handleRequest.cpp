@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/15 13:58:17 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:09:32 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,8 +236,6 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		while (i + j < size && (buffer[i + j] >= '0' && buffer[i + j] <= '9'))
 			j++;
 		bodys.content_len = toInt(buffer.substr(i, j));
-		//std::cout << "get to here pls inform me fkmndfkln\n";
-		//std::cout << "content length  ========================= > "  <<  bodys.content_len << std::endl;
 		if (bodys.content_len > 0)
 			bodys.content_length_flag = 1;
 		else
@@ -258,30 +256,22 @@ int	endOfChunks(std::string	buffer, struct body& bodys)
 	std::string	hex;
 	i = 0;
 	size = buffer.size();
-	//std::cout << "=================> start in "  << std::endl;
 	while (1)
 	{
 		if (size >= (bodys.cr_index + bodys.chunks_len))
 		{
-				//std::cout << "=================> start med "  << std::endl;
-				//std::cout << "Data : " << size <<  " " <<  (bodys.cr_index + bodys.chunks_len);
-				//std::cout << " " << bodys.cr_index << " " <<  bodys.chunks_len << std::endl;
 				i = bodys.cr_index + bodys.chunks_len;
 				while (i < size && (buffer[i] == '\r' || buffer[i] == '\n'))
 					i++;
-				//std::cout << "index :: " << i << std::endl;
 				j = 0;
 				while (i + j < size && buffer[i + j] != '\n' && buffer[i + j] != '\r')
 					j++;
-				//std::cout << "Size : " << j << " " << buffer.substr(i, 4) << std::endl;
 				if (j && buffer[i + j] == '\r')
 				{
 					hex = buffer.substr(i , j);
 					bodys.chunks_len = hexToDec(hex);
-				//	std::cout << "Next chunks is : [" << hex << "] " << bodys.chunks_len << " " << j<< std::endl;
 					if (bodys.chunks_len == 0)
 					{
-				//		std::cout << "=================> out 1 "  << std::endl;
 						return (1);
 					}
 					else
@@ -289,9 +279,7 @@ int	endOfChunks(std::string	buffer, struct body& bodys)
 						i = i + j;
 						while (i < size && (buffer[i] == '\r' || buffer[i] == '\n'))
 							i++;
-				//		std::cout << "index : " << i << std::endl;
 						bodys.cr_index = i;
-						//bodys.cr_index = bodys.cr_index + bodys.chunks_len + hex.size() + 2;
 					}
 				}
 				else
@@ -301,11 +289,9 @@ int	endOfChunks(std::string	buffer, struct body& bodys)
 			break;
 		if (buffer.size() > 6 && (buffer.substr(buffer.size() - 8, 7) == "0\r\n\r\n\r\n"))
 		{
-			//std::cout << "=================> out 1 "  << std::endl;
 			return (1);
 		}
 	}
-	//std::cout << "=================> out 0 "  << std::endl;
 	return (0);
 }
 
@@ -317,9 +303,9 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	int find;
 	int i;
 	int len;
-	std::cout << "_______________________________________________________________________________________ end" << std::endl;
+	
 	getBodyType(buffer, bodys);
-	if (bodys.boundary_flag)
+/*	if (bodys.boundary_flag)
 		std::cout << "1 " << bodys.boundary << std::endl;
 	if (bodys.chunks_flag)
 		std::cout << "2 " << bodys.chunks_len << std::endl;
@@ -327,7 +313,7 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 		std::cout << "3 " << bodys.content_len << std::endl;
 	if (bodys.cr_nl_flag)
 		std::cout << "4 " << bodys.cr_nl_flag << std::endl;
-	
+*/	
 	if (bodys.boundary_flag)
 	{
 		if (buffer.find(bodys.boundary) != -1)
@@ -348,51 +334,27 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	{
 		if (buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
-			//std::cout << "rrrsss\n" ;
 			return (0);
 		}
 	}
-	/*
-	if (boundary.size() == 0)
-	{
-		find = getBoundary(buffer, boundary);
-		if (find == -1)
-			flag = 0;
-		if (boundary.size() && buffer.find(boundary) != -1)
-		{
-			std::cout << "Boundary found : one  " << boundary << std::endl;
-			return (0);
-		}
-	}
-	else if (boundary.size() && buffer.find(boundary) != -1)
-	{
-		std::cout << "Boundary found : two " << boundary << std::endl;
-		return (0);
-	}
-	if (content_len >= 0 && contentLength(buffer, content_len))
-	{
-		std::cout << "content Length reached" << std::endl;
-		return (0);
-	}
-	if (flag && content_len == -1 && buffer.size() >= 4)
-	{
-		if (buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
-		{
-			std::cout << "rrrsss\n" ;
-			return (0);
-		}
-	}*/
-	//std::cout << "_________________________________________________________________  return 1" << std::endl;
 	return (1);
 }
-
+/*
 void	closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i)
 {
-	close(web.clients[client_i].fd);
 	FD_CLR(web.clients[client_i].fd , &web.reads);
-	web.clients.erase(it + client_i);
+	FD_CLR(web.clients[client_i].fd , &web.writes);
+	close(web.clients[client_i].fd);
+	maxFd(web);
+	//std::cout << "1 here " << web.clients.size() << " , index : " << client_i << std::endl;
+   	//std::cout << "itr : " << (*it).fd << " and " << web.clients[client_i].fd << std::endl;	
+	while ((*it).fd != web.clients[client_i].fd && it != web.clients.end())
+		it++;
+	//std::cout << "2 here " << web.clients.size() << " , index : " << client_i << std::endl;
+   	//std::cout << "itr : " << (*it).fd << " and " << web.clients[client_i].fd << std::endl;	
+	web.clients.erase(it);
 }
-
+*/
 
 void	handleRequest(struct webserv& web)
 {
@@ -482,7 +444,7 @@ void	handleRequest(struct webserv& web)
 			if (rd == 0)
 			{
 				std::cout << "connection is end" << std::endl;
-				closeConnection(web, it, i);
+				//closeConnection(web, it, i);
 			}
 			else
 			{
@@ -499,7 +461,7 @@ void	handleRequest(struct webserv& web)
 				send(web.clients[i].fd, web.clients[i].rsp.c_str(), strlen(web.clients[i].rsp.c_str()), 0);
 				std::cout << "--------------------------------" << std::endl;*/
 			//	send(web.clients[i].fd, temp, strlen(temp), 0);
-				closeConnection(web, it, i);
+				//closeConnection(web, it, i);
 			}
 		}	
 		i++;

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/15 13:54:46 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:24:03 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void    handleConnection(struct webserv& web);
 //handleRequest.cpp
 int		handleContinue(char *line); 
 int		endOfTheRequest(std::string buffer, struct body& bodys);
-void    closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i);
+void    closeConnection(struct webserv& web, int client_i);
 void    handleRequest(struct webserv& web);
 
 
@@ -297,5 +297,5 @@ void    parseRequest(struct webserv web, struct client& clt, std::stringstream& 
 // parse request // 
 void	parseRequests(struct webserv web, std::stringstream& buffer);
 void    receiveRequest(struct webserv& web, struct client& clt, int i);
-
+void    maxFd(struct webserv& web);
 #endif

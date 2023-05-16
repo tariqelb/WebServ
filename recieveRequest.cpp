@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/15 14:00:24 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:06:39 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	char							line[100000];
 	int 							i;
 	int								n_byte_readed;
-	std::vector<client>::iterator   it;
     struct body                     bodys;
 
     bodys.chunks_flag = 0;
@@ -72,9 +71,10 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	if (n_byte_readed < 0)
 	{
 		std::cerr << "Error in recv" << std::endl;
-		it = web.clients.begin();
-		closeConnection(web, it, clt_i);	
+		closeConnection(web, clt_i);	
+		return ;
 	}
+	std::cout << "Read bytes : " << n_byte_readed << std::endl;
 	if (n_byte_readed == 0)
 	{
 		clt.request_is_ready = true;

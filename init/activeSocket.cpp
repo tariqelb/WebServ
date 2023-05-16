@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:31:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/01 22:36:23 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/15 20:24:10 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void	activeSocket(struct webserv& web)
 	FD_ZERO(&web.writes);
 	FD_ZERO(&web.exceps);
 	activeReadSocket(web);
+	activeWriteSocket(web);
 	i = 0;
 	maxFd = -1;
 	size = web.servers.size();
