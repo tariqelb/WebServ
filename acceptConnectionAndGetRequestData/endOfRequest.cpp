@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handlerequest.cpp                                  :+:      :+:    :+:   */
+/*   endOfRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/17 15:11:03 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 19:12:04 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ int	contentLength(std::string	buffer, unsigned long& content_len)
 		find = buffer.find("\r\n\r\n") + 4;
 		if (find > 0)
 		{
-			std::cout << "out " << buffer.size() << " " << (content_len + find) << std::endl;
 			if (buffer.size() >= (content_len + find))
 				return (1);
 		}

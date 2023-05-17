@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/17 15:32:34 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 19:22:51 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include <cctype>
 #include <sys/stat.h>
 
-# define MAX_CONNECTION 255
+# define MAX_CONNECTION 355
 # define MAX_PORT 3
 # define HOST "localhost"
 # define MAX_CLIENTS 10
