@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/16 17:07:34 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:27:06 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	handleConnection(struct webserv& web)
 			{
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
-					std::cout << "New connection accepted with fd : " << newClient.fd << std::endl;//remove
+				//	std::cout << "New connection accepted with fd : " << newClient.fd << std::endl;//remove
 					if (newClient.fd < 0)
 					{
 						std::cerr << "Error : Fail connecting to client" << std::endl;
@@ -59,9 +59,19 @@ void	handleConnection(struct webserv& web)
 					}
 					else
 					{
-						std::cout  << "New client fd : " << newClient.fd << std::endl;
+				//		std::cout  << "New client fd : " << newClient.fd << std::endl;
 						FD_SET(newClient.fd, &web.reads);
 						FD_SET(newClient.fd, &web.writes);
+						newClient.bodys.chunks_flag = 0;
+						newClient.bodys.boundary_flag = 0;
+						newClient.bodys.content_length_flag = 0;
+						newClient.bodys.cr_nl_flag = 0;
+						newClient.bodys.chunks_len = 0;
+						newClient.bodys.chunks_con_len = 0;
+						newClient.bodys.content_len = 0;
+						newClient.bodys.n_chunks = 0;
+						newClient.bodys.cr_index = -1;
+						newClient.bodys.get_body_type = 0;
 						web.clients.push_back(newClient);
 						maxFd(web);
 					}
@@ -76,7 +86,7 @@ void	handleConnection(struct webserv& web)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
-			std::cout << "The new client : " << web.clients[i].fd << " nbr of clients : " <<  web.clients.size() << std::endl;
+			//std::cout << "The new client : " << web.clients[i].fd << " nbr of clients : " <<  web.clients.size() << std::endl;
 			receiveRequest(web, web.clients[i], i);
 		}
 		i++;
@@ -91,10 +101,10 @@ void	handleConnection(struct webserv& web)
 			{
 				send(web.clients[i].fd, temp, strlen(temp), 0);
 				closeConnection(web, i);
-				std::cout << "----------------------------------------------" << std::endl;
+				//std::cout << "----------------------------------------------" << std::endl;
 			}
 			else
-				std::cout << "Client not ready " << std::endl;
+				;//std::cout << "Client not ready " << std::endl;
 		}
 		i++;
 	}

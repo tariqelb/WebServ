@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/16 17:24:03 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:32:34 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include <cctype>
 #include <sys/stat.h>
 
-# define MAX_CONNECTION 100
+# define MAX_CONNECTION 255
 # define MAX_PORT 3
 # define HOST "localhost"
 # define MAX_CLIENTS 10
@@ -47,6 +47,7 @@ const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
 
 struct body
 {
+	int				get_body_type;
 	int				chunks_flag;
 	int				boundary_flag;
 	int				content_length_flag;
@@ -130,6 +131,8 @@ struct client
 	bool												request_is_ready;
 	bool												response_is_ready;
 	std::stringstream									buffer;
+	struct body											bodys;
+
 	client(){};
 	client(const client& other)
     {

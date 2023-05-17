@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/16 17:06:39 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:25:24 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	char							line[100000];
 	int 							i;
 	int								n_byte_readed;
-    struct body                     bodys;
 
-    bodys.chunks_flag = 0;
-    bodys.boundary_flag = 0;
-    bodys.content_length_flag = 0;
-    bodys.cr_nl_flag = 0;
-    bodys.chunks_len = 0;
-    bodys.chunks_con_len = 0;
-    bodys.content_len = 0;
-    bodys.n_chunks = 0;
-    bodys.cr_index = -1;
 	memset(line, 0, 100000);
 	n_byte_readed = 0;
 	
@@ -74,7 +64,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 		closeConnection(web, clt_i);	
 		return ;
 	}
-	std::cout << "Read bytes : " << n_byte_readed << std::endl;
+//	std::cout << "Read bytes : " << n_byte_readed << std::endl;
 	if (n_byte_readed == 0)
 	{
 		clt.request_is_ready = true;
@@ -83,9 +73,9 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	else
 		clt.buffer << line;
 	//std::cout << "line [" << line  << "]"<< std::endl;
-	if (endOfTheRequest(clt.buffer.str(), bodys) == 0)
+	if (endOfTheRequest(clt.buffer.str(), clt.bodys) == 0)
 	{
-		std::cout << "End the request\n";
+		//std::cout << "End the request\n";
 		clt.request_is_ready = true;
 	}
 }

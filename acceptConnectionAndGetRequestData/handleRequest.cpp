@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/16 17:09:32 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/17 15:11:03 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 			bodys.boundary = temp.substr(find, i - 1);
 			bodys.boundary += "--";
 			bodys.boundary_flag = 1;
+			bodys.get_body_type = 1;
 			return;
 		}
 	}
@@ -204,7 +205,10 @@ void	getBodyType(std::string buffer, struct body& bodys)
 					j++;
 				bodys.chunks_con_len = toInt(buffer.substr(i, j));
 				if (bodys.chunks_con_len > 0)
+				{
 					bodys.chunks_flag = 1;
+					bodys.get_body_type = 1;
+				}
 			}
 			find = buffer.find("\r\n\r\n");
 			i = find + 4;
@@ -221,6 +225,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 			{
 				bodys.chunks_flag = 1;
 				bodys.n_chunks = 1;
+				bodys.get_body_type = 1;
 				return;
 			}
 		}
@@ -239,11 +244,17 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		if (bodys.content_len > 0)
 			bodys.content_length_flag = 1;
 		else
+		{
 			bodys.cr_nl_flag = 1;
+			bodys.get_body_type = 1;
+		}
 		return ;	
 	}
 	else
+	{
 		bodys.cr_nl_flag = 1;
+		bodys.get_body_type = 1;
+	}
 
 }
 
@@ -304,16 +315,8 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	int i;
 	int len;
 	
-	getBodyType(buffer, bodys);
-/*	if (bodys.boundary_flag)
-		std::cout << "1 " << bodys.boundary << std::endl;
-	if (bodys.chunks_flag)
-		std::cout << "2 " << bodys.chunks_len << std::endl;
-	if (bodys.content_length_flag)
-		std::cout << "3 " << bodys.content_len << std::endl;
-	if (bodys.cr_nl_flag)
-		std::cout << "4 " << bodys.cr_nl_flag << std::endl;
-*/	
+	if (bodys.get_body_type == 0)
+		getBodyType(buffer, bodys);
 	if (bodys.boundary_flag)
 	{
 		if (buffer.find(bodys.boundary) != -1)
@@ -332,138 +335,10 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	}
 	if (bodys.cr_nl_flag)
 	{
-		if (buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
+		if (buffer.size() > 4 &&  buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
 			return (0);
 		}
 	}
 	return (1);
-}
-/*
-void	closeConnection(struct webserv& web, std::vector<client>::iterator& it, int client_i)
-{
-	FD_CLR(web.clients[client_i].fd , &web.reads);
-	FD_CLR(web.clients[client_i].fd , &web.writes);
-	close(web.clients[client_i].fd);
-	maxFd(web);
-	//std::cout << "1 here " << web.clients.size() << " , index : " << client_i << std::endl;
-   	//std::cout << "itr : " << (*it).fd << " and " << web.clients[client_i].fd << std::endl;	
-	while ((*it).fd != web.clients[client_i].fd && it != web.clients.end())
-		it++;
-	//std::cout << "2 here " << web.clients.size() << " , index : " << client_i << std::endl;
-   	//std::cout << "itr : " << (*it).fd << " and " << web.clients[client_i].fd << std::endl;	
-	web.clients.erase(it);
-}
-*/
-
-void	handleRequest(struct webserv& web)
-{
-	int								i;
-	int								flag;
-	std::string						boundary;
-	int								fd;
-	int								rd;
-	char							line[100000];
-	std::stringstream				buffer;
-	std::vector<client>::iterator	it;
-	unsigned long					content_len;
-	struct body						bodys;
-	
-	flag = 1;
-	content_len = 0;
-	bodys.chunks_flag = 0;
-	bodys.boundary_flag = 0;
-	bodys.content_length_flag = 0;
-	bodys.cr_nl_flag = 0;
-	bodys.chunks_len = 0;
-	bodys.chunks_con_len = 0;
-	bodys.content_len = 0;
-	bodys.n_chunks = 0;
-	bodys.cr_index = -1;
-	//int j = 0;//remove
-	i = 0;
-	while (i < web.clients.size())
-	{
-		it = web.clients.begin();
-		fd = web.clients[i].fd;
-		//std::cout << "FD :" << fd << std::endl;
-		if (FD_ISSET(fd, &web.tmp_read))
-		{
-			std::cout << "Handle request : " << fd << std::endl;
-			//send(web.clients[i].fd, temp, strlen(temp), 0);
-			return ;
-			while (1)
-			{
-				rd = 0;
-				memset(line, 0, 100000);
-				rd = recv(web.clients[i].fd, line, 99999, 0);
-				line[rd] = 0;
-				std::cout << "*****************************" << std::endl;
-				std::cout << "rd: {" << rd << "} Line [" << line << "]" << std::endl;
-				std::cout << "*****************************" << std::endl;
-				if (rd > 0)
-					buffer << line;
-				//if (j == 0)//remove
-				//	std::cout << buffer.str().substr(0, 600) << std::endl;//remove
-				//j++;//remove
-				//std::cout << "read " << j << " " << rd << std::endl;
-				/*if  (rd > 0)
-				{
-					int k = 0;
-					while (k < 7)
-					{
-						if (rd + k - 7 > 0)
-							std::cout << " Line : " << (unsigned int) line[ rd + k - 7]; 
-						k++;
-					}
-					std::cout << std::endl;
-				}*/
-				if (rd == -1)
-				{
-					std::cerr << "Error in recv" << std::endl;;
-					return;
-				}
-				if (handleContinue(line) == 0)
-				{
-					std::cout << CONTINUE << std::endl;
-					send(web.clients[i].fd, CONTINUE, strlen(CONTINUE), 0);
-				}
-				/*else if (endOfTheRequest(buffer.str(), bodys) == 0)
-				{
-					std::cout << "end of request" << std::endl;
-					break;
-				}*/
-				if (rd == 0)
-				{
-					//std::cout << "*--------------------------*" << std::endl;
-					//std::cout << buffer << std::endl;
-					//std::cout << "*--------------------------*" << std::endl;
-					break;
-				}
-			}
-			if (rd == 0)
-			{
-				std::cout << "connection is end" << std::endl;
-				//closeConnection(web, it, i);
-			}
-			else
-			{
-				//std::cout << "Clients request : " << std::endl;
-				//std::cout << " ----------------------------" << std::endl;
-				//std::cout << buffer.str() << std::endl;;
-				parseRequests(web, buffer);
-				//std::cout << " ----------------------------" << std::endl;
-			//	parseRequest(web, web.clients[i], buffer);
-				//getRequestData(web, buffer, fd);
-				/*response(web, i);
-				std::cout << "--------------------------------" << std::endl;
-				std::cout << web.clients[i].rsp << std::endl;
-				send(web.clients[i].fd, web.clients[i].rsp.c_str(), strlen(web.clients[i].rsp.c_str()), 0);
-				std::cout << "--------------------------------" << std::endl;*/
-			//	send(web.clients[i].fd, temp, strlen(temp), 0);
-				//closeConnection(web, it, i);
-			}
-		}	
-		i++;
-	}
 }
