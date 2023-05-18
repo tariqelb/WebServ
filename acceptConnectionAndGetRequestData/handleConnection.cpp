@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 15:21:54 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:50:01 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	closeConnection(struct webserv& web, int client_i)
    	std::vector<client>::iterator it;
 
 	it = web.clients.begin();
-	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
 	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
@@ -55,7 +54,6 @@ void	handleConnection(struct webserv& web)
 					else
 					{
 						FD_SET(newClient.fd, &web.reads);
-						FD_SET(newClient.fd, &web.writes);
 						newClient.bodys.chunks_flag = 0;
 						newClient.bodys.boundary_flag = 0;
 						newClient.bodys.content_length_flag = 0;
@@ -82,13 +80,16 @@ void	handleConnection(struct webserv& web)
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
 			receiveRequest(web, web.clients[i], i);
+			
 			if (web.clients[i].request_is_ready == true)
 			{
+				FD_CLR(web.clients[i].fd , &web.reads);
+
 				//handle request data;
-				std::ofstream file;
-				file.open("name.txt");
-				std::cout << web.clients[i].buffer.str();
-				file.close();	
+				//std::ofstream file;
+				//file.open("name.txt");
+				//std::cout << web.clients[i].buffer.str();
+				//file.close();	
 			}
 		}
 		i++;
