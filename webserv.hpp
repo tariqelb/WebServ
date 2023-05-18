@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/17 19:22:51 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 14:48:46 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,10 @@
 #include <sys/stat.h>
 
 # define MAX_CONNECTION 355
-# define MAX_PORT 3
 # define HOST "localhost"
 # define MAX_CLIENTS 10
 # define CONTINUE "HTTP/1.0 100-continue"
-# define CONFIGFILE	"./server.conf";
-const char	ports[MAX_PORT][6] = {"8080", "8081", "8082"};
+# define CONFIGFILE	"./configFile/server.conf";
 
 
 struct body
@@ -61,13 +59,13 @@ struct body
 };
 
 
-struct respReslt
+/*struct respReslt
 {
 	std::string	root;
 	std::string	index;
 	int			error;
 	int			autoindex;
-};
+};*/
 
 struct	location
 {
@@ -190,7 +188,7 @@ struct	webserv
 };
 
 
-//handleconnection.cpp
+//handleConnection.cpp
 void    handleConnection(struct webserv& web);
 
 //handleRequest.cpp
