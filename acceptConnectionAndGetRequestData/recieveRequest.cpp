@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/17 19:09:33 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 15:24:24 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 		clt.buffer << line;
 	if (endOfTheRequest(clt.buffer.str(), clt.bodys) == 0)
 	{
+		std::cout << "End file\n";
 		clt.request_is_ready = true;
 	}
 }

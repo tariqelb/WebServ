@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 15:02:07 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 15:21:54 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,14 @@ void	handleConnection(struct webserv& web)
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
 			receiveRequest(web, web.clients[i], i);
-			//if (web.clients[i].request_is_ready == true)
+			if (web.clients[i].request_is_ready == true)
+			{
 				//handle request data;
+				std::ofstream file;
+				file.open("name.txt");
+				std::cout << web.clients[i].buffer.str();
+				file.close();	
+			}
 		}
 		i++;
 	}
@@ -93,7 +99,7 @@ void	handleConnection(struct webserv& web)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
-			if (web.clients[i].response_is_ready == true)
+			if (web.clients[i].request_is_ready == true/* && web.clients[i].response_is_ready == true */)
 			{
 				send(web.clients[i].fd, temp, strlen(temp), 0);
 				closeConnection(web, i);
