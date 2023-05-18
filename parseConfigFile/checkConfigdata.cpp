@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 21:03:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/03 00:54:05 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 22:26:59 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,52 @@ int	valideListenDirective(std::vector<std::string>& listen, std::vector<std::str
 	return (0);
 }
 
+
+int	validHostDirective(std::string& host)
+{
+	int 			i;
+	int 			j;
+	int 			size;
+	std::string		value;
+	int				nbr;
+	int				dot;
+
+	size = host.size();
+	if (size == 0)
+	{
+		host.assign("0.0.0.0");
+		return (0);
+	}
+	if (host == "localhost")
+		return (0);
+	i = 0;
+	dot = 0;
+	nbr = 0;
+	while (i < size)
+	{
+		j = 0;
+		while (i + j < size && (host[i + j] >= '0' && host[i + j] <= '9'))
+			j++;
+		if (dot < 3 && (j == 0 || j > 3 || host[i + j] != '.'))
+				return (1);
+		if (dot == 3 && (j == 0 || j > 3 || host[i + j] != 0))
+		{
+			std::cout << "here\n";
+			return (1);
+		}
+		nbr = toInt(host.substr(i, j));
+		if (nbr < 0 || nbr > 255)
+			return (1);
+		dot++;
+		i = i + j;
+		if (host[i] == '.')
+			i++;
+	}
+	if (dot != 4)
+		return (1);
+	return (0);
+}
+
 int	checkConfigData(struct webserv& web)
 {
 	int 									i;
@@ -101,7 +147,13 @@ int	checkConfigData(struct webserv& web)
 	size = web.config.size();
 	while (i < size)
 	{
-		if (valideListenDirective(web.config[i].listen, port))
+		if (validHostDirective(web.config[i].host))
+		{
+			web.config.erase(it + i);
+			it = web.config.begin();
+			size = web.config.size();
+		}
+		else if (valideListenDirective(web.config[i].listen, port))
 		{
 			web.config.erase(it + i);
 			it = web.config.begin();

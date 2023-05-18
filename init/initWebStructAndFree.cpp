@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/02 21:52:47 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/02 21:53:18 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 20:53:12 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,13 @@ void	initWebStrcut(struct webserv& web)
 	{
 		j = 0;
 		len = web.servers[i].serverConfig.listen.size();
+		char *host = const_cast<char*>( web.servers[i].serverConfig.host.c_str());	
 		while (j < len)
 		{
 			char *port = const_cast<char*>( web.servers[i].serverConfig.listen[j].c_str());
 			web.status = 0;
-			web.status = getaddrinfo(HOST, port, &web.hints, &web.servers[i].socket[j]);
+			//web.status = getaddrinfo(HOST, port, &web.hints, &web.servers[i].socket[j]);
+			web.status = getaddrinfo(host, port, &web.hints, &web.servers[i].socket[j]);
 			if (web.status != 0)
 			{
 				std::cerr << "error : init web struct in port ";

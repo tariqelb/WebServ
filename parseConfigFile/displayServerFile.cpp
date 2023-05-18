@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 20:35:32 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 00:52:48 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 20:14:27 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	displayServerFile(std::vector<struct serverfile> conf)
 	while (i < conf.size())
 	{
 		std::cout << "************************************************************" << std::endl;
+		std::cout << "Host : " << conf[i].host << std::endl;
 		{
 			int j = 0;
 			while (j < conf[i].listen.size())

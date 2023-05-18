@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 15:13:51 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 22:30:17 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,8 @@ int	main(int ac, char **av)
 		}
 		else //(web.status == 0)
 			handleConnection(web);
-	//	handleRequest(web);
-
-	}
-	
+	//	handleRequest(web);	
+	}	
 	freedWeb(web);
 	
 	return (0);

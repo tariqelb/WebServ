@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 14:48:46 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 22:06:00 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,12 @@
 # include <sys/errno.h>
 # include <arpa/inet.h>
 # include <sys/select.h>
-# include <poll.h>
-//# include <sys/epoll.h>
 # include <sys/event.h>
 # include <sys/time.h>
 # include <fcntl.h>
 # include <cmath>
 #include <vector>
 #include <iostream>
-#include <stdio.h>
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -102,6 +99,7 @@ struct	location
 // cgi_path = path to the file that will execute for a cgi
 struct	serverfile
 {
+	std::string											host;
 	std::vector<std::string>							listen;
 	std::vector<std::string>							server_name;
 	std::vector<std::pair<std::string, std::string> >	error_page;
@@ -168,7 +166,7 @@ struct server
 	struct serverfile				serverConfig;
 };
 
-//
+//le request data;
 struct	webserv
 {
 	struct addrinfo						hints;
@@ -299,4 +297,5 @@ void    parseRequest(struct webserv web, struct client& clt, std::stringstream& 
 void	parseRequests(struct webserv web, std::stringstream& buffer);
 void    receiveRequest(struct webserv& web, struct client& clt, int i);
 void    maxFd(struct webserv& web);
+int		toInt(std::string nbr);
 #endif

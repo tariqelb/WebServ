@@ -6,12 +6,12 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:44:50 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/03 00:51:31 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/18 20:17:05 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-char directives[14][21] = {"listen", "servername", "error_page", "client_max_body_size", "location"    , "allow", "root", "autoindex", "index", "upload", "upload_store", "cgi", "script_filename"};
+char directives[14][21] = {"listen", "host", "servername", "error_page", "client_max_body_size", "location"    , "allow", "root", "autoindex", "index", "upload", "upload_store", "cgi", "script_filename"};
 
 std::string	getDirectiveKey(std::string line)
 {
@@ -146,6 +146,10 @@ void	fillServerBlock(struct webserv& web, std::vector<std::string> serv)
 		std::string		value;
 
 		getKeyandValue(key, value, serv[i]);
+		if (key == "host")
+		{
+			conf.host.assign(value);
+		}
 		if (key == "listen")
 		{
 			conf.listen.push_back(value);
@@ -237,7 +241,7 @@ void	getConfigData(struct webserv& web, std::vector<std::string> file)
 					key = getDirectiveKey(file[i]);
 					flag = 0;
 					j = 0;
-					while (j < 13)
+					while (j < 14)
 					{
 						if (key.compare(0, key.size(), directives[j]) == 0)
 							flag = 1;
