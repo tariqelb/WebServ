@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 16:51:03 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/19 20:25:59 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,10 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 
 	memset(line, 0, 100000);
 	n_byte_readed = 0;
-	
 	n_byte_readed = recv(clt.fd, line, 99999, 0);
 	line[n_byte_readed] = 0;
 	if (n_byte_readed < 0)
 	{
-		std::cerr << "Error in recv" << std::endl;
 		closeConnection(web, clt_i);	
 		return ;
 	}

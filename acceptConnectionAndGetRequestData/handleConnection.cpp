@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 16:50:01 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/19 20:30:45 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	handleConnection(struct webserv& web)
 	int				i;
 	int				j;
 	int				size;
-
+	int				k;
 	size = web.servers.size();	
 	i = 0;
 	while (i < size)
@@ -54,17 +54,19 @@ void	handleConnection(struct webserv& web)
 					else
 					{
 						FD_SET(newClient.fd, &web.reads);
-						newClient.bodys.chunks_flag = 0;
-						newClient.bodys.boundary_flag = 0;
-						newClient.bodys.content_length_flag = 0;
-						newClient.bodys.cr_nl_flag = 0;
-						newClient.bodys.chunks_len = 0;
-						newClient.bodys.chunks_con_len = 0;
-						newClient.bodys.content_len = 0;
-						newClient.bodys.n_chunks = 0;
-						newClient.bodys.cr_index = -1;
-						newClient.bodys.get_body_type = 0;
 						web.clients.push_back(newClient);
+						k = web.clients.size() - 1;
+						web.clients[k].bodys.chunks_flag = 0;
+						web.clients[k].bodys.boundary_flag = 0;
+						web.clients[k].bodys.content_length_flag = 0;
+						web.clients[k].bodys.cr_nl_flag = 0;
+						web.clients[k].bodys.chunks_len = 0;
+						web.clients[k].bodys.chunks_con_len = 0;
+						web.clients[k].bodys.content_len = 0;
+						web.clients[k].bodys.n_chunks = 0;
+						web.clients[k].bodys.cr_index = -1;
+						web.clients[k].bodys.get_body_type = 0;
+
 						maxFd(web);
 						return ;
 					}
@@ -85,6 +87,7 @@ void	handleConnection(struct webserv& web)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
 
+				parseRequest(web, web.clients[i]);
 				//handle request data;
 				//std::ofstream file;
 				//file.open("name.txt");
@@ -94,7 +97,6 @@ void	handleConnection(struct webserv& web)
 		}
 		i++;
 	}
-	
 	i = 0;
 	while (i < size)
 	{

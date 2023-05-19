@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/17 19:12:04 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/19 20:28:55 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,10 +175,13 @@ void	getBodyType(std::string buffer, struct body& bodys)
 			while (find + i < size && (temp[find + i] != '\n' && temp[find + i] != ' ' && temp[find + i] != '\t'))
 				i++;
 			bodys.boundary = temp.substr(find, i - 1);
-			bodys.boundary += "--";
-			bodys.boundary_flag = 1;
-			bodys.get_body_type = 1;
-			return;
+			if (bodys.boundary.size())
+			{
+				bodys.boundary += "--";
+				bodys.boundary_flag = 1;
+				bodys.get_body_type = 1;
+				return;
+			}
 		}
 	}
 	find = buffer.find("Transfer-Encoding:");

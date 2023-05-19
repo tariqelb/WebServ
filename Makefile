@@ -6,7 +6,7 @@
 #    By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/05/17 19:12:38 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/05/19 14:55:09 by tel-bouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ SRCS = ./main.cpp \
 	   ./parseConfigFile/checkConfigData.cpp \
 	   ./parseConfigFile/splitSemiColons.cpp \
 	   ./parseConfigFile/valides.cpp  \
-	   ./parseRequest/parseRequests.cpp 
+	   ./parseRequest.cpp 
 
 INCLUDES = .
 

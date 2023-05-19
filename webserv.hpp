@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 22:06:00 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/19 19:46:00 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,10 +291,10 @@ void			responseToRequest(struct server serv, struct client clt, struct respReslt
 //parseRequest.cpp
 int isRequestWellFormed(struct webserv web, std::string buff);
 void    fillRequestData(struct client& clt, std::stringstream& buff);
-void    parseRequest(struct webserv web, struct client& clt, std::stringstream& buffer);
+void    parseRequest(struct webserv& web, struct client& clt);
 
 // parse request // 
-void	parseRequests(struct webserv web, std::stringstream& buffer);
+//void	parseRequests(struct webserv web, std::stringstream& buffer);
 void    receiveRequest(struct webserv& web, struct client& clt, int i);
 void    maxFd(struct webserv& web);
 int		toInt(std::string nbr);

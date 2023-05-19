@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 21:03:09 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/04/13 23:01:35 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/19 20:31:44 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,22 +118,28 @@ void	getKeyValue(struct client& clt, std::string buff)
 		i = find + 1;
 		while (i < size && (buff[i] == ' ' || buff[i] == '\t'))
 			i++;
-		if (size > i)
-			pr.second = buff.substr(i, find);
+		j = 0;
+		while (i + j < size && buff[i] != '\n')
+			j++;
+		pr.second = buff.substr(i, j);
 		clt.request.push_back(pr); 
 	}
 }
 
 void	fillRequestData(struct client& clt, std::stringstream& buffer)
 {
-	int i;
-	int size;
-	std::pair<std::string, std::string> pr;
-	std::string buff;
+	int										i;
+	int 									size;
+	std::pair<std::string, std::string>		pr;
+	std::string 							buff;
+	int										rd;
 
 	i = 0;
+	rd = 0;
+	size = buffer.str().size();
 	getline(buffer, buff);
-	while (buff.size())
+	rd += buff.size() + 1;
+	while (rd < size)
 	{
 		if (i == 0)
 			getMethodUriVersion(clt, buff);
@@ -144,38 +150,48 @@ void	fillRequestData(struct client& clt, std::stringstream& buffer)
 			//get the body
 			//Create another body key val if you reach max std::string size;
 			getline(buffer, buff);
+			rd += buff.size() + 1;
 			pr.first = "Body";
-			while (buff.size())
+			while (rd < size)
 			{
 				buff += "\n";
 				pr.second += buff;
 				buff.assign("");
 				getline(buffer, buff);
+				rd += buff.size() + 1;
 			}
 			clt.request.push_back(pr);
+			return ;
 		}
 		else if (buff.size())
 			getKeyValue(clt, buff);
+		//std::cout << "["  << buff.substr(0, buff.size() - 1) << "]" << std::endl;
 		buff.assign("");
+
 		getline(buffer, buff);
-		i++;
-	}
-	i = 0;
-	size = clt.request.size();
-	while (i < size)
-	{
-		if (clt.request[i].first == "Body")
-		{
-			std::cout << "Key : " << clt.request[i].first   << std::endl;
-			std::cout << "val : " << clt.request[i].second  << std::endl;
-		}
+		rd += buff.size() + 1;
 		i++;
 	}
 }
 
-void	parseRequest(struct webserv web, struct client& clt, std::stringstream& buff)
+void	parseRequest(struct webserv& web, struct client& clt)
 {
-	fillRequestData(clt, buff);
+	std::cout << "****************************************" << std::endl;
+	std::cout << clt.buffer.str() << std::endl;
+	std::cout << "****************************************" << std::endl;
+	fillRequestData(clt, clt.buffer);
+	/*int i = 0;
+	int size = clt.request.size();
+	std::cout << "The size : " <<  size << std::endl;
+	while (i < size)
+	{
+		//if (clt.request[i].first == "Body")
+		{
+			std::cout << "Key : " << clt.request[i].first;
+			std::cout << ", val : " << clt.request[i].second  << std::endl;
+		}
+		i++;
+	}*/
 	/*if (isRequestWellFormed(web, buff) == 0)
 	{
 		std::cerr << "Request not well formed" << std::endl;
