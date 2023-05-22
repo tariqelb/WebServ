@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/19 20:28:55 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/22 21:11:50 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,17 +180,19 @@ void	getBodyType(std::string buffer, struct body& bodys)
 				bodys.boundary += "--";
 				bodys.boundary_flag = 1;
 				bodys.get_body_type = 1;
-				return;
 			}
 		}
 	}
 	find = buffer.find("Transfer-Encoding:");
 	if (find >= 0)
 	{
+		size = buffer.size();
 		i = find + 19;
 		j = 0;
-		while (i + j < size && buffer[i + j] != '\n')
+		while (i + j < size && buffer[i + j] != '\r')
+		{
 			j++;
+		}
 		temp = buffer.substr(i, j);
 		find = temp.find("chunked");
 		if (find >= 0)
@@ -228,7 +230,6 @@ void	getBodyType(std::string buffer, struct body& bodys)
 				bodys.chunks_flag = 1;
 				bodys.n_chunks = 1;
 				bodys.get_body_type = 1;
-				return;
 			}
 		}
 	}
@@ -250,14 +251,12 @@ void	getBodyType(std::string buffer, struct body& bodys)
 			bodys.cr_nl_flag = 1;
 			bodys.get_body_type = 1;
 		}
-		return ;	
 	}
-	else
+	if (bodys.boundary_flag == 0 && bodys.chunks_flag == 0 && bodys.content_length_flag == 0)
 	{
 		bodys.cr_nl_flag = 1;
 		bodys.get_body_type = 1;
 	}
-
 }
 
 
@@ -317,28 +316,42 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	int i;
 	int len;
 	
+	std::cout << "Buffer [" << buffer << "]" << std::endl;
 	if (bodys.get_body_type == 0)
 		getBodyType(buffer, bodys);
 	if (bodys.boundary_flag)
 	{
+		std::cout << "Boundary : in " << std::endl;
 		if (buffer.find(bodys.boundary) != -1)
+		{
+			std::cout << "Boundary : " << std::endl;
 			return (0);
+		}
 	}
 	if (bodys.chunks_flag)
 	{
+		std::cout << "Chunks : in " << bodys.chunks_con_len << " " << bodys.chunks_len << std::endl;
 		if (endOfChunks(buffer, bodys))
+		{
+			std::cout << "Chunks : " << std::endl;
 			return (0);
+		}
 	}
 	if (bodys.content_length_flag)
 	{
+		std::cout << "Content_length : in " << std::endl;
 		find = buffer.find("\r\n\r\n") + 4;
 		if (buffer.size() >= (bodys.content_len + find))
-				return (0);
+		{
+			std::cout << "Content_length : " << std::endl;
+			return (0);
+		}
 	}
 	if (bodys.cr_nl_flag)
 	{
 		if (buffer.size() > 4 &&  buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
+			std::cout << "Cr nl : " << std::endl;
 			return (0);
 		}
 	}
