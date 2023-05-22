@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 21:03:09 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/19 20:31:44 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/22 22:07:15 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,10 +176,10 @@ void	fillRequestData(struct client& clt, std::stringstream& buffer)
 
 void	parseRequest(struct webserv& web, struct client& clt)
 {
-	std::cout << "****************************************" << std::endl;
-	std::cout << clt.buffer.str() << std::endl;
-	std::cout << "****************************************" << std::endl;
-	fillRequestData(clt, clt.buffer);
+//	std::cout << "****************************************" << std::endl;
+//	std::cout << clt.buffer.str() << std::endl;
+//	std::cout << "****************************************" << std::endl;
+//	fillRequestData(clt, clt.buffer);
 	/*int i = 0;
 	int size = clt.request.size();
 	std::cout << "The size : " <<  size << std::endl;

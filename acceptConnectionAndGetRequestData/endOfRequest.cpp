@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/22 21:11:50 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/22 22:04:08 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,34 +316,27 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	int i;
 	int len;
 	
-	std::cout << "Buffer [" << buffer << "]" << std::endl;
 	if (bodys.get_body_type == 0)
 		getBodyType(buffer, bodys);
 	if (bodys.boundary_flag)
 	{
-		std::cout << "Boundary : in " << std::endl;
 		if (buffer.find(bodys.boundary) != -1)
 		{
-			std::cout << "Boundary : " << std::endl;
 			return (0);
 		}
 	}
 	if (bodys.chunks_flag)
 	{
-		std::cout << "Chunks : in " << bodys.chunks_con_len << " " << bodys.chunks_len << std::endl;
 		if (endOfChunks(buffer, bodys))
 		{
-			std::cout << "Chunks : " << std::endl;
 			return (0);
 		}
 	}
 	if (bodys.content_length_flag)
 	{
-		std::cout << "Content_length : in " << std::endl;
 		find = buffer.find("\r\n\r\n") + 4;
 		if (buffer.size() >= (bodys.content_len + find))
 		{
-			std::cout << "Content_length : " << std::endl;
 			return (0);
 		}
 	}
@@ -351,7 +344,6 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	{
 		if (buffer.size() > 4 &&  buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
-			std::cout << "Cr nl : " << std::endl;
 			return (0);
 		}
 	}

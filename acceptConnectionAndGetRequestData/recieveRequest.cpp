@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/22 19:46:28 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/22 22:04:11 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 		return ;
 	}
 	else
-		clt.buffer << line;
+	 	clt.buffer.write((char *) line, n_byte_readed); //	clt.buffer << line;
 	if (endOfTheRequest(clt.buffer.str(), clt.bodys) == 0)
 	{
 		clt.request_is_ready = true;
