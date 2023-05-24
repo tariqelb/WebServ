@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/19 19:46:00 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/24 21:14:03 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ struct	location
 	std::string											upload_store;
 	std::string											cgi_ext;
 	std::string											cgi_path;
+	std::string											redirect;
 };
 // serverfile struct hold information from confige file each variable is hold one value or multiple if it std::string so its hold one value
 // and if its std::vector so it hold mutiple value 

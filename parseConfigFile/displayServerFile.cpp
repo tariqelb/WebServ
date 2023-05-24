@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 20:35:32 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 20:14:27 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/24 22:08:37 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	displayServerFile(std::vector<struct serverfile> conf)
 				std::cout << "upload_store : " << conf[i].location[j].upload_store << std::endl;
 				std::cout << "cgi : " << conf[i].location[j].cgi_ext << std::endl;
 				std::cout << "cgi_path : " << conf[i].location[j].cgi_path << std::endl;
+				std::cout << "redirect : " << conf[i].location[j].redirect << std::endl;
 				int k = 0;
 				while (k < conf[i].location[j].error_page.size())
 				{
