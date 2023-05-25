@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/22 22:04:11 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/25 23:04:38 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,16 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	 	clt.buffer.write((char *) line, n_byte_readed); //	clt.buffer << line;
 	if (endOfTheRequest(clt.buffer.str(), clt.bodys) == 0)
 	{
+		//std::cout << "Buffer [" << clt.buffer.str() << "]" << clt.buffer.str().size() << std::endl;
+		std::fstream s;
+		s.open("name.txt", std::ios::trunc | std::ios::out);
+		if (!s.is_open())
+		{
+			std::cout << errno << std::endl;
+			std::cout << "Not opned " << std::endl;
+		}
+		s << clt.buffer.str();
+		s.close();
 		clt.request_is_ready = true;
 		FD_SET(clt.fd, &web.writes);
 	}
