@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 19:46:44 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 20:04:32 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void fillResponseHeader(struct client &clt, struct webserv &web, int statusCode)
 	std::cout << "status code " << statusCode << "\n";
 	getResponse(clt, statusCode, response, fileBody, filePath);
 	// std::cout << "response  == " << response << "\n";
-	// std::cout << "sendeeed " << send(clt.fd, response.c_str(), response.size(), 0) << "\n";
+	send(clt.fd, response.c_str(), response.size(), 0);
 	
 }
 
