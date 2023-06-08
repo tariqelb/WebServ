@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/08 19:25:26 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 19:49:40 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ void	handleConnection(struct webserv& web)
 		{
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
-				send(web.clients[i].fd, temp, strlen(temp), 0);
+				// send(web.clients[i].fd, temp, strlen(temp), 0);
 				closeConnection(web, i);
 			}
 		}
