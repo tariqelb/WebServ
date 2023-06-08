@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 16:30:09 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/18 20:06:01 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/05/29 15:53:54 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	isAclosedServer(std::vector<std::string> file, int line_index)
 		else if (isBracket(file[i]) == 2)
 			open_bracket--;
 		else if (endsWithSemiColon(file[i]) == 0)
-		   return (-1);	
+		   return (-1);
 		i++;
 	}
 	if (open_bracket != 0)

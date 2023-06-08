@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/19 20:30:45 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:24:48 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ void	closeConnection(struct webserv& web, int client_i)
 	close(web.clients[client_i].fd);
 	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
-	web.clients.erase(it);
+	if (it != web.clients.end())
+		web.clients.erase(it);
 	maxFd(web);
 }
-
+/*
 void	handleConnection(struct webserv& web)
 {
 	struct client 	newClient;
@@ -35,6 +36,7 @@ void	handleConnection(struct webserv& web)
 	int				j;
 	int				size;
 	int				k;
+	
 	size = web.servers.size();	
 	i = 0;
 	while (i < size)
@@ -66,7 +68,118 @@ void	handleConnection(struct webserv& web)
 						web.clients[k].bodys.n_chunks = 0;
 						web.clients[k].bodys.cr_index = -1;
 						web.clients[k].bodys.get_body_type = 0;
+						web.clients[k].file_name = "req" + std::to_string(web.req_nbr) + ".txt";
+						std::cout << "filename : " << web.clients[k].file_name << std::endl;
+						web.req_nbr++;
+						maxFd(web);
+						return ;
+					}
+			}
+			j++;
+		}
+		i++;
+	}
+	size = web.clients.size();	
+	std::cout << "data 0 :  " <<  i << " " << web.next_read <<  " " << size << std::endl; 
+	i = web.next_read;
+	std::cout << "data 1 :  " <<  i << " " << web.next_read <<  " " << size << std::endl; 
+	while (i < size)
+	{
+		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
+		{
+			std::cout << "Index 1 : " << i << std::endl;
+			receiveRequest(web, web.clients[i], i);	
+			if (web.clients[i].request_is_ready == true)
+			{
+				FD_CLR(web.clients[i].fd , &web.reads);
 
+				//parseRequest(web, web.clients[i]);
+			}
+		}
+		i++;
+	}
+	std::cout << "data 2 :  " <<  i << " " << web.next_read <<  " " << size << std::endl; 
+	i = 0;
+	while (i < size && i < web.next_read)
+	{
+		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
+		{
+			std::cout << "Index 2 : " << i << std::endl;
+			receiveRequest(web, web.clients[i], i);
+			
+			if (web.clients[i].request_is_ready == true)
+			{
+				FD_CLR(web.clients[i].fd , &web.reads);
+
+				//parseRequest(web, web.clients[i]);
+			}
+		}
+		i++;
+	}
+	std::cout << "data 3 :  " <<  i << " " << web.next_read <<  " " << size << std::endl; 
+	web.next_read++;
+	std::cout << "data 4 :  " <<  i << " " << web.next_read <<  " " << size << std::endl; 
+	if (web.next_read == size)
+		web.next_read = 0;
+	std::cout << "data 5 :  " <<  i << " " << web.next_read <<  " " << size << std::endl;
+	i = 0;
+	while (i < size)
+	{
+		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
+		{
+			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true * /)
+			{
+				send(web.clients[i].fd, temp, strlen(temp), 0);
+				closeConnection(web, i);
+			}
+		}
+		i++;
+	}
+}
+*/
+
+void	handleConnection(struct webserv& web)
+{
+	struct client 	newClient;
+	int				i;
+	int				j;
+	int				size;
+	int				k;
+	
+	size = web.servers.size();	
+	i = 0;
+	while (i < size)
+	{
+		j = 0;
+		while (j < web.servers[i].socketFd.size())
+		{
+			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
+			{
+					newClient.len = sizeof(newClient.addr);
+					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
+					if (newClient.fd < 0)
+					{
+						std::cerr << "Error : Fail connecting to client" << std::endl;
+						return ;
+					}
+					else
+					{
+						FD_SET(newClient.fd, &web.reads);
+						web.clients.push_back(newClient);
+						k = web.clients.size() - 1;
+						web.clients[k].bodys.chunks_flag = 0;
+						web.clients[k].bodys.boundary_flag = 0;
+						web.clients[k].bodys.content_length_flag = 0;
+						web.clients[k].bodys.cr_nl_flag = 0;
+						web.clients[k].bodys.chunks_len = 0;
+						web.clients[k].bodys.chunks_con_len = 0;
+						web.clients[k].bodys.content_len = 0;
+						web.clients[k].bodys.n_chunks = 0;
+						web.clients[k].bodys.cr_index = -1;
+						web.clients[k].bodys.get_body_type = 0;
+						web.clients[k].file_name = "req" + std::to_string(web.req_nbr) + ".txt";
+						std::cout << "filename : " << web.clients[k].file_name << std::endl;
+						web.req_nbr++;
 						maxFd(web);
 						return ;
 					}
@@ -81,18 +194,14 @@ void	handleConnection(struct webserv& web)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
+			std::cout << "Index: " << i << " "<< web.clients[i].fd << " " << web.clients[i].file_name  << std::endl;
 			receiveRequest(web, web.clients[i], i);
 			
 			if (web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
 
-				parseRequest(web, web.clients[i]);
-				//handle request data;
-				//std::ofstream file;
-				//file.open("name.txt");
-				//std::cout << web.clients[i].buffer.str();
-				//file.close();	
+				//parseRequest(web, web.clients[i]);
 			}
 		}
 		i++;
@@ -102,7 +211,7 @@ void	handleConnection(struct webserv& web)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
-			if (web.clients[i].request_is_ready == true/* && web.clients[i].response_is_ready == true */)
+			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				send(web.clients[i].fd, temp, strlen(temp), 0);
 				closeConnection(web, i);

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 21:03:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/24 22:10:51 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/07 17:57:12 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ int	valideListenDirective(std::vector<std::string>& listen, std::vector<std::str
 	{
 		if (validePort(listen[i]))   
 		{
-			if (DuplicatePort(listen[i], port) == 1)
-				return (1);
+			//if (DuplicatePort(listen[i], port) == 1)
+			//	return (1);
 			port.push_back(listen[i]);
 			i++;
 		}

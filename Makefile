@@ -6,7 +6,7 @@
 #    By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/05/19 14:55:09 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/06/06 20:21:40 by tel-bouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,8 @@ NAME = webserv.out
 
 SRCS = ./main.cpp \
 	   ./acceptConnectionAndGetRequestData/recieveRequest.cpp \
+	   ./acceptConnectionAndGetRequestData/splitBody.cpp \
+	   ./acceptConnectionAndGetRequestData/multiTypes.cpp \
 	   ./acceptConnectionAndGetRequestData/endOfRequest.cpp \
 	   ./acceptConnectionAndGetRequestData/handleConnection.cpp  \
 	   ./init/displayHostPort.cpp ./init/initServer.cpp \
@@ -27,7 +29,7 @@ SRCS = ./main.cpp \
 	   ./parseConfigFile/checkConfigData.cpp \
 	   ./parseConfigFile/splitSemiColons.cpp \
 	   ./parseConfigFile/valides.cpp  \
-	   ./parseRequest.cpp 
+	   ./client.cpp
 
 INCLUDES = .
 

@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/25 23:45:22 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 18:35:10 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,15 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	char							line[100000];
 	int 							i;
 	int								n_byte_readed;
+	std::string						buff;
 
 	memset(line, 0, 100000);
 	n_byte_readed = 0;
 	n_byte_readed = recv(clt.fd, line, 99999, 0);
 	line[n_byte_readed] = 0;
+	buff.assign("");
+	//std::cout << "the size of rd : "  << n_byte_readed << std::endl;
+	//std::cout << "The request : " << line << std::endl;
 	if (n_byte_readed < 0)
 	{
 		closeConnection(web, clt_i);	
@@ -64,25 +68,45 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i)
 	}
 	if (n_byte_readed == 0)
 	{
+		if (clt.nbr_of_reads == 0)
+		{
+			//std::cout << "Empty request " << std::endl;
+			FD_CLR(web.clients[i].fd , &web.reads);
+			closeConnection(web, clt_i);
+		}
 		clt.request_is_ready = true;
 		return ;
 	}
 	else
-	 	clt.buffer.write((char *) line, n_byte_readed); //	clt.buffer << line;
-	if (endOfTheRequest(clt.buffer.str(), clt.bodys) == 0)
 	{
-		//std::cout << "Buffer [" << clt.buffer.str() << "]" << clt.buffer.str().size() << std::endl;
-		std::fstream s;
-		s.open("name.txt", std::ios::trunc | std::ios::out);
-		if (!s.is_open())
-		{
-			std::cout << errno << std::endl;
-			std::cout << "Not opned " << std::endl;
+		if (clt.nbr_of_reads == 0)
+			clt.file->open(clt.file_name.c_str(),  std::fstream::out);
+		else
+			clt.file->open(clt.file_name.c_str(),  std::fstream::app | std::fstream::out);
+		if (!clt.file->is_open())
+			std::cerr << "Can not open file." << std::endl;
+		//you need to check for file is opned and doing what the sutiation needs
+		clt.file->write((char *) line, n_byte_readed); //	clt.buffer << line;
+		clt.file->close();
+		clt.bodys.rd_bytes = clt.bodys.rd_bytes + n_byte_readed;
+		buff.assign(line, n_byte_readed);
+		//std::cout << "the size of each : " << buff.size() << " " << n_byte_readed << std::endl;
+		//std::cout << "The request : " << buff << std::endl;
+		if (clt.nbr_of_reads == 0)
+		{	
+			if (buff.find("POST") == 0)
+			{
+				clt.post_flag = 1;
+			}
 		}
-		s << clt.buffer.str();
-		s.close();
+		clt.nbr_of_reads++;
+	}
+	if (clt.post_flag == 1)
+		splitBody(buff, clt);
+	if (endOfTheRequest(buff, clt.bodys) == 0)
+	{
 		clt.request_is_ready = true;
-		std::cout << "[" << clt.buffer.str() << "]" << std::endl;
+		//std::cout << "Headers : [" << clt.headers << "]" << std::endl;  
 		FD_SET(clt.fd, &web.writes);
 	}
 }

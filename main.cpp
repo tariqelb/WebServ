@@ -6,24 +6,22 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/24 22:11:02 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/07 23:26:48 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-
-
 int	main(int ac, char **av)
 {
 	struct	webserv		web;
-	struct	timeval		tv;
 	int					index;
 	int					flag;
 
+	web.next_read = 0;
+	web.next_write = 0;
 	index = 0;
-	tv.tv_sec = 120;
-	tv.tv_usec = 0;
+	web.req_nbr = 0;
 	//get data from config file
 	web.status = 0;
 	parseConfigFile(web, ac, av);
@@ -59,7 +57,7 @@ int	main(int ac, char **av)
 		web.tmp_read = web.reads;
 		web.tmp_write = web.writes;
 		std::cout << "Wait in select : " << web.clients.size() << std::endl;
-		web.status = select(web.maxReadFd + 1, &web.tmp_read, &web.tmp_write, 0, &tv);
+		web.status = select(web.maxReadFd + 1, &web.tmp_read, &web.tmp_write, 0, 0);
 		if (web.status == 0)
 		{
 			std::cerr << "server time listening out" << std::endl;
@@ -73,9 +71,10 @@ int	main(int ac, char **av)
 			return (1);
 
 		}
-		else //(web.status == 0)
+		else
 			handleConnection(web);
-	//	handleRequest(web);	
+		if (web.req_nbr == MAXINT)
+			web.req_nbr = 0;
 	}	
 	freedWeb(web);
 	
