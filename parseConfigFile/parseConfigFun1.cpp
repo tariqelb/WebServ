@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parseConfigFun1.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 11:40:24 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 21:21:46 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
 
 //check if a line have only whitespace characters return (0) if yes otherwise return (1)

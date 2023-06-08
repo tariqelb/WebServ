@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handleConnectinon.cpp                              :+:      :+:    :+:   */
+/*   handleConnection.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/08 18:24:48 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:25:26 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
 char    temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/    html\r\n\r\n <html>hello, world    </html>\r\n";
 
@@ -200,7 +200,14 @@ void	handleConnection(struct webserv& web)
 			if (web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-
+				int returnValue = parseRequest(web, web.clients[i]);
+				if (returnValue == 200 && web.clients[i].map_request["Method"] == "GET")
+					get(web, web.clients[i]);
+				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "POST")
+					post(web, web.clients[i]);
+				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "DELETE")
+					deleteResponse(web, web.clients[i]);
+				std::cout << "\033[00m";
 				//parseRequest(web, web.clients[i]);
 			}
 		}

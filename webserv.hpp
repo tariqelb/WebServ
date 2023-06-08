@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/07 23:26:33 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:25:20 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@
 #include <string>
 #include <cctype>
 #include <sys/stat.h>
+
+#include <map>
+#include <algorithm>
 
 # define MAX_CONNECTION 355
 # define HOST "localhost"
@@ -101,6 +104,10 @@ struct uploadFiles
 
 struct client
 {
+	std::map<std::string, std::string> 					map_request;
+	std::map<std::string, std::string>					map_response;
+	int 												config;
+	int													location;
 	std::vector<std::pair<std::string, std::string> >	request;
 	std::vector<std::pair<std::string, std::string> >	response;
 	struct sockaddr_storage								addr;
@@ -297,6 +304,36 @@ void	activeSocket(struct webserv& web);
 int 	initServer(struct webserv& web);
 
 /*     ***********************************************     */
+
+
+/* ************************** utils.cpp ********************************************* */
+unsigned long	stringToInt(std::string str);
+int				search(struct client &clt, struct webserv &web, int i);
+std::string		replaceLocation(std::string uri, std::string pattern, std::string root);
+std::string		intToString(int n);
+void			fillMapContentTypes(std::map<std::string, std::string> &contentTypes);
+std::string getStatusMessage(int statusCode);
+/* ************************** parseRequest ****************************************** */
+
+int				parseRequest(struct webserv& web, struct client& clt);
+void		fillRequestData(struct client& clt);
+int				isRequestWellFormed(struct client &clt, struct webserv &web);
+
+/* ************************* sendResponse ****************************************** */
+
+int send_404(struct client &clt) ;
+int sendResponse(struct client &clt, struct webserv &web, int statusCode);
+
+std::string readFileContent(std::string &filePath, int statusCode);
+std::string getContentType(std::string filePath);
+void getResponse(struct client &clt, int statusCode,
+	std::string &response, std::string responseContent, std::string filePath);
+/**************************************************************************************/
+
+
+int		get(struct webserv& web, struct client& clt);
+void	post(struct webserv& web, struct client& clt);
+void	deleteResponse(struct webserv& web, struct client& clt);
 
 
 

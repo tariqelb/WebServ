@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   checkConfigdata.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 21:03:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/07 17:57:12 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
 int	DuplicatePort(std::string listen, std::vector<std::string> port)
 {

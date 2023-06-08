@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   splitSemiColons.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 11:48:44 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/03/29 21:58:05 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
 void	removeDoubleSemiColons(std::string& line)
 {

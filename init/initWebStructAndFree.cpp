@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   initWebStructAndFree.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/02 21:52:47 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/05/29 15:54:49 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
 
 void	getServerConfig(struct webserv& web)

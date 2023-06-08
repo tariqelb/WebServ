@@ -3,46 +3,70 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/06/06 20:21:40 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/06/08 19:33:11 by hasabir          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv.out
 
-SRCS = ./main.cpp \
-	   ./acceptConnectionAndGetRequestData/recieveRequest.cpp \
-	   ./acceptConnectionAndGetRequestData/splitBody.cpp \
-	   ./acceptConnectionAndGetRequestData/multiTypes.cpp \
-	   ./acceptConnectionAndGetRequestData/endOfRequest.cpp \
-	   ./acceptConnectionAndGetRequestData/handleConnection.cpp  \
-	   ./init/displayHostPort.cpp ./init/initServer.cpp \
-	   ./init/initWebStructAndFree.cpp ./init/activeSocket.cpp\
-	   ./parseConfigFile/parseConfigFile.cpp \
-	   ./parseConfigFile/getConfigData.cpp \
-	   ./parseConfigFile/parseConfigFun1.cpp \
-	   ./parseConfigFile/moveBracketsToNextLine.cpp \
-	   ./parseConfigFile/valideServersBlock.cpp \
-	   ./parseConfigFile/displayServerFile.cpp \
-	   ./parseConfigFile/checkConfigData.cpp \
-	   ./parseConfigFile/splitSemiColons.cpp \
-	   ./parseConfigFile/valides.cpp  \
-	   ./client.cpp
+SRCS = 	main.cpp \
+		acceptConnectionAndGetRequestData/endOfRequest.cpp\
+		acceptConnectionAndGetRequestData/handleConnection.cpp\
+		acceptConnectionAndGetRequestData/multiTypes.cpp\
+		acceptConnectionAndGetRequestData/recieveRequest.cpp\
+		acceptConnectionAndGetRequestData/splitBody.cpp\
+		init/activeSocket.cpp init/displayHostPort.cpp\
+		init/initServer.cpp init/initWebStructAndFree.cpp\
+		parseConfigFile/checkConfigdata.cpp parseConfigFile/displayServerFile.cpp\
+		parseConfigFile/getConfigData.cpp\
+		parseConfigFile/moveBracketsToNextLine.cpp\
+		parseConfigFile/parseConfigFile.cpp parseConfigFile/parseConfigFun1.cpp\
+		parseConfigFile/splitSemiColons.cpp parseConfigFile/valideServersBlock.cpp\
+		parseConfigFile/valides.cpp parseRequest/deleteResponse.cpp\
+		parseRequest/get.cpp parseRequest/parsRequestHeader.cpp\
+		parseRequest/parseRequest.cpp parseRequest/post.cpp\
+		parseRequest/sendResponse.cpp parseRequest/utils.cpp\
+		client.cpp\
 
-INCLUDES = .
-
-FLAGS =  -std=c++98
+OBJS = ${SRCS:.cpp=.o}
 
 CC = c++
+FLAGS = -std=c++98
 
-all : $(NAME)
+all : ${NAME}
 
-$(NAME) :
-	$(CC) $(FLAGS) $(SRCS) -I $(INCLUDES) -o $(NAME)
+%.o: %.cpp
+	@$(CC) ${FLAGS} -c -o $@ $<
+  
+${NAME} :${OBJS}
+	@$(CC) $(OBJS) -o $(NAME)
+	@echo "\033[92m|  Compilation Done  |\033[00m"
 
-fclean :
-	/bin/rm -rf $(NAME)
+clean:
+	@rm -rf ${OBJS}
+	@echo "|  CLEANED |"
 
-re : fclean all
+fclean: clean
+	@rm -rf ${NAME}
+
+re: fclean all
+
+
+# INCLUDES = .
+
+# FLAGS =  -std=c++98
+
+# CC = c++
+
+# all : $(NAME)
+
+# $(NAME) :
+# 	$(CC) $(FLAGS) $(SRCS) -I $(INCLUDES) -o $(NAME)
+
+# fclean :
+# 	/bin/rm -rf $(NAME)
+
+# re : fclean all

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   getConfigData.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 17:44:50 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/06 20:41:42 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 char directives[14][21] = {"listen", "host", "servername", "error_page", "client_max_body_size", "location"    , "allow", "root", "autoindex", "index", "upload", "upload_store", "cgi", "redirect"};
 
 std::string	getDirectiveKey(std::string line)
