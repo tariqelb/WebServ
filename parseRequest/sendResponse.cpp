@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 18:47:57 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 19:46:44 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ std::string getContentType(std::string filePath)
 
 void fillResponseHeader(struct client &clt, struct webserv &web, int statusCode)
 {
-	std::cout << "status code = " << statusCode << std::endl;
+	// std::cout << "status code = " << statusCode << std::endl;
 	std::vector<std::pair<std::string, std::string> >::iterator iter;
 	std::string response, fileBody, filePath;
 
@@ -105,8 +105,8 @@ void fillResponseHeader(struct client &clt, struct webserv &web, int statusCode)
 		fileBody = readFileContent(filePath, statusCode);
 	std::cout << "status code " << statusCode << "\n";
 	getResponse(clt, statusCode, response, fileBody, filePath);
-	std::cout << "response  == " << response << "\n";
-	std::cout << "sendeeed " << send(clt.fd, response.c_str(), response.size(), 0) << "\n";
+	// std::cout << "response  == " << response << "\n";
+	// std::cout << "sendeeed " << send(clt.fd, response.c_str(), response.size(), 0) << "\n";
 	
 }
 

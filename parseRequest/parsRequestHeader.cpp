@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:50:33 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 18:52:05 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 19:46:14 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::string	getRequestLine(std::string line, std::map<std::string, std::string> 
 void	fillRequestData(struct client& clt)
 {
 	std::string line, key, value, requestLine;
-	std::cout << "clt.file_name = " <<  clt.file_name << std::endl;
+	// std::cout << "clt.file_name = " <<  clt.file_name << std::endl;
 	clt.file->open(clt.file_name.c_str(), std::ios::in);
 	if (!clt.file->is_open())
 	{

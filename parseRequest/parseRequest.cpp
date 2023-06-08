@@ -19,7 +19,7 @@ int parsLocation(struct client &clt, struct webserv &web, int i)
 		if (clt.map_request["URI"] != "/" || web.config[i].root.empty())
 			return sendResponse(clt, web, 404);
 		clt.map_request["URI"] = web.config[i].root;
-		std::cout << "location = [" << clt.map_request["URI"] << "]\n";
+		// std::cout << "location = [" << clt.map_request["URI"] << "]\n";
 		return 0;
 	}
 	if (!web.config[i].location[clt.location].redirect.empty())
@@ -48,7 +48,7 @@ int parsLocation(struct client &clt, struct webserv &web, int i)
 										 web.config[i].root);
 	else //!Need to be checked
 		return sendResponse(clt, web, 404);
-	std::cout << "location = [" << clt.map_request["URI"] << "]\n";
+	// std::cout << "location = [" << clt.map_request["URI"] << "]\n";
 	return 0;
 }
 
@@ -70,7 +70,7 @@ int parseRequestData(struct client &clt, struct webserv &web)
 
 int parseRequest(struct webserv &web, struct client &clt)
 {
-	std::cout << "\033[91m-----------------------------------------------------------\n";
+	// std::cout << "\033[91m-----------------------------------------------------------\n";
 	clt.response_is_ready = true;
 	clt.config = -1;
 	clt.location = -1;

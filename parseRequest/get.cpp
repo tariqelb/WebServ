@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 19:32:31 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 19:45:46 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	get(struct webserv& web, struct client& clt)
 	}
 	if (clt.location >= 0)
 	{
-		std::cout << "auto index = " << web.config[clt.config].location[clt.location].autoindex << std::endl;
+		// std::cout << "auto index = " << web.config[clt.config].location[clt.location].autoindex << std::endl;
 		if (web.config[clt.config].location[clt.location].autoindex.empty() ||
 			web.config[clt.config].location[clt.location].autoindex == "off")
 			sendResponse(clt, web, 403);
