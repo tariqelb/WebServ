@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/01 22:54:14by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/09 00:29:37 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,16 @@ int parseRequestData(struct client &clt, struct webserv &web)
 	if ((error = parsLocation(clt, web, clt.config)))
 		return error;
 
-	std::vector<std::string>::iterator iter = std::find(web.config[clt.config].location[clt.location].allow.begin(),
+	std::vector<std::string>::iterator iter;
+	if (clt.config != -1 && clt.location != -1)
+	{
+		iter = std::find(web.config[clt.config].location[clt.location].allow.begin(),
 		web.config[clt.config].location[clt.location].allow.end(), clt.map_request["Method"]);
-	if (iter == web.config[clt.config].location[clt.location].allow.end())
-		return sendResponse(clt, web, 405);
-	return 200;
+		if (iter == web.config[clt.config].location[clt.location].allow.end())
+			return sendResponse(clt, web, 405);
+		return 200;
+	}
+	return sendResponse(clt, web, 405);
 }
 
 int parseRequest(struct webserv &web, struct client &clt)

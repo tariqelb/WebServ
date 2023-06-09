@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/08 19:25:20 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/09 01:58:00 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@
 # include <sys/time.h>
 # include <fcntl.h>
 # include <cmath>
-#include <vector>
-#include <map>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <cctype>
-#include <sys/stat.h>
+# include <vector>
+# include <map>
+# include <iostream>
+# include <sstream>
+# include <fstream>
+# include <string>
+# include <cctype>
+# include <sys/stat.h>
+# include <cstdio>
 
-#include <map>
 #include <algorithm>
 
 # define MAX_CONNECTION 355
@@ -167,7 +167,7 @@ void    handleConnection(struct webserv& web);
 // file name : recieveRequest.cpp
 // fun  name :
 void	maxFd(struct webserv& web);
-void	receiveRequest(struct webserv& web, struct client& clt, int clt_i);
+void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& flag_fail);
 
 // repo name : acceptConnectionAndGetRequestData
 // file name : endOfRequest.cpp

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/08 19:18:52 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/08 23:34:39 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,6 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	}
 	if (bodys.content_length_flag)
 	{
-		std::cout << "rd : " << bodys.rd_bytes << " " << bodys.content_len << " " << bodys.cr_index << std::endl;
 		if (bodys.rd_bytes >= (bodys.content_len + bodys.cr_index))
 		{
 			return (0);
