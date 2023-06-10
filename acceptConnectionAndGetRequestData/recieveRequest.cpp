@@ -6,7 +6,7 @@
 /*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/09 02:24:13 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/10 22:47:11 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	if (endOfTheRequest(buff, clt.bodys) == 0)
 	{
 		clt.request_is_ready = true;
+		if (clt.post_flag)
+			getFilesLength(clt);
 		FD_SET(clt.fd, &web.writes);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/09 01:58:00 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/09 17:44:11 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ struct client
 	int													nbr_of_reads;
 	int													post_flag;
 	std::vector<struct uploadFiles>						upload_files;
+	unsigned long										body_length;
 
 	client();
 	~client();
@@ -188,10 +189,15 @@ int		isADerective(std::string buffer, int find, int size);
 void	getFileSize(struct uploadFiles& file);
 
 // repo name : acceptConnectionAndGetRequestData
-// file name : split.cpp
+// file name : splitBody.cpp
 // fun  name :
 void	addHeaders(std::string buffer, struct client& clt, int pos);
 void	splitBody(std::string buffer, struct client& clt);
+
+// repo name : acceptConnectionAndGetRequestData
+// file name : getFilesLength.cpp
+// fun  name :
+void    getFilesLength(struct client& clt);
 /*     ***********************************************     */
 
 

@@ -6,7 +6,7 @@
 #    By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/06/08 19:33:11 by hasabir          ###   ########.fr        #
+#    Updated: 2023/06/09 17:33:23 by tel-bouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ SRCS = 	main.cpp \
 		acceptConnectionAndGetRequestData/multiTypes.cpp\
 		acceptConnectionAndGetRequestData/recieveRequest.cpp\
 		acceptConnectionAndGetRequestData/splitBody.cpp\
+		acceptConnectionAndGetRequestData/getFilesLength.cpp\
 		init/activeSocket.cpp init/displayHostPort.cpp\
 		init/initServer.cpp init/initWebStructAndFree.cpp\
 		parseConfigFile/checkConfigdata.cpp parseConfigFile/displayServerFile.cpp\
