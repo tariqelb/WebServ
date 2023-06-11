@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 00:19:32 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/08 19:26:56 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/11 00:56:15 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 uploadFiles::uploadFiles()
 {
+	//std::cout << "Upload constructor called" << std::endl;
 	len = 0;
 	filename = "";
 	file = new std::fstream();
@@ -22,6 +23,7 @@ uploadFiles::uploadFiles()
 
 uploadFiles::~uploadFiles()
 {
+	//std::cout << "Upload destructor called" << std::endl;
 	delete file;
 }
 
@@ -45,11 +47,14 @@ uploadFiles&	uploadFiles::operator=(const uploadFiles& rhs)
 
 client::client()
 {	
+	config = -1;
+	location = -1;
+	len = 0;
+	fd = -1;
 	request_is_ready = false;
 	response_is_ready = false;
-	fd = -1;
-	len = 0;
 	bodys.get_body_type = 0;
+	bodys.rd_bytes = 0;
 	bodys.chunks_flag = 0;
 	bodys.boundary_flag = 0;
 	bodys.content_length_flag = 0;
@@ -59,13 +64,16 @@ client::client()
 	bodys.chunks_len = 0;
 	bodys.chunks_con_len = 0;
 	bodys.content_len = 0;
-	bodys.boundary.assign("");
-	bodys.rd_bytes = 0;
-	nbr_of_reads = 0;
 	bodys.content_disposition = 0;
+	bodys.boundary.assign("");
+	headers.assign("");
+	file = new std::fstream();
+	file_name.assign("");
+	body_data.assign("");
+	nbr_of_reads = 0;
 	post_flag = 0;
 	body_data.assign("");
-	file = new std::fstream();
+	body_length = 0;
 }
 
 client::~client() 
@@ -78,6 +86,10 @@ client::client(const client& rhs)
 	int				i;
 	int				size;
 
+	map_request = rhs.map_request;
+	map_response = rhs.map_response;
+	config = rhs.config;
+	location = rhs.location;
 	request = rhs.request;
 	response = rhs.response;
 	addr = rhs.addr;
@@ -85,7 +97,6 @@ client::client(const client& rhs)
 	fd = rhs.fd;
 	request_is_ready = rhs.request_is_ready;
 	response_is_ready = rhs.response_is_ready;
-	headers = rhs.headers;
 	nbr_of_reads = rhs.nbr_of_reads;
 	post_flag = rhs.post_flag;
 	body_data = rhs.body_data;
@@ -100,17 +111,22 @@ client::client(const client& rhs)
 	bodys.chunks_len = rhs.bodys.chunks_len;
 	bodys.chunks_con_len = rhs.bodys.chunks_con_len;
 	bodys.content_len = rhs.bodys.content_len;
-	bodys.boundary = rhs.bodys.boundary;
 	bodys.content_disposition = rhs.bodys.content_disposition;
+	bodys.boundary = rhs.bodys.boundary;
+	headers = rhs.headers;
 	file = new std::fstream();
+	file_name = rhs.file_name;
+	body_data = rhs.body_data;
+	nbr_of_reads = rhs.nbr_of_reads;
+	post_flag = rhs.post_flag;
+	body_length = rhs.body_length;
 	i = 0;
 	size = rhs.upload_files.size();
 	while (i < size)
 	{
-		upload_files[i] = rhs.upload_files[i];
+		upload_files.push_back(rhs.upload_files[i]);
 		i++;
 	}
-	
 }
 
 client&		client::operator=(const client& rhs)
@@ -120,6 +136,10 @@ client&		client::operator=(const client& rhs)
 
 	if (this != &rhs)
 	{
+		map_request = rhs.map_request;
+		map_response = rhs.map_response;
+		config = rhs.config;
+		location = rhs.location;
 		request = rhs.request;
 		response = rhs.response;
 		addr = rhs.addr;
@@ -127,8 +147,6 @@ client&		client::operator=(const client& rhs)
 		fd = rhs.fd;
 		request_is_ready = rhs.request_is_ready;
 		response_is_ready = rhs.response_is_ready;
-		//bodys = rhs.bodys;
-		headers = rhs.headers;	
 		nbr_of_reads = rhs.nbr_of_reads;
 		post_flag = rhs.post_flag;
 		body_data = rhs.body_data;
@@ -143,14 +161,20 @@ client&		client::operator=(const client& rhs)
 		bodys.chunks_len = rhs.bodys.chunks_len;
 		bodys.chunks_con_len = rhs.bodys.chunks_con_len;
 		bodys.content_len = rhs.bodys.content_len;
-		bodys.boundary = rhs.bodys.boundary;
 		bodys.content_disposition = rhs.bodys.content_disposition;
+		bodys.boundary = rhs.bodys.boundary;
+		headers = rhs.headers;
 		file = new std::fstream();
+		file_name = rhs.file_name;
+		body_data = rhs.body_data;
+		nbr_of_reads = rhs.nbr_of_reads;
+		post_flag = rhs.post_flag;
+		body_length = rhs.body_length;
 		i = 0;
 		size = rhs.upload_files.size();
 		while (i < size)
 		{
-			upload_files[i] = rhs.upload_files[i];
+			upload_files.push_back(rhs.upload_files[i]);
 			i++;
 		}
 	}

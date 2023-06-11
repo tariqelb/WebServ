@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/09 17:45:28 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/11 00:51:57 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	closeConnection(struct webserv& web, int client_i)
    	std::vector<client>::iterator it;
 
 	it = web.clients.begin();
+	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
 	/*
@@ -37,7 +38,6 @@ void	closeConnection(struct webserv& web, int client_i)
 
 void	handleConnection(struct webserv& web)
 {
-	struct client 	newClient;
 	int				i;
 	int				j;
 	int				size;
@@ -53,6 +53,7 @@ void	handleConnection(struct webserv& web)
 		{
 			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
 			{
+					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
 					if (newClient.fd < 0)
@@ -64,6 +65,7 @@ void	handleConnection(struct webserv& web)
 					{
 						FD_SET(newClient.fd, &web.reads);
 						web.clients.push_back(newClient);
+						size = web.servers.size();	
 						k = web.clients.size() - 1;
 						web.clients[k].bodys.chunks_flag = 0;
 						web.clients[k].bodys.boundary_flag = 0;
@@ -94,14 +96,13 @@ void	handleConnection(struct webserv& web)
 		{
 			flag_fail = 1;
 			receiveRequest(web, web.clients[i], i, flag_fail);
+			//size = web.clients.size();	
 			if (flag_fail && web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
 				int returnValue = parseRequest(web, web.clients[i]);
 				if (returnValue == 200 && web.clients[i].map_request["Method"] == "GET")
-				{
 					get(web, web.clients[i]);
-				}
 				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "POST")
 					post(web, web.clients[i]);
 				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "DELETE")
@@ -118,6 +119,7 @@ void	handleConnection(struct webserv& web)
 		i++;
 	}
 	i = 0;
+	size = web.clients.size();	
 	while (i < size)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
