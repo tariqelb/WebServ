@@ -6,7 +6,7 @@
 #    By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/06/09 17:33:23 by tel-bouh         ###   ########.fr        #
+#    Updated: 2023/06/12 15:21:44 by hasabir          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,10 +26,11 @@ SRCS = 	main.cpp \
 		parseConfigFile/moveBracketsToNextLine.cpp\
 		parseConfigFile/parseConfigFile.cpp parseConfigFile/parseConfigFun1.cpp\
 		parseConfigFile/splitSemiColons.cpp parseConfigFile/valideServersBlock.cpp\
-		parseConfigFile/valides.cpp parseRequest/deleteResponse.cpp\
-		parseRequest/get.cpp parseRequest/parsRequestHeader.cpp\
-		parseRequest/parseRequest.cpp parseRequest/post.cpp\
-		parseRequest/sendResponse.cpp parseRequest/utils.cpp\
+		parseConfigFile/valides.cpp\
+		parseRequest/parsRequestHeader.cpp\
+		parseRequest/parseRequest.cpp parseRequest/utils.cpp\
+		response/deleteResponse.cpp\
+		response/getResponse.cpp response/postResponse.cpp response/sendResponse.cpp\
 		client.cpp\
 
 OBJS = ${SRCS:.cpp=.o}
@@ -55,19 +56,3 @@ fclean: clean
 
 re: fclean all
 
-
-# INCLUDES = .
-
-# FLAGS =  -std=c++98
-
-# CC = c++
-
-# all : $(NAME)
-
-# $(NAME) :
-# 	$(CC) $(FLAGS) $(SRCS) -I $(INCLUDES) -o $(NAME)
-
-# fclean :
-# 	/bin/rm -rf $(NAME)
-
-# re : fclean all

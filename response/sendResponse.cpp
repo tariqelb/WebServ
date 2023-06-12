@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 20:04:32 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/12 18:52:25 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void getResponse(struct client &clt, int statusCode,
 
 std::string readFileContent(std::string &filePath, int statusCode)
 {
-	std::string responseBody;
+	std::stringstream responseBody;
 	std::fstream file;
 
 	if (filePath == "Default")
@@ -54,8 +54,8 @@ std::string readFileContent(std::string &filePath, int statusCode)
 					+ intToString(statusCode) + ".html";
 		file.open(filePath.c_str(), std::ios::in);
 	}
-	getline(file, responseBody, '\0');
-	return responseBody;
+	responseBody << file.rdbuf();
+	return responseBody.str();
 }
 
 std::string getContentType(std::string filePath)
@@ -105,9 +105,8 @@ void fillResponseHeader(struct client &clt, struct webserv &web, int statusCode)
 		fileBody = readFileContent(filePath, statusCode);
 	std::cout << "status code " << statusCode << "\n";
 	getResponse(clt, statusCode, response, fileBody, filePath);
-	// std::cout << "response  == " << response << "\n";
-	send(clt.fd, response.c_str(), response.size(), 0);
-	
+	if (send(clt.fd, response.c_str(), response.size(), 0) < 0)
+		std::cout << "ERROR: send\n";
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/11 00:17:59 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/12 17:36:22 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,19 +102,35 @@ struct uploadFiles
 	uploadFiles&	operator=(const uploadFiles& rhs);
 };
 
+class Response
+{
+	public:
+	int							statusCode;
+	bool						error;
+	std::string					response;
+	// std::vector<std::string>	response;
+	
+};
+
+
 struct client
 {
 	std::map<std::string, std::string> 					map_request;
-	std::map<std::string, std::string>					map_response;
+	// std::map<std::string, std::string>					map_response;
+	// std::string											response;
+	// int													statusCode;
+	
+	Response											response;
+	
 	int 												config;
 	int													location;
 	std::vector<std::pair<std::string, std::string> >	request;
-	std::vector<std::pair<std::string, std::string> >	response;
+	// std::vector<std::pair<std::string, std::string> >	response;
+	bool						response_is_ready;
 	struct sockaddr_storage								addr;
 	socklen_t											len;
 	int													fd;
 	bool												request_is_ready;
-	bool												response_is_ready;
 	struct body											bodys;
 	std::string											headers;
 	std::fstream										*file;			
@@ -318,7 +334,8 @@ int				search(struct client &clt, struct webserv &web, int i);
 std::string		replaceLocation(std::string uri, std::string pattern, std::string root);
 std::string		intToString(int n);
 void			fillMapContentTypes(std::map<std::string, std::string> &contentTypes);
-std::string getStatusMessage(int statusCode);
+std::string		host(std::string host);
+std::string		getStatusMessage(int statusCode);
 /* ************************** parseRequest ****************************************** */
 
 int				parseRequest(struct webserv& web, struct client& clt);

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 16:16:23 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/12 18:18:27 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ unsigned long stringToInt(std::string str)
 			n *= 1000000;
 		else if (*iter == 'k')
 			n *= 1000;
+		//! else if (G)
 	}
 	return n;
 }
@@ -47,6 +48,14 @@ std::string replaceLocation(std::string uri, std::string pattern, std::string ro
 	int position = uri.find(pattern);
 	location.replace(position, pattern.length(), root);
 	return location;
+}
+std::string host(std::string host)
+{
+	if (host.empty())
+		return "0.0.0.0";
+	if (host == "localhost")
+		return "127.0.0.1";
+	return host;
 }
 
 int search(struct client &clt, struct webserv &web, int i)
@@ -80,9 +89,9 @@ std::string getStatusMessage(int statusCode)
 	map[405] = "Method Not Allowed\r\n";
 	map[302] = "Found\r\n";
 	map[301] = "Moved Permanently\r\n";
-	map[200] = "200 OK\r\n";
+	map[200] = "OK\r\n";
 	map[-302] = "Found\r\n";
-	map[0] = "200 OK\r\n";
+	map[0] = "OK\r\n";
 	return map[statusCode];
 }
 

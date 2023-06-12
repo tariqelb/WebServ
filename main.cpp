@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:47:52 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/09 02:02:08 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/12 18:04:57 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	main(int ac, char **av)
 		FD_ZERO(&web.tmp_write);
 		web.tmp_read = web.reads;
 		web.tmp_write = web.writes;
-		std::cout << "Wait in select : " << web.clients.size() << std::endl;
+		// std::cout << "Wait in select : " << web.clients.size() << std::endl;
 		web.status = select(web.maxReadFd + 1, &web.tmp_read, &web.tmp_write, 0, 0);
 		if (web.status == 0)
 		{

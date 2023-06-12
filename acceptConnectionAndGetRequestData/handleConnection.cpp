@@ -6,14 +6,11 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/11 00:51:57 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/12 18:04:15 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
-
-char    temp[2048] = "HTTP/1.0 200 OK\r\n Server: webserver-c\r\n Content-type: text/    html\r\n\r\n <html>hello, world    </html>\r\n";
-
 
 void	closeConnection(struct webserv& web, int client_i)
 {
@@ -23,12 +20,12 @@ void	closeConnection(struct webserv& web, int client_i)
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
-	/*
-	if (std::remove(web.clients[client_i].file_name.c_str()) == 0)
+	if ((web.clients[client_i].response.error || (!web.clients[client_i].map_request.empty()
+		&& web.clients[client_i].map_request["Method"] == "GET"))
+		&&!std::remove(web.clients[client_i].file_name.c_str()))
 		std::cout << "req file removed " <<  web.clients[client_i].file_name << std::endl;
 	else
 		std::cout << "req not file removed " <<  web.clients[client_i].file_name << std::endl;
-	*/
 	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
 	if (it != web.clients.end())
@@ -100,15 +97,20 @@ void	handleConnection(struct webserv& web)
 			if (flag_fail && web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-				int returnValue = parseRequest(web, web.clients[i]);
-				if (returnValue == 200 && web.clients[i].map_request["Method"] == "GET")
-					get(web, web.clients[i]);
-				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "POST")
+				
+				// web.clients[i].statusCode = parseRequest(web, web.clients[i]);
+				std::cout << "uri = [" << web.clients[i].map_request["URI"] << "]\n";
+				if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "GET")
+				{
+					std::cout << "Sending get response ...\n";
+					web.clients[i].response.statusCode = get(web, web.clients[i]);
+				}
+				else if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "POST")
 					post(web, web.clients[i]);
-				else if (returnValue == 200 && web.clients[i].map_request["Method"] == "DELETE")
+				else if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "DELETE")
 					deleteResponse(web, web.clients[i]);
 				std::cout << "\033[00m";
-				//parseRequest(web, web.clients[i]);
+
 			}
 			else if (flag_fail == 0)
 			{
@@ -126,7 +128,7 @@ void	handleConnection(struct webserv& web)
 		{
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
-				// send(web.clients[i].fd, temp, strlen(temp), 0);
+				sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
 				closeConnection(web, i);
 			}
 		}

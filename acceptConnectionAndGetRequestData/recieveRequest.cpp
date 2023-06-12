@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recieveRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tel-bouh <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/10 22:47:11 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/12 18:03:08 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		clt.bodys.rd_bytes = clt.bodys.rd_bytes + n_byte_readed;
 		buff.assign(line, n_byte_readed);
 		if (clt.nbr_of_reads == 0)
-		{	
+		{
 			if (buff.find("POST") == 0)
 			{
 				clt.post_flag = 1;
@@ -102,13 +102,22 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		}
 		clt.nbr_of_reads++;
 	}
-	/*if (clt.nbr_of_reads == 1 && firstTest(buff) == 1)
+
+	/*****************************************************************/
+	std::cout << "clt_i = " << clt_i << std::endl;
+	if (clt.nbr_of_reads == 1
+		&& (web.clients[clt_i].response.statusCode = parseRequest(web, web.clients[clt_i])))
 	{
-		FD_CLR(web.clients[client_i].fd , &web.reads);
+		web.clients[clt_i].response.error = true;
+		FD_CLR(web.clients[clt_i].fd , &web.reads);
+		sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
 		closeConnection(web, clt_i);
 		flag_fail = 0;
 		return ;
-	}*/
+	}
+	/*****************************************************************/
+
+	web.clients[clt_i].response.error = false;
 	if (clt.post_flag == 1)
 	{
 		splitBody(buff, clt);

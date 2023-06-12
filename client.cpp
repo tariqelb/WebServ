@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 00:19:32 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/11 00:56:15 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:44:19 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ client::client(const client& rhs)
 	int				i;
 	int				size;
 
-	map_request = rhs.map_request;
-	map_response = rhs.map_response;
+	// map_request = rhs.map_request;
+	// map_response = rhs.map_response;
 	config = rhs.config;
 	location = rhs.location;
 	request = rhs.request;
@@ -136,8 +136,8 @@ client&		client::operator=(const client& rhs)
 
 	if (this != &rhs)
 	{
-		map_request = rhs.map_request;
-		map_response = rhs.map_response;
+		// map_request = rhs.map_request;
+		// map_response = rhs.map_response;
 		config = rhs.config;
 		location = rhs.location;
 		request = rhs.request;

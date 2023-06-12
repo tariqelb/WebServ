@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get.cpp                                            :+:      :+:    :+:   */
+/*   getResponse.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/08 19:45:46 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/12 16:09:59 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,20 @@ int	get(struct webserv& web, struct client& clt)
 	{
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
-			return sendResponse(clt, web, 302);
-		return sendResponse(clt, web, 404);
+			return 302;
+		return 404;
 	} 
 	if (!S_ISDIR(pathStat.st_mode))
 	{
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
-			return sendResponse(clt, web, -302);
+			return -302;
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
-			return sendResponse(clt, web, 0);
-		return sendResponse(clt, web, 200);
+			return 0;
+		return 200;
 	}
-
 	if (*clt.map_request["URI"].rbegin() != '/')
-		return sendResponse(clt, web, 301);
+		return 301;
 	if (clt.location >= 0 && !web.config[clt.config].location[clt.location].index.empty())
 		path = clt.map_request["URI"] + web.config[clt.config].location[clt.location].index;
 	else if (clt.location < 0 && !web.config[clt.config].index.empty())
@@ -48,15 +47,15 @@ int	get(struct webserv& web, struct client& clt)
 	if (!stat(path.c_str(), &pathStat))
 	{
 		clt.map_request["URI"] = path;
-		return sendResponse(clt, web, 200);
+		return 200;
 	}
 	if (clt.location >= 0)
 	{
 		// std::cout << "auto index = " << web.config[clt.config].location[clt.location].autoindex << std::endl;
 		if (web.config[clt.config].location[clt.location].autoindex.empty() ||
 			web.config[clt.config].location[clt.location].autoindex == "off")
-			sendResponse(clt, web, 403);
+			return 403;
 	}
 	//! auto index
-	return sendResponse(clt, web, 0);
+	return 0;
 }
