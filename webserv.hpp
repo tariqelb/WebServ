@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/12 17:36:22 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/14 13:19:02 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,19 @@ struct uploadFiles
 class Response
 {
 	public:
-	int							statusCode;
-	bool						error;
-	std::string					response;
-	// std::vector<std::string>	response;
-	
+		bool				header;
+		bool				error;
+		bool				finishReading;
+		int					statusCode;
+		int					nbrFrames;
+		unsigned long		fileSize;
+		unsigned long		len;
+		std::string			responseData;
+		std::string			responseBody;
+		std::string			filePath;
+		std::streampos		position;
+
+		Response():header(0), nbrFrames(-1), finishReading(0){};
 };
 
 
@@ -154,6 +162,7 @@ struct server
 	struct serverfile				serverConfig;
 };
 
+
 //le request data;
 struct	webserv
 {
@@ -173,6 +182,7 @@ struct	webserv
 	unsigned int						next_read;
 	unsigned int 						next_write;
 };
+
 /*     ***********************************************     */
 // repo name : acceptConnectionAndGetRequestData
 // file name : handleConnection.cpp
@@ -351,6 +361,7 @@ std::string readFileContent(std::string &filePath, int statusCode);
 std::string getContentType(std::string filePath);
 void getResponse(struct client &clt, int statusCode,
 	std::string &response, std::string responseContent, std::string filePath);
+std::string getFilePath(struct client& clt, struct webserv &web, int statusCode);
 /**************************************************************************************/
 
 

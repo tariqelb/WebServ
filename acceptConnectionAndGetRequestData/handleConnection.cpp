@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/12 18:04:15 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/14 12:42:23 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,9 @@ void	closeConnection(struct webserv& web, int client_i)
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
-	if ((web.clients[client_i].response.error || (!web.clients[client_i].map_request.empty()
+	if (!((web.clients[client_i].response.error || (!web.clients[client_i].map_request.empty()
 		&& web.clients[client_i].map_request["Method"] == "GET"))
-		&&!std::remove(web.clients[client_i].file_name.c_str()))
-		std::cout << "req file removed " <<  web.clients[client_i].file_name << std::endl;
-	else
+		&&!std::remove(web.clients[client_i].file_name.c_str())))
 		std::cout << "req not file removed " <<  web.clients[client_i].file_name << std::endl;
 	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
@@ -129,7 +127,8 @@ void	handleConnection(struct webserv& web)
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
-				closeConnection(web, i);
+				if (web.clients[i].response.finishReading)
+					closeConnection(web, i);
 			}
 		}
 		i++;
