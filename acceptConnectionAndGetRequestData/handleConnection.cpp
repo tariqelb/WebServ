@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/14 12:42:23 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/15 13:51:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,6 @@ void	handleConnection(struct webserv& web)
 			if (flag_fail && web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-				
-				// web.clients[i].statusCode = parseRequest(web, web.clients[i]);
-				std::cout << "uri = [" << web.clients[i].map_request["URI"] << "]\n";
 				if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "GET")
 				{
 					std::cout << "Sending get response ...\n";
@@ -127,8 +124,11 @@ void	handleConnection(struct webserv& web)
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
-				if (web.clients[i].response.finishReading)
+				if (web.clients[i].response.finishReading || web.clients[i].response.error)
+				{
+					std::cout << "Connection Closed\n" << std::endl;
 					closeConnection(web, i);
+				}
 			}
 		}
 		i++;

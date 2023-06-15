@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/14 13:19:02 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/15 12:50:38 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,13 @@ class Response
 		bool				finishReading;
 		int					statusCode;
 		int					nbrFrames;
+		unsigned long		sizeFrame;
 		unsigned long		fileSize;
 		unsigned long		len;
 		std::string			responseData;
-		std::string			responseBody;
 		std::string			filePath;
 		std::streampos		position;
+		std::vector<char>		responseBody;
 
 		Response():header(0), nbrFrames(-1), finishReading(0){};
 };
@@ -354,14 +355,26 @@ int				isRequestWellFormed(struct client &clt, struct webserv &web);
 
 /* ************************* sendResponse ****************************************** */
 
-int send_404(struct client &clt) ;
-int sendResponse(struct client &clt, struct webserv &web, int statusCode);
+int			sendResponse(struct client &clt, struct webserv &web, int statusCode);
 
-std::string readFileContent(std::string &filePath, int statusCode);
-std::string getContentType(std::string filePath);
-void getResponse(struct client &clt, int statusCode,
+std::string	readFileContent(std::string &filePath, int statusCode);
+void		getResponse(struct client &clt, int statusCode,
 	std::string &response, std::string responseContent, std::string filePath);
+void getResponseHeader(struct client &clt, int statusCode, std::string filePath);
+/* ************************** responseUtils *************************************** */
+
 std::string getFilePath(struct client& clt, struct webserv &web, int statusCode);
+std::string getContentType(std::string filePath);
+std::string decimalToHex(int decimalNumber);
+void	initData(struct client &clt, std::string filePath, std::ifstream &file);
+
+
+/* ************************** seneErrorResponse *********************************** */
+
+void	readeErrorFile(struct client &clt, int statusCode);
+void	fillErrorResponse(struct client &clt, struct webserv &web, int statusCode);
+void	getResponseHeaderError(struct client &clt, int statusCode);
+
 /**************************************************************************************/
 
 
