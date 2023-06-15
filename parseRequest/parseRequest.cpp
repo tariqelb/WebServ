@@ -6,24 +6,24 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/12 18:05:35 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/15 19:06:54 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
 
-int parsLocation(struct client &clt, struct webserv &web, int i)
+int parsLocation(struct client &clt, struct webserv &web)
 {
-	if ((clt.location = search(clt, web, i)) < 0)
+	if ((clt.location = search(clt, web)) < 0)
 	{
-		if (clt.map_request["URI"] != "/" || web.config[i].root.empty())
+		if (clt.map_request["URI"] != "/" || web.config[clt.config].root.empty())
 			return 404;
-		clt.map_request["URI"] = web.config[i].root;
+		clt.map_request["URI"] = web.config[clt.config].root;
 		return 0;
 	}
-	if (!web.config[i].location[clt.location].redirect.empty())
+	if (!web.config[clt.config].location[clt.location].redirect.empty())
 	{
-		clt.map_request["URI"] = web.config[i].location[clt.location].redirect;
+		clt.map_request["URI"] = web.config[clt.config].location[clt.location].redirect;
 		char whitSpace[] = {'\t', ' ', '\v'};
 		if (std::find_first_of(clt.map_request["URI"].begin(), clt.map_request["URI"].end(),
 				std::begin(whitSpace), std::end(whitSpace)) != clt.map_request["URI"].end())
@@ -37,14 +37,14 @@ int parsLocation(struct client &clt, struct webserv &web, int i)
 			return stringToInt(statusCode);
 		}
 	}
-	else if (!web.config[i].location[clt.location].root.empty())
+	else if (!web.config[clt.config].location[clt.location].root.empty())
 		clt.map_request["URI"] = replaceLocation(clt.map_request["URI"],
-										 web.config[i].location[clt.location].pattern, 
-										 web.config[i].location[clt.location].root);
-	else if (!web.config[i].root.empty())
+										 web.config[clt.config].location[clt.location].pattern, 
+										 web.config[clt.config].location[clt.location].root);
+	else if (!web.config[clt.config].root.empty())
 		clt.map_request["URI"] = replaceLocation(clt.map_request["URI"],
-										 web.config[i].location[clt.location].pattern,
-										 web.config[i].root);
+										 web.config[clt.config].location[clt.location].pattern,
+										 web.config[clt.config].root);
 	else //!Need to be checked
 		return 404;
 	// std::cout << "location = [" << clt.map_request["URI"] << "]\n";
@@ -104,7 +104,7 @@ int parseRequestData(struct client &clt, struct webserv &web)
 	if ((statusCode = isRequestWellFormed(clt, web)))
 		return statusCode;
 
-	if ((statusCode = parsLocation(clt, web, clt.config)))
+	if ((statusCode = parsLocation(clt, web)))
 		return statusCode;
 
 	std::vector<std::string>::iterator iter;

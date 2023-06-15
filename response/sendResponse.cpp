@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 13:49:55 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/15 19:15:32 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 
 	chunkHeader = decimalToHex(clt.response.sizeFrame) + "\r\n" ;
 	clt.response.responseBody.assign(chunkHeader.begin(), chunkHeader.end());
-	clt.response.responseBody.insert(clt.response.responseBody.end(), buffer.begin(), buffer.end());
+	clt.response.responseBody.insert(clt.response.responseBody.end(),
+				buffer.begin(), buffer.end());
 	chunkHeader.clear();
 	chunkHeader = "\r\n";
 	clt.response.responseBody.insert(clt.response.responseBody.end(),
@@ -121,7 +122,7 @@ void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 
 int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
-	if (statusCode >= 400)
+	if (statusCode >= 400 || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
 	else
 		fillResponse(clt, web, statusCode);

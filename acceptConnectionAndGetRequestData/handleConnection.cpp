@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/15 13:51:18 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/15 19:39:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,22 @@
 
 void	closeConnection(struct webserv& web, int client_i)
 {
-   	std::vector<client>::iterator it;
+	std::vector<client>::iterator it;
 
 	it = web.clients.begin();
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
-	if (!((web.clients[client_i].response.error || (!web.clients[client_i].map_request.empty()
+	if (!((web.clients[client_i].response.error
+		|| (!web.clients[client_i].map_request.empty()
 		&& web.clients[client_i].map_request["Method"] == "GET"))
 		&&!std::remove(web.clients[client_i].file_name.c_str())))
-		std::cout << "req not file removed " <<  web.clients[client_i].file_name << std::endl;
+		std::cerr << "req not file removed " <<  web.clients[client_i].file_name << std::endl;
+	if (web.clients[client_i].response.autoindex)
+	{
+		if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
+			std::cerr << "Failed to remove autoindex file\n";
+	}
 	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
 	if (it != web.clients.end())
