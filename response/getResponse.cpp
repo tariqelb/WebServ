@@ -38,7 +38,7 @@ int autoindex(struct client& clt)
 	{
 		while ((en = readdir(directory)) != NULL)
 		{
-			autoindex	<< "<li>" << "<a href=\""
+			autoindex	<< "<li>" << "<a href=\"http://"
 						<< clt.map_request["Host"] + clt.map_request["URI"] << "\">"
 						<< en->d_name << "</a></li>\n";
 		}
