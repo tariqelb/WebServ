@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/12 18:03:08 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 18:23:30 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,9 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 {
 	char							line[100000];
 	int 							i;
-	int								n_byte_readed;
-	std::string						buff;
+	int			n_byte_readed;
+	int			statusCode;
+	std::string	buff;
 
 	memset(line, 0, 100000);
 	n_byte_readed = 0;
@@ -104,16 +105,18 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	}
 
 	/*****************************************************************/
-	std::cout << "clt_i = " << clt_i << std::endl;
-	if (clt.nbr_of_reads == 1
-		&& (web.clients[clt_i].response.statusCode = parseRequest(web, web.clients[clt_i])))
+	if (clt.nbr_of_reads == 1)
 	{
-		web.clients[clt_i].response.error = true;
-		FD_CLR(web.clients[clt_i].fd , &web.reads);
-		sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
-		closeConnection(web, clt_i);
-		flag_fail = 0;
-		return ;
+		parseRequest(web, web.clients[clt_i]);
+		if (web.clients[clt_i].response.error)
+		{
+			web.clients[clt_i].response.error = true;
+			FD_CLR(web.clients[clt_i].fd , &web.reads);
+			sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
+			closeConnection(web, clt_i);
+			flag_fail = 0;
+			return ;
+		}
 	}
 	/*****************************************************************/
 

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 13:18:03 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 12:28:50 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 14:15:06 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ std::string getFilePath(struct client& clt, struct webserv &web, int statusCode)
 	struct stat pathStat;
 	int status;
 
-	if (statusCode == 200 || statusCode == -302)
+	if (statusCode < 400)
 		return clt.map_request["URI"];
 	if (clt.location >= 0 )
 	{

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 19:15:32 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 18:21:08 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,11 @@ void getResponseHeader(struct client &clt, int statusCode, std::string filePath)
 	std::string response;
 
 	clt.response.header = true;
+	if (statusCode < 0)
+		statusCode = statusCode * -1;
 	response = "HTTP/1.1 " + intToString(statusCode) + " " + getStatusMessage(statusCode);
-	switch (statusCode)
-	{
-
-		case 302:
-			clt.response.finishReading = true;
-			clt.response.error = true;
-			response += "location: " + clt.map_request["URI"] + "\r\n\r\n";
-			clt.response.responseData.assign(response.begin(), response.begin() + response.size());
-			return;
-		case 301:
-			clt.response.finishReading = true;
-			clt.response.error = true;
-			response += "Connection: close\r\nServer: webserver-c\r\n ";
-			response +=  "Content-type: text/html\r\n\r\n";
-			response += " <html> <h1>Moved Permanently => need to be handled<h1> </html>\r\n";
-			clt.response.responseData.assign(response.begin(), response.begin() + response.size());
-			return;
-		case 0:
-			std::cout << "i am here\n";
-			clt.response.finishReading = true;
-			clt.response.error = true;
-			response += "Connection: close\r\nServer: webserver-c\r\n ";
-			response +=  "Content-type: text/html\r\n\r\n";
-			response += " <html> <h1> CGI or Post or delete or something not yet handled <h1>  </html>\r\n";
-			clt.response.responseData.assign(response.begin(), response.begin() + response.size());
-			return ;
-	}
-	response += "Transfer-Encoding: chunked\r\nServer: webserver-c\r\n ";
-	response += "Connection: keep-alive\r\n ";
+	response += "Transfer-Encoding: chunked\r\nServer: webserver-c\r\n";
+	response += "Connection: keep-alive\r\n";
 	response += "Content-Type: " + getContentType(filePath) + "\r\n";
 	response += "Content-Length:" + intToString(clt.response.len) +"\r\n\r\n";
 	clt.response.responseData.assign(response.begin(), response.end());
@@ -61,13 +36,17 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	std::string chunkHeader;
 
 	file.open(filePath.c_str(), std::ios::binary);
+	if (!file.is_open())
+	{
+		std::cerr << "COULD NOT OPEN FILE\n";
+		return ;
+	}
 	if (clt.response.nbrFrames < 0)
 		initData(clt, filePath, file);
 	if (clt.response.nbrFrames == 0)
 	{
 		clt.response.finishReading = true;
 		clt.response.sizeFrame = clt.response.fileSize;
-		std::cout << "FINISH READING\n";
 	}
 	else
 	{
@@ -105,9 +84,7 @@ void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 	if (!clt.response.header)
 		clt.response.filePath = getFilePath(clt, web, statusCode);
 	
-	if (statusCode != 301 && statusCode != 302 && statusCode != 0)
-		readFile(statusCode, clt, clt.response.filePath);
-	
+	readFile(statusCode, clt, clt.response.filePath);	
 	if (!clt.response.header)
 		getResponseHeader(clt, statusCode, clt.response.filePath);
 	else
@@ -122,14 +99,15 @@ void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 
 int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
-	if (statusCode >= 400 || clt.response.autoindex)
+	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
+	else if (!statusCode || statusCode >= 300)
+		fillRedirectResponse(clt, web, statusCode);
 	else
 		fillResponse(clt, web, statusCode);
 
-	if (send(clt.fd, clt.response.responseData.c_str(),
+	if (send(clt.fd, clt.response.responseData.data(),
 		clt.response.responseData.size(), 0) < 0)
-		std::cout << "ERROR: send\n";
 	
 	if (clt.response.finishReading)
 		clt.response.position = 0;

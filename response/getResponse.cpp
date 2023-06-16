@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 19:06:58 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 20:14:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int autoindex(struct client& clt)
 	if (!autoindex)
 	{
 		std::cerr << "Failed to create autoindex.html" << std::endl;
-		return 404;
+		return error(clt, 404);
 	}
 
 	autoindex << "<html>\n"
@@ -38,7 +38,9 @@ int autoindex(struct client& clt)
 	{
 		while ((en = readdir(directory)) != NULL)
 		{
-			autoindex << "<li>" << en->d_name << "</li>\n";
+			autoindex	<< "<li>" << "<a href=\""
+						<< clt.map_request["Host"] + clt.map_request["URI"] << "\">"
+						<< en->d_name << "</a></li>\n";
 		}
 		closedir(directory);
 	}
@@ -51,7 +53,9 @@ int autoindex(struct client& clt)
 	autoindex.close();
 
 	clt.map_request["URI"] +=  "/autoindex.html";
-	return 200;
+	if (clt.response.statusCode != 301)
+		clt.response.statusCode = 200;
+	return 0;
 }
 
 
@@ -65,20 +69,32 @@ int	get(struct webserv& web, struct client& clt)
 	{
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
-			return 302;
-		return 404;
+		{
+			if (clt.response.statusCode)
+				return clt.response.statusCode;
+			return clt.response.statusCode = 302;
+		}
+		return error(clt, 404);
 	} 
 	if (!S_ISDIR(pathStat.st_mode))
 	{
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
-			return -302;
+		{
+			if (clt.response.statusCode)
+				return clt.response.statusCode *= -1;
+			return clt.response.statusCode = -302;
+		}
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
-			return 0;
-		return 200;
+			return clt.response.statusCode = 0;
+		return clt.response.statusCode = 200;
 	}
 	if (*clt.map_request["URI"].rbegin() != '/')
-		return 301;
+	{
+		//! handle this case
+		clt.map_request["URI"] += "/";
+		clt.response.statusCode = 301;
+	}
 	if (clt.location >= 0 && !web.config[clt.config].location[clt.location].index.empty())
 		path = clt.map_request["URI"] + web.config[clt.config].location[clt.location].index;
 	else if (clt.location < 0 && !web.config[clt.config].index.empty())
@@ -89,14 +105,16 @@ int	get(struct webserv& web, struct client& clt)
 	if (!stat(path.c_str(), &pathStat))
 	{
 		clt.map_request["URI"] = path;
-		return 200;
+		if (clt.response.statusCode != 301)
+			clt.response.statusCode = 200;
+		return 0;
 	}
 	if (clt.location >= 0)
 	{
 		if (web.config[clt.config].location[clt.location].autoindex.empty() ||
 			web.config[clt.config].location[clt.location].autoindex == "off")
-			return 403;
+			return error(clt, 403);
 	}
 	return autoindex(clt);
-	return 0;
+	return clt.response.statusCode = 0;
 }

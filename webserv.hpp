@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/15 18:12:48 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 17:39:55 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,13 +114,13 @@ class Response
 		unsigned long		sizeFrame;
 		unsigned long		fileSize;
 		unsigned long		len;
-		std::string			responseData;
 		std::string			filePath;
 		std::streampos		position;
-		std::vector<char>		responseBody;
+		std::vector<char>	responseBody;
+		std::vector<char>	responseData;
 
 		Response():header(0), nbrFrames(-1)
-		, finishReading(0), autoindex(0){};
+		, finishReading(0), autoindex(0), statusCode(0){};
 };
 
 
@@ -350,6 +350,7 @@ std::string		intToString(int n);
 void			fillMapContentTypes(std::map<std::string, std::string> &contentTypes);
 std::string		host(std::string host);
 std::string		getStatusMessage(int statusCode);
+int error(struct client &clt,int statusCode);
 
 /* ************************** parseRequest ****************************************** */
 
@@ -378,13 +379,16 @@ void	readeErrorFile(struct client &clt, int statusCode);
 void	fillErrorResponse(struct client &clt, struct webserv &web, int statusCode);
 void	getResponseHeaderError(struct client &clt, int statusCode);
 
+/* ************************** sendRedirecResponse ********************************* */
+
+void	fillRedirectResponse(struct client &clt, struct webserv &web, int statusCode);
+
 /**************************************************************************************/
 
 
 int		get(struct webserv& web, struct client& clt);
 void	post(struct webserv& web, struct client& clt);
 void	deleteResponse(struct webserv& web, struct client& clt);
-
 
 
 #endif

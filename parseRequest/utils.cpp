@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 16:37:02 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 17:39:28 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,18 @@ int search(struct client &clt, struct webserv &web)
 	}
 	vec_iter = std::max_element(vec.begin(), vec.end());
 	for (j = 0; j < vec.size() && vec[j] != *vec_iter; j++);
-	std::cout << "j = " << j << std::endl;
+	// std::cout << "max = " << *vec_iter << " => " << j << std::endl;
 	if (!j && !vec[j])
 		return -1;
 	return j;
+}
+
+
+int error(struct client &clt,int statusCode)
+{
+	clt.response.statusCode = statusCode;
+	clt.response.error = true;
+	return 0;
 }
 
 std::string getStatusMessage(int statusCode)
@@ -97,7 +105,6 @@ std::string getStatusMessage(int statusCode)
 	map[302] = "Found\r\n";
 	map[301] = "Moved Permanently\r\n";
 	map[200] = "OK\r\n";
-	map[-302] = "Found\r\n";
 	map[0] = "OK\r\n";
 	return map[statusCode];
 }

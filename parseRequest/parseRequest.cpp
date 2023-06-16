@@ -6,35 +6,59 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 19:06:54 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 18:09:04 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
+
+int handleRedirection(struct client &clt, struct webserv &web)
+{
+	char nextChar = clt.map_request["URI"]
+					[clt.map_request["URI"].find(web.config[clt.config].location[clt.location].pattern)
+					+ web.config[clt.config].location[clt.location].pattern.size()];
+	
+	if (nextChar != '/' && nextChar != '\0')
+		return error(clt, 404);
+	
+	clt.map_request["URI"].clear();
+	clt.map_request["URI"] = web.config[clt.config].location[clt.location].redirect;
+
+	char whitSpace[] = {'\t', ' ', '\v'};
+	int whitSpaceChar;
+	whitSpaceChar = clt.map_request["URI"].find_first_of(whitSpace, 0, sizeof(whitSpace));
+	if (whitSpaceChar != std::string::npos)
+	{
+		std::stringstream redirect(clt.map_request["URI"]);
+		std::string statusCode;
+		
+		redirect >> statusCode;
+		clt.response.statusCode = stringToInt(statusCode);
+		for (; whitSpaceChar < clt.map_request["URI"].size()
+			&& std::isspace(clt.map_request["URI"][whitSpaceChar]); whitSpaceChar++)
+		clt.map_request["URI"] = clt.map_request["URI"].substr(whitSpaceChar + 1,
+			clt.map_request["URI"].size());
+	}
+	return 0;
+}
+
 
 int parsLocation(struct client &clt, struct webserv &web)
 {
 	if ((clt.location = search(clt, web)) < 0)
 	{
 		if (clt.map_request["URI"] != "/" || web.config[clt.config].root.empty())
-			return 404;
+			return error(clt, 404);
 		clt.map_request["URI"] = web.config[clt.config].root;
 		return 0;
 	}
 	if (!web.config[clt.config].location[clt.location].redirect.empty())
 	{
-		clt.map_request["URI"] = web.config[clt.config].location[clt.location].redirect;
-		char whitSpace[] = {'\t', ' ', '\v'};
-		if (std::find_first_of(clt.map_request["URI"].begin(), clt.map_request["URI"].end(),
-				std::begin(whitSpace), std::end(whitSpace)) != clt.map_request["URI"].end())
+		int status;
+		if ((status = handleRedirection(clt, web)))
 		{
-			std::stringstream redirect(clt.map_request["URI"]);
-			std::string statusCode;
-
-			redirect >> statusCode;
-			redirect >> clt.map_request["URI"];
-			std::cout << "location = [" << clt.map_request["URI"] << "]\n";
-			return stringToInt(statusCode);
+			std::cout << "I SHOULD RETURN =>" << status << "\n";
+			return status;
 		}
 	}
 	else if (!web.config[clt.config].location[clt.location].root.empty())
@@ -45,9 +69,8 @@ int parsLocation(struct client &clt, struct webserv &web)
 		clt.map_request["URI"] = replaceLocation(clt.map_request["URI"],
 										 web.config[clt.config].location[clt.location].pattern,
 										 web.config[clt.config].root);
-	else //!Need to be checked
-		return 404;
-	// std::cout << "location = [" << clt.map_request["URI"] << "]\n";
+	else
+		return error(clt, 404);
 	return 0;
 }
 
@@ -82,30 +105,31 @@ int isRequestWellFormed(struct client &clt, struct webserv &web)
 		|| (clt.map_request["Method"] == "POST" 
 		&& clt.map_request.find("Transfer-Encoding") == clt.map_request.end()
 		&& clt.map_request.find("Content-Length") == clt.map_request.end()))
-		return 400;
+		return error(clt, 400);
 	if (clt.map_request.find("Transfer-Encoding") != clt.map_request.end()
 		&& clt.map_request["Transfer-Encoding"] != "chunked")
-		return 501;
+		return error(clt, 501);
 		
 	if (clt.map_request["URI"].size() > 2048)
-		return 414;
+		return error(clt, 414);
 
 	if (clt.map_request.find("Content-Length") != clt.map_request.end()
 		&& clt.map_request["Method"] == "POST"
 	&& stringToInt(clt.map_request["Content-Length"])
 		> stringToInt(web.config[clt.config].max_body_size))
-		return 413;
+		return error(clt, 413);
 	return 0;
 }
 
 int parseRequestData(struct client &clt, struct webserv &web)
 {
-	int statusCode;
-	if ((statusCode = isRequestWellFormed(clt, web)))
-		return statusCode;
+	isRequestWellFormed(clt, web);
+	if (clt.response.error)
+		return 0;
 
-	if ((statusCode = parsLocation(clt, web)))
-		return statusCode;
+	parsLocation(clt, web);
+	if (clt.response.error)
+		return 0;
 
 	std::vector<std::string>::iterator iter;
 	if (clt.config != -1 && clt.location != -1)
@@ -113,10 +137,10 @@ int parseRequestData(struct client &clt, struct webserv &web)
 		iter = std::find(web.config[clt.config].location[clt.location].allow.begin(),
 		web.config[clt.config].location[clt.location].allow.end(), clt.map_request["Method"]);
 		if (iter == web.config[clt.config].location[clt.location].allow.end())
-			return 405;
+			return error(clt, 405);
 		return 0;
 	}
-	return 405;
+	return error(clt, 405);
 }
 
 int parseRequest(struct webserv &web, struct client &clt)
@@ -128,7 +152,6 @@ int parseRequest(struct webserv &web, struct client &clt)
 	
 	fillRequestData(clt);
 
-	return parseRequestData(clt, web);
+	parseRequestData(clt, web);
+	return 0;
 }
-
-// 	// std::cout<<std::string(clt.buffer.str(), 65005)<<std::endl;

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/15 19:39:18 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/16 18:23:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,14 +101,15 @@ void	handleConnection(struct webserv& web)
 			if (flag_fail && web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-				if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "GET")
+				if (web.clients[i].map_request["Method"] == "GET")
 				{
+					//! staus code can be 300 >
 					std::cout << "Sending get response ...\n";
-					web.clients[i].response.statusCode = get(web, web.clients[i]);
+					get(web, web.clients[i]);
 				}
-				else if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "POST")
+				else if (web.clients[i].response.statusCode < 400 && web.clients[i].map_request["Method"] == "POST")
 					post(web, web.clients[i]);
-				else if (!web.clients[i].response.statusCode && web.clients[i].map_request["Method"] == "DELETE")
+				else if (web.clients[i].response.statusCode < 400 && web.clients[i].map_request["Method"] == "DELETE")
 					deleteResponse(web, web.clients[i]);
 				std::cout << "\033[00m";
 
