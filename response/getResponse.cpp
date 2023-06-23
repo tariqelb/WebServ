@@ -6,26 +6,30 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/16 20:14:18 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/19 16:26:09 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
 
 
-int autoindex(struct client& clt)
+int autoindex(struct client& clt, struct webserv &web)
 {
 	std::ofstream autoindex((clt.map_request["URI"] + "/autoindex.html").c_str());
 	DIR* directory;
 	struct dirent* en;
+	std::string pattern;
 
-	clt.response.autoindex = true;
+	//!still need to handle the case of the previous
 	if (!autoindex)
 	{
 		std::cerr << "Failed to create autoindex.html" << std::endl;
 		return error(clt, 404);
 	}
 
+	std::cout << "autoindex = " << clt.response.autoindex << std::endl;
+	clt.response.autoindex = true;
+	std::cout << "new uri = " << clt.map_request["URI"] << std::endl;
 	autoindex << "<html>\n"
 				<< "<head><title>Index of " << clt.map_request["URI"] << "</title></head>\n"
 				<< "<body>\n"
@@ -36,12 +40,22 @@ int autoindex(struct client& clt)
 	directory = opendir(clt.map_request["URI"].c_str());
 	if (directory)
 	{
+		if (*clt.response.uri.rbegin() != '/')
+		{
+			std::cout << "i am adding /\n"; 
+			clt.response.uri += "/";
+		}
 		while ((en = readdir(directory)) != NULL)
 		{
-			autoindex	<< "<li>" << "<a href=\"http://"
-						<< clt.map_request["Host"] + clt.map_request["URI"] << "\">"
+			if (strcmp(en->d_name, ".") && strcmp(en->d_name, ".."))
+			{
+			autoindex	<< "<li>" << "<a href=\""
+						<< "http://"
+						<< clt.map_request["Host"] + clt.response.uri + en->d_name
+						<< "\">"
 						<< en->d_name << "</a></li>\n";
-		}
+			}
+		}//!manage the spaces and special characters in file names
 		closedir(directory);
 	}
 
@@ -58,15 +72,15 @@ int autoindex(struct client& clt)
 	return 0;
 }
 
-
-
 int	get(struct webserv& web, struct client& clt)
 {
 	struct stat pathStat;
 	std::string path;
 
-	if (stat(clt.map_request["URI"].c_str(), &pathStat) != 0)
+	std::cout << "uri = " << clt.map_request["URI"] << std::endl;
+	if (stat(clt.map_request["URI"].c_str(), &pathStat))
 	{
+		std::cout << "****************\n";
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
 		{
@@ -86,17 +100,20 @@ int	get(struct webserv& web, struct client& clt)
 			return clt.response.statusCode = -302;
 		}
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
-			return clt.response.statusCode = 0;
+		{
+			return cgi(web, clt);
+		}
 		return clt.response.statusCode = 200;
 	}
 	if (*clt.map_request["URI"].rbegin() != '/')
 	{
-		//! handle this case
 		clt.map_request["URI"] += "/";
-		clt.response.statusCode = 301;
+		clt.response.statusCode = -301;
 	}
 	if (clt.location >= 0 && !web.config[clt.config].location[clt.location].index.empty())
+	{
 		path = clt.map_request["URI"] + web.config[clt.config].location[clt.location].index;
+	}
 	else if (clt.location < 0 && !web.config[clt.config].index.empty())
 		path = clt.map_request["URI"] + web.config[clt.config].index;
 	if (stat(path.c_str(), &pathStat))
@@ -105,7 +122,7 @@ int	get(struct webserv& web, struct client& clt)
 	if (!stat(path.c_str(), &pathStat))
 	{
 		clt.map_request["URI"] = path;
-		if (clt.response.statusCode != 301)
+		if (clt.response.statusCode != -301)
 			clt.response.statusCode = 200;
 		return 0;
 	}
@@ -115,6 +132,6 @@ int	get(struct webserv& web, struct client& clt)
 			web.config[clt.config].location[clt.location].autoindex == "off")
 			return error(clt, 403);
 	}
-	return autoindex(clt);
+	return autoindex(clt, web);
 	return clt.response.statusCode = 0;
 }

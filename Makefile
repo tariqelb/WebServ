@@ -6,7 +6,7 @@
 #    By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/06/16 11:31:00 by hasabir          ###   ########.fr        #
+#    Updated: 2023/06/19 16:06:06 by hasabir          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRCS = 	main.cpp \
 		response/deleteResponse.cpp response/ResponseUtils.cpp\
 		response/getResponse.cpp response/postResponse.cpp response/sendResponse.cpp\
 		response/sendErrorResponse.cpp response/sendRedirectResponse.cpp\
+		cgi/cgi.cpp\
 		client.cpp\
 
 OBJS = ${SRCS:.cpp=.o}

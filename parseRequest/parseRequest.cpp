@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/16 18:09:04 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/23 07:35:06 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,7 @@ int parsLocation(struct client &clt, struct webserv &web)
 	{
 		int status;
 		if ((status = handleRedirection(clt, web)))
-		{
-			std::cout << "I SHOULD RETURN =>" << status << "\n";
 			return status;
-		}
 	}
 	else if (!web.config[clt.config].location[clt.location].root.empty())
 		clt.map_request["URI"] = replaceLocation(clt.map_request["URI"],
@@ -92,7 +89,11 @@ int getHostPort(struct client &clt, struct webserv &web)
 		}
 	}
 	if (*port != clt.map_request["Host"].substr(clt.map_request["Host"].find(":") + 1))
+	{
+		clt.port = web.config[0].listen[0];
 		return 0;
+	}
+	clt.port = *port;
 	return i;
 }
 

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/16 17:39:55 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/23 07:34:02 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define WEBSERV_HPP
 
 # include <unistd.h>
-# include <string.h>
+# include <cstring>
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netdb.h>
@@ -34,8 +34,9 @@
 # include <cctype>
 # include <sys/stat.h>
 # include <cstdio>
-#include <dirent.h>
-#include <algorithm>
+# include <dirent.h>
+# include <algorithm>
+# include <cstdlib>
 
 # define MAX_CONNECTION 355
 # define HOST "localhost"
@@ -118,39 +119,43 @@ class Response
 		std::streampos		position;
 		std::vector<char>	responseBody;
 		std::vector<char>	responseData;
+		std::string			uri;
 
 		Response():header(0), nbrFrames(-1)
 		, finishReading(0), autoindex(0), statusCode(0){};
 };
 
-
+class CGI
+{
+	public:
+		std::map<std::string, std::string>	cgi_ENV;
+		std::map<std::string, std::string>	query;
+		std::vector<std::string> env;
+};
 struct client
 {
-	std::map<std::string, std::string> 					map_request;
-	// std::map<std::string, std::string>					map_response;
-	// std::string											response;
-	// int													statusCode;
+	std::map<std::string, std::string>	map_request;	
+	Response							response;
+	CGI									cgi;
 	
-	Response											response;
-	
-	int 												config;
-	int													location;
-	std::vector<std::pair<std::string, std::string> >	request;
-	// std::vector<std::pair<std::string, std::string> >	response;
-	bool						response_is_ready;
-	struct sockaddr_storage								addr;
-	socklen_t											len;
-	int													fd;
-	bool												request_is_ready;
-	struct body											bodys;
-	std::string											headers;
-	std::fstream										*file;			
-	std::string											file_name;
-	std::string											body_data;
-	int													nbr_of_reads;
-	int													post_flag;
-	std::vector<struct uploadFiles>						upload_files;
-	unsigned long										body_length;
+	int 								config;
+	int									location;
+	std::string							port;
+
+	bool								response_is_ready;
+	struct sockaddr_storage				addr;
+	socklen_t							len;
+	int									fd;
+	bool								request_is_ready;
+	struct body							bodys;
+	std::string							headers;
+	std::fstream						*file;			
+	std::string							file_name;
+	std::string							body_data;
+	int									nbr_of_reads;
+	int									post_flag;
+	std::vector<struct uploadFiles>		upload_files;
+	unsigned long						body_length;
 
 	client();
 	~client();
@@ -382,6 +387,9 @@ void	getResponseHeaderError(struct client &clt, int statusCode);
 /* ************************** sendRedirecResponse ********************************* */
 
 void	fillRedirectResponse(struct client &clt, struct webserv &web, int statusCode);
+
+/* ************************** cgi ************************************************* */
+int cgi(struct webserv &web, struct client &clt);
 
 /**************************************************************************************/
 
