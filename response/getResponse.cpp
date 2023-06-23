@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/19 16:26:09 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/23 18:07:21 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int autoindex(struct client& clt, struct webserv &web)
 			{
 			autoindex	<< "<li>" << "<a href=\""
 						<< "http://"
-						<< clt.map_request["Host"] + clt.response.uri + en->d_name
+						<< clt.map_request["Host"] << clt.response.uri << en->d_name
 						<< "\">"
 						<< en->d_name << "</a></li>\n";
 			}
@@ -101,7 +101,8 @@ int	get(struct webserv& web, struct client& clt)
 		}
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
 		{
-			return cgi(web, clt);
+			if (cgi(web, clt) == 200)
+				return 200;
 		}
 		return clt.response.statusCode = 200;
 	}
