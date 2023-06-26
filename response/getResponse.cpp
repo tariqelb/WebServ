@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/23 18:07:21 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/25 22:40:09 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,7 @@ int autoindex(struct client& clt, struct webserv &web)
 		return error(clt, 404);
 	}
 
-	std::cout << "autoindex = " << clt.response.autoindex << std::endl;
 	clt.response.autoindex = true;
-	std::cout << "new uri = " << clt.map_request["URI"] << std::endl;
 	autoindex << "<html>\n"
 				<< "<head><title>Index of " << clt.map_request["URI"] << "</title></head>\n"
 				<< "<body>\n"
@@ -41,10 +39,7 @@ int autoindex(struct client& clt, struct webserv &web)
 	if (directory)
 	{
 		if (*clt.response.uri.rbegin() != '/')
-		{
-			std::cout << "i am adding /\n"; 
 			clt.response.uri += "/";
-		}
 		while ((en = readdir(directory)) != NULL)
 		{
 			if (strcmp(en->d_name, ".") && strcmp(en->d_name, ".."))
@@ -77,7 +72,6 @@ int	get(struct webserv& web, struct client& clt)
 	struct stat pathStat;
 	std::string path;
 
-	std::cout << "uri = " << clt.map_request["URI"] << std::endl;
 	if (stat(clt.map_request["URI"].c_str(), &pathStat))
 	{
 		std::cout << "****************\n";

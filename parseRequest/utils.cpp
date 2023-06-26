@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/16 17:39:28 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/24 18:02:24 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 	contentTypes[".gif"] = "image/gif";
 	contentTypes[".mp3"] = "audio/mpeg";
 	contentTypes[".mp4"] = "video/mp4";
+	contentTypes[".hpp"] = "text/x-c++hdr";
 	contentTypes[".cpp"] = "text/x-c++src";
 	contentTypes[".c"] = "text/x-csrc";
 	contentTypes[".py"] = "text/x-python";

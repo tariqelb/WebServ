@@ -1,10 +1,40 @@
+
+
 <!DOCTYPE html>
+<html>
 <head>
     <title>Error Page</title>
+    <style>
+        .indented-text {
+            display: inline-block;
+            margin-left: 0px;
+        }
+        .larger-text {
+            font-size: 70px;
+            text-align: center;
+        }
+        body {
+            display: grid;
+            place-items: center;
+            height: 50vh;
+            background-color: #050000;
+            font-family: Courier New, monospace;
+        }
+        
+        h1 {
+            color: #2b7922;
+            /* text-align: center; */
+        }
+        
+        p {
+            color: #5ceb4d;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <p>
-       <h1>404 Not Found<h1>
-    </p>
-    
+    <!-- <span class="larger-text"></span> -->
+    <h1><span class="larger-text"></span>404 Not Found</span></h1>
+    <p> <span class="larger-text">The file requested can not be found.</span></p>
 </body>
+</html>

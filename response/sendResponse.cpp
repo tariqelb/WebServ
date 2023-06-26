@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/16 18:21:08 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/25 23:57:33 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	if (!file.is_open())
 	{
 		std::cerr << "COULD NOT OPEN FILE\n";
-		return ;
+		return ;//!404
 	}
 	if (clt.response.nbrFrames < 0)
 		initData(clt, filePath, file);
@@ -82,7 +82,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	if (!clt.response.header)
-		clt.response.filePath = getFilePath(clt, web, statusCode);
+		clt.response.filePath = clt.map_request["URI"];
 	
 	readFile(statusCode, clt, clt.response.filePath);	
 	if (!clt.response.header)

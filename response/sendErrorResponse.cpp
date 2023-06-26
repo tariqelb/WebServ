@@ -6,11 +6,86 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/15 19:03:04 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 00:47:27 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../webserv.hpp"
+
+std::string	generateErrorFile(struct client &clt, struct webserv &web, int statusCode)
+{
+	std::cout << "generating error file path\n";
+	std::string filePath("www/error/generated_"
+					+ intToString(statusCode) + ".html");
+	std::ofstream  errorFile(filePath);
+	
+	if (!errorFile)
+	{
+		std::cerr << "error opening error file\n";
+		return NULL;
+	}
+
+	errorFile	<< "<!DOCTYPE html>\n<html>\n<head>\n"
+				<< "<title>" << getStatusMessage(statusCode)
+				<< "</title>\n"
+				<< "<style>\n"
+				
+				<< ".larger-text {\n"
+				<< "font-size: 60px;\n"
+				<< "text-align: center;\n}\n"
+				
+				<< "body {\n"
+            	<< "background-color: #080707;\n"
+            	<< "font-family: Courier New, monospace;\n}\n"
+				<< "h1 {\n"
+            	<< "color: #fcfcfc;\n"
+            	<< "text-align: center;\n}"
+        
+        		<<"p {\n"
+            	<< "text-align: center;\n}\n</style>\n"
+				<< "/head>\n"
+				<<"<body>\n"
+				<< "<span class=\"larger-text\">"
+				<< "\t<p>\n<h1><center>" 
+				<< statusCode << ":\n" << getStatusMessage(statusCode)
+				<< "</p></center></h1>"
+				<< "</body>\n</html>";
+	
+	return filePath;
+}
+
+
+std::string getFilePath(struct client& clt, struct webserv &web, int statusCode)
+{
+	std::vector<std::pair<std::string, std::string> >::iterator iter;
+	std::string filePath;
+	struct stat pathStat;
+	int status;
+
+	if (clt.location >= 0 )
+	{
+		for (iter = web.config[clt.config].location[clt.location].error_page.begin();
+		iter != web.config[clt.config].location[clt.location].error_page.end()
+		&& iter->first != intToString(statusCode); iter++);
+		if (iter != web.config[clt.config].location[clt.location].error_page.end())
+			filePath = iter->second;
+	}
+	if (clt.location < 0
+		|| iter == web.config[clt.config].location[clt.location].error_page.end())
+	{
+		for (iter = web.config[clt.config].error_page.begin();
+			iter != web.config[clt.config].error_page.end()
+			&& iter->first != intToString(statusCode); iter++);
+		if (iter != web.config[clt.config].error_page.end())
+			filePath = iter->second;
+	}
+	if (iter == web.config[clt.config].error_page.end()
+		|| (iter != web.config[clt.config].error_page.end()
+		&& ((status = stat(filePath.c_str(), &pathStat))
+		|| (!status && !S_ISREG(pathStat.st_mode)))))
+		filePath = generateErrorFile(clt, web, statusCode);
+	return filePath;
+}
 
 void readeErrorFile(struct client &clt, int statusCode)
 {
@@ -40,7 +115,11 @@ void	getResponseHeaderError(struct client &clt, int statusCode)
 
 void	fillErrorResponse(struct client &clt, struct webserv &web, int statusCode)
 {
-	clt.response.filePath = getFilePath(clt, web, statusCode);
+	std::cout << "filling error response\n";
+	if (clt.response.autoindex)
+		clt.response.filePath = clt.map_request["URI"];
+	else
+		clt.response.filePath = getFilePath(clt, web, statusCode);
 	readeErrorFile(clt, statusCode);
 	getResponseHeaderError(clt, statusCode);
 }
