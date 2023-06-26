@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/23 07:35:06 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 10:55:19 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ int parseRequestData(struct client &clt, struct webserv &web)
 			return error(clt, 405);
 		return 0;
 	}
-	return error(clt, 405);
+	return 0;
 }
 
 int parseRequest(struct webserv &web, struct client &clt)

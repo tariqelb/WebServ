@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/23 07:34:02 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 23:13:08 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define CONTINUE "HTTP/1.0 100-continue"
 # define CONFIGFILE	"./configFile/server.conf";
 # define MAXINT	100000
+# define CRLF "\r\n"
 
 
 struct body
@@ -110,6 +111,8 @@ class Response
 		bool				error;
 		bool				finishReading;
 		bool				autoindex;
+		bool				generateError;
+		bool				body;
 		int					statusCode;
 		int					nbrFrames;
 		unsigned long		sizeFrame;
@@ -121,8 +124,9 @@ class Response
 		std::vector<char>	responseData;
 		std::string			uri;
 
-		Response():header(0), nbrFrames(-1)
-		, finishReading(0), autoindex(0), statusCode(0){};
+		Response():header(0), nbrFrames(-1),
+		finishReading(0), autoindex(0),generateError(0),
+		body(0), statusCode(0){};
 };
 
 class CGI

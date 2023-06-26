@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/26 00:47:27 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 23:09:13 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ std::string	generateErrorFile(struct client &clt, struct webserv &web, int statu
 					+ intToString(statusCode) + ".html");
 	std::ofstream  errorFile(filePath);
 	
+	clt.response.generateError = true;
 	if (!errorFile)
 	{
 		std::cerr << "error opening error file\n";
@@ -35,14 +36,14 @@ std::string	generateErrorFile(struct client &clt, struct webserv &web, int statu
 				<< "text-align: center;\n}\n"
 				
 				<< "body {\n"
-            	<< "background-color: #080707;\n"
-            	<< "font-family: Courier New, monospace;\n}\n"
+				<< "background-color: #080707;\n"
+				<< "font-family: Courier New, monospace;\n}\n"
 				<< "h1 {\n"
-            	<< "color: #fcfcfc;\n"
-            	<< "text-align: center;\n}"
-        
-        		<<"p {\n"
-            	<< "text-align: center;\n}\n</style>\n"
+				<< "color: #fcfcfc;\n"
+				<< "text-align: center;\n}"
+		
+				<<"p {\n"
+				<< "text-align: center;\n}\n</style>\n"
 				<< "/head>\n"
 				<<"<body>\n"
 				<< "<span class=\"larger-text\">"
@@ -50,7 +51,7 @@ std::string	generateErrorFile(struct client &clt, struct webserv &web, int statu
 				<< statusCode << ":\n" << getStatusMessage(statusCode)
 				<< "</p></center></h1>"
 				<< "</body>\n</html>";
-	
+	clt.map_request["URI"] = filePath;
 	return filePath;
 }
 
@@ -93,6 +94,11 @@ void readeErrorFile(struct client &clt, int statusCode)
 	std::stringstream responseBody;
 	
 	file.open(clt.response.filePath.c_str(), std::ios::binary);
+	if (!file.is_open())
+	{
+		std::cerr << "ERROR : FAILED TO OPEN ERROR OR AUTOINDEX FILE \n";
+		return;
+	}
 	responseBody << file.rdbuf();
 	std::copy( std::istreambuf_iterator<char>(responseBody),
 	std::istreambuf_iterator<char>(), std::back_inserter(clt.response.responseBody));
@@ -115,7 +121,6 @@ void	getResponseHeaderError(struct client &clt, int statusCode)
 
 void	fillErrorResponse(struct client &clt, struct webserv &web, int statusCode)
 {
-	std::cout << "filling error response\n";
 	if (clt.response.autoindex)
 		clt.response.filePath = clt.map_request["URI"];
 	else

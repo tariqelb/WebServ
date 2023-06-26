@@ -6,7 +6,7 @@
 #    By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 14:11:30 by tel-bouh          #+#    #+#              #
-#    Updated: 2023/06/23 17:30:04 by hasabir          ###   ########.fr        #
+#    Updated: 2023/06/26 21:52:56 by hasabir          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ FLAGS = -std=c++98
 
 all : ${NAME}
 
-%.o: %.cpp
+%.o: %.cpp webserv.hpp
 	@$(CC) ${FLAGS} -c -o $@ $<
   
 ${NAME} :${OBJS}

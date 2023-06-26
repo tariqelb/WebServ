@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/24 18:02:24 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 11:01:51 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ std::string getStatusMessage(int statusCode)
 	map[302] = "Found\r\n";
 	map[301] = "Moved Permanently\r\n";
 	map[200] = "OK\r\n";
+	map[500] = "Internal Server Error\r\n";
 	map[0] = "OK\r\n";
 	return map[statusCode];
 }

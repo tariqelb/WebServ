@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/16 18:23:52 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 23:18:16 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,14 @@ void	closeConnection(struct webserv& web, int client_i)
 		&& web.clients[client_i].map_request["Method"] == "GET"))
 		&&!std::remove(web.clients[client_i].file_name.c_str())))
 		std::cerr << "req not file removed " <<  web.clients[client_i].file_name << std::endl;
-	if (web.clients[client_i].response.autoindex)
+	if (web.clients[client_i].response.autoindex
+		|| web.clients[client_i].response.generateError)
 	{
 		if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
 			std::cerr << "Failed to remove autoindex file\n";
 	}
-	while (client_i < web.clients.size() && (*it).fd != web.clients[client_i].fd && it != web.clients.end())
+	while (client_i < web.clients.size()
+		&& (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
 	if (it != web.clients.end())
 		web.clients.erase(it);
@@ -101,9 +103,8 @@ void	handleConnection(struct webserv& web)
 			if (flag_fail && web.clients[i].request_is_ready == true)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-				if (web.clients[i].map_request["Method"] == "GET")
+				if (!web.clients[i].response.error && web.clients[i].map_request["Method"] == "GET")
 				{
-					//! staus code can be 300 >
 					std::cout << "Sending get response ...\n";
 					get(web, web.clients[i]);
 				}

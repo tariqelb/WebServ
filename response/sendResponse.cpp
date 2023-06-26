@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/25 23:57:33 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/26 23:17:38 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,8 @@ void getResponseHeader(struct client &clt, int statusCode, std::string filePath)
 	std::string response;
 
 	clt.response.header = true;
-	if (statusCode < 0)
-		statusCode = statusCode * -1;
 	response = "HTTP/1.1 " + intToString(statusCode) + " " + getStatusMessage(statusCode);
-	response += "Transfer-Encoding: chunked\r\nServer: webserver-c\r\n";
+	response += "Server: webserver-c\r\n";
 	response += "Connection: keep-alive\r\n";
 	response += "Content-Type: " + getContentType(filePath) + "\r\n";
 	response += "Content-Length:" + intToString(clt.response.len) +"\r\n\r\n";
@@ -39,8 +37,10 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	if (!file.is_open())
 	{
 		std::cerr << "COULD NOT OPEN FILE\n";
-		return ;//!404
+		error(clt, 500);
+		return ;
 	}
+	// std::cout << "\033[91m Frame -> " << clt.response.nbrFrames << "\033[00m" << std::endl; 
 	if (clt.response.nbrFrames < 0)
 		initData(clt, filePath, file);
 	if (clt.response.nbrFrames == 0)
@@ -60,22 +60,8 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	clt.response.position = file.tellg();
 	
 	clt.response.responseBody.clear();
-
-	chunkHeader = decimalToHex(clt.response.sizeFrame) + "\r\n" ;
-	clt.response.responseBody.assign(chunkHeader.begin(), chunkHeader.end());
 	clt.response.responseBody.insert(clt.response.responseBody.end(),
 				buffer.begin(), buffer.end());
-	chunkHeader.clear();
-	chunkHeader = "\r\n";
-	clt.response.responseBody.insert(clt.response.responseBody.end(),
-			chunkHeader.begin(), chunkHeader.end());
-	if (clt.response.finishReading)
-	{
-		chunkHeader.clear();
-		chunkHeader = "0\r\n\r\n";
-		clt.response.responseBody.insert(clt.response.responseBody.end()
-			,chunkHeader.begin(), chunkHeader.end());
-	}
 	file.close();
 }
 
@@ -101,16 +87,17 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
-	else if (!statusCode || statusCode >= 300)
+	else if (!statusCode || statusCode >= 300 || !clt.response.body)
 		fillRedirectResponse(clt, web, statusCode);
 	else
 		fillResponse(clt, web, statusCode);
-
-	if (send(clt.fd, clt.response.responseData.data(),
-		clt.response.responseData.size(), 0) < 0)
-	
 	if (clt.response.finishReading)
 		clt.response.position = 0;
+
+	if (send(clt.fd, clt.response.responseData.data(), clt.response.responseData.size(), 0) < 0)
+	{
+		error(clt, 500);
+		std::cerr << "ERROR : SEND\n";
+	}
 	return statusCode;
 }
-
