@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sendResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/26 23:17:38 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/27 17:25:20 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
-	else if (!statusCode || statusCode >= 300 || !clt.response.body)
+	else if (!statusCode || (statusCode >= 300 && !clt.response.body))
 		fillRedirectResponse(clt, web, statusCode);
 	else
 		fillResponse(clt, web, statusCode);

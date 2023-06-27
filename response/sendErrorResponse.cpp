@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sendErrorResponse.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/26 23:09:13 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/27 23:46:32 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,14 @@ std::string getFilePath(struct client& clt, struct webserv &web, int statusCode)
 	struct stat pathStat;
 	int status;
 
+	std::cout << "location = " << clt.location << std::endl;
+	displayServerFile(web.config);
 	if (clt.location >= 0 )
 	{
 		for (iter = web.config[clt.config].location[clt.location].error_page.begin();
 		iter != web.config[clt.config].location[clt.location].error_page.end()
-		&& iter->first != intToString(statusCode); iter++);
+		&& iter->first != intToString(statusCode); iter++)
+			std::cout << "statius code = " << iter->first << std::endl;
 		if (iter != web.config[clt.config].location[clt.location].error_page.end())
 			filePath = iter->second;
 	}
@@ -76,9 +79,11 @@ std::string getFilePath(struct client& clt, struct webserv &web, int statusCode)
 	{
 		for (iter = web.config[clt.config].error_page.begin();
 			iter != web.config[clt.config].error_page.end()
-			&& iter->first != intToString(statusCode); iter++);
+			&& iter->first != intToString(statusCode); iter++)
+			std::cout << "error = " << iter->first << " | path = " << iter->second << std::endl;;
 		if (iter != web.config[clt.config].error_page.end())
 			filePath = iter->second;
+		std::cout << "file path = " << filePath << std::endl;
 	}
 	if (iter == web.config[clt.config].error_page.end()
 		|| (iter != web.config[clt.config].error_page.end()

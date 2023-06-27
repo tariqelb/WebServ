@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   getResponse.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/26 23:15:00 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/27 17:24:39 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ int	get(struct webserv& web, struct client& clt)
 {
 	struct stat pathStat;
 	std::string path;
+	
+	std::cout << "URI = " << clt.map_request["URI"] << std::endl;
 
 	if (stat(clt.map_request["URI"].c_str(), &pathStat))
 	{
@@ -101,7 +103,6 @@ int	get(struct webserv& web, struct client& clt)
 	if (*clt.map_request["URI"].rbegin() != '/')
 	{
 		clt.map_request["URI"] += "/";
-		std::cout << "I AM SUPPOSE TO BE HERE\n";
 		clt.response.body = true;
 		clt.response.statusCode = 301;
 	}
@@ -117,7 +118,7 @@ int	get(struct webserv& web, struct client& clt)
 	if (!stat(path.c_str(), &pathStat))
 	{
 		clt.map_request["URI"] = path;
-		if (!clt.response.body)
+		// if (!clt.response.body)
 			clt.response.statusCode = 200;
 		return 0;
 	}
@@ -128,5 +129,6 @@ int	get(struct webserv& web, struct client& clt)
 			return error(clt, 403);
 	}
 	return autoindex(clt, web);
-	return clt.response.statusCode = 0;
+	std::cout << "there is a problem \n";
+	return clt.response.statusCode = 500;
 }

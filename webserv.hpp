@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/26 23:13:08 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/06/27 23:45:32 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/errno.h>
 # include <arpa/inet.h>
 # include <sys/select.h>
-# include <sys/event.h>
+// # include <sys/event.h>
 # include <sys/time.h>
 # include <fcntl.h>
 # include <cmath>
@@ -104,7 +104,7 @@ struct uploadFiles
 	uploadFiles&	operator=(const uploadFiles& rhs);
 };
 
-class Response
+struct Response
 {
 	public:
 		bool				header;
