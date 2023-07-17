@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 18:45:09 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 20:18:30 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	handleConnection(struct webserv& web)
 	int				size;
 	int				k;
 	int				flag_fail;
-	// std::cout << "handle" << std::endl;
+	 //std::cout << "handle" << std::endl;
 	
 	size = web.servers.size();	
 	i = 0;
@@ -62,13 +62,27 @@ void	handleConnection(struct webserv& web)
 		{
 			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
 			{
-					if (web.clients.size() == 1)
-						std::cout << YELLOW << "fd be " << web.clients[0].fd << " loop " << web.clients[0].cgi.loop_detected << END << std::endl;
+					if (web.clients.size() >= 1)
+					{
+						unsigned long z = 0;
+						while (z < web.clients.size())
+						{
+							std::cout << YELLOW << "fd before " << web.clients[z].fd << " loop " << web.clients[z].cgi.loop_detected << END << std::endl;
+							z++;
+						}
+					}
 					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
-					if (web.clients.size() == 1)
-						std::cout << YELLOW << "fd be " << web.clients[0].fd << " loop " << web.clients[0].cgi.loop_detected << END << std::endl;
+					if (web.clients.size() >= 1)
+					{
+						unsigned long z = 0;
+						while (z < web.clients.size())
+						{
+							std::cout << YELLOW << "fd after " << web.clients[z].fd << " loop " << web.clients[z].cgi.loop_detected << END << std::endl;
+							z++;
+						}
+					}
 					if (newClient.fd < 0)
 					{
 						std::cerr << "Error : Fail connecting to client" << std::endl;
@@ -81,7 +95,14 @@ void	handleConnection(struct webserv& web)
 						flags |= O_NONBLOCK;//!
 						fcntl(newClient.fd, F_SETFL, flags);//!
 						FD_SET(newClient.fd, &web.reads);
+						//std::cout << "The hooly ii : " << (newClient.cgi.loop_detected = 11) << std::endl;; 
 						web.clients.push_back(newClient);
+						//std::cout << "The hooly  : " << web.clients[web.clients.size() - 1].cgi.loop_detected << std::endl;; 
+						/*if (web.clients.size() == 2)
+						{
+							std::cout << "The hooly 2 : " << web.clients[web.clients.size() - 2].cgi.loop_detected << std::endl;; 
+							//exit(1);
+						}*/
 						size = web.servers.size();	
 						k = web.clients.size() - 1;
 						web.clients[k].bodys.chunks_flag = 0;
@@ -98,6 +119,15 @@ void	handleConnection(struct webserv& web)
 						web.clients[k].body_length = 0;
 						web.req_nbr++;
 						maxFd(web);
+						if (web.clients.size() >= 1)
+						{
+							unsigned long z = 0;
+							while (z < web.clients.size())
+							{
+								std::cout << BLUE << "fd after " << web.clients[z].fd << " loop " << web.clients[z].cgi.loop_detected << END << std::endl;
+								z++;
+							}
+						}
 						return ;
 					}
 			}
@@ -109,11 +139,12 @@ void	handleConnection(struct webserv& web)
 	i = 0;
 	while (i < size)
 	{
+	 	//std::cout << "handle be read" << std::endl;
 		
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
 			
-			std::cout << "in read " << i  << std::endl;
+			//std::cout << "in read " << i  << std::endl;
 			flag_fail = 1;
 			receiveRequest(web, web.clients[i], i, flag_fail);
 			//size = web.clients.size();	
@@ -124,6 +155,8 @@ void	handleConnection(struct webserv& web)
 				{
 					std::cout << "Sending get response ...\n";
 					get(web, web.clients[i]);
+					std::cout << "Get : " << web.clients[i].cgi.loop_detected << std::endl;
+
 				}
 				else if (web.clients[i].response.statusCode < 400
 						&& web.clients[i].map_request["Method"] == "POST")
@@ -146,8 +179,10 @@ void	handleConnection(struct webserv& web)
 		size = web.clients.size();
 	while (i < size)
 	{
+	 	//std::cout << "handle be write" << std::endl;
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
+	 		//std::cout << "in write" << std::endl;
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				int n_byte_readed = 0;

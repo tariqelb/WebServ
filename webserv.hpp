@@ -6,7 +6,7 @@
 /*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 16:58:25 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/17 19:46:41 by tel-bouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ class CGI
 		std::string 						interpreter;
 		std::vector<std::string> 			env;
 		std::string							 header;
-		bool								loop_detected;
+		int								loop_detected;
 		long								time;
 		pid_t								pid;
 		std::string							outFile;
