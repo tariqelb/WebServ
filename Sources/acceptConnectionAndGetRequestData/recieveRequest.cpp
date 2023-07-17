@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recieveRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/15 06:50:17 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 16:59:35 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 			FD_CLR(web.clients[clt_i].fd , &web.reads);
 			sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
 
-			std::cout << PURPLE << "--------------- 4 --------------- receiveRequest ----------- \n" << END;
+			std::cout << PURPLE << "--------------- 4 receiveRequest  \n" << END;
 			closeConnection(web, clt_i);
 			flag_fail = 0;
 			return ;

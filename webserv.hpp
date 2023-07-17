@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 10:44:42 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 16:58:25 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ struct Response
 		std::vector<char>	responseBody;
 		std::vector<char>	responseData;
 		std::string			uri;
-		Response():header(0), cgi(0), finishReading(0),
+		Response():header(0),error(0), cgi(0), finishReading(0),
         	autoindex(0), generateError(0),
         	body(0), statusCode(0), nbrFrames(-1) {};
 };
