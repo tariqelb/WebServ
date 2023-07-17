@@ -6,7 +6,7 @@
 /*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 21:03:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 14:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/17 17:01:48 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int	checkConfigData(struct webserv& web)
 		else 
 			i++;
 	}
-	displayServerFile(web.config);
+	// displayServerFile(web.config);
 	return (0);
 }
 
