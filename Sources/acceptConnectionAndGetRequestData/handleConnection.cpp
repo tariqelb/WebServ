@@ -16,7 +16,7 @@ void	closeConnection(struct webserv& web, int client_i)
 {
 	std::vector<client>::iterator it;
 
-	std::cout << RED << "-----------------------------\nConnection Closed\n" << END << std::endl;
+	std::cout << RED << "-------------\nConnection Closed " << web.clients[client_i].cgi.loop_detected << " " << web.clients[client_i].fd << END << std::endl;
 	it = web.clients.begin();
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
@@ -73,6 +73,7 @@ void	handleConnection(struct webserv& web)
 					}
 					else
 					{
+						std::cout << "new client " << newClient.fd << std::endl;
 						int flags = fcntl(newClient.fd, F_GETFL, 0);//!
 						flags |= O_NONBLOCK;//!
 						fcntl(newClient.fd, F_SETFL, flags);//!
@@ -167,6 +168,7 @@ void	handleConnection(struct webserv& web)
 				}
 				if (web.clients[i].cgi.loop_detected == false)
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
+				//std::cout << "Response error : " << web.clients[i].response.error << std::endl; 
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
 				{
 					std::cout << PURPLE << "--------------- 2 --------------- handleConnection  \n" << END;

@@ -157,8 +157,12 @@ class CGI
 		long								time;
 		pid_t								pid;
 		std::string							outFile;
-		
-	CGI():header(""), loop_detected(false), time(0){};
+
+		CGI();
+		CGI(const CGI& rhs);
+		CGI& operator=(const CGI& rhs);
+		~CGI();
+	//CGI():header(""), loop_detected(false), time(0){};
 };
 struct client
 {

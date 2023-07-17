@@ -101,7 +101,9 @@ int cgi(struct webserv &web, struct client &clt)
 		return status;
 	fill_CGI_ENV(clt, web);
 	try {
+			std::cout << RED << "be LOOP : "  << clt.cgi.loop_detected << END << std::endl;
 			executeCgi(clt,clt.cgi, clt.map_request["URI"]);
+			std::cout << RED << "af LOOP : "  << clt.cgi.loop_detected << END << std::endl;
 	}
 	catch (std::exception &e)
 	{
