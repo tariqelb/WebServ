@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/16 20:37:59 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:51:10 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	std::ifstream file;
 	std::string chunkHeader;
 
+	(void)statusCode;
 	file.open(filePath.c_str(), std::ios::binary);
 	if (!file.is_open())
 		std::cerr << RED << "ERROR OPEN OUT TFO\n" << END;
@@ -91,6 +92,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 
 void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 {
+	(void)web;
 	if (!clt.response.header)
 		clt.response.filePath = clt.map_request["URI"];
 	readFile(statusCode, clt, clt.response.filePath);

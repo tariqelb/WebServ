@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 12:00:54 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 10:43:32 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:52:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePa
 {
 	std::vector<std::pair<std::string, std::string> >::iterator iter;
 	
-	int	index = filePath.find_last_of('.');
+	size_t	index = filePath.find_last_of('.');
 	if (index == std::string::npos)
 		return 0;
 	clt.cgi.extention = filePath.substr(index, filePath.size());
@@ -79,8 +79,8 @@ std::string	parsePHPcgi(std::string fileName, std::string &header, std::string s
 	{
 		if ((line.find("Content-type")) != std::string::npos)
 		{
-			int start = line.find(':') + 2;
-			int end = line.find(';');
+			size_t start = line.find(':') + 2;
+			size_t end = line.find(';');
 			if (end == std::string::npos)
 				end = line.length() - 1;
 			content_type = line.substr(start, end - start);

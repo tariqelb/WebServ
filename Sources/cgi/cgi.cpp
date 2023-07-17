@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 10:55:43 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:51:32 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	executeCgi(struct client &clt,CGI &cgi, std::string &filePath)
 
 			const char* arg[] = {cgi.interpreter.c_str() , filePath.c_str(), NULL};
 			char** env = new char*[cgi.env.size() + 2];  //!
-			int i;
+			size_t i;
 			for (i = 0; i < cgi.env.size(); i++)
 				env[i] = const_cast<char*>(cgi.env[i].c_str());
 			env[i++] = const_cast<char*>("REDIRECT_STATUS=1");  //! for php

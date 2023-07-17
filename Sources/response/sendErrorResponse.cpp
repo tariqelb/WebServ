@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/15 17:55:03 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:49:49 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 std::string	generateErrorFile(struct client &clt, struct webserv &web, int statusCode)
 {
+	(void)web;
 	// std::cout << RED << "generating error file path\n" << END;
 	std::string filePath("www/error/generated_"
 					+ intToString(statusCode) + ".html");
@@ -98,6 +99,7 @@ void readeErrorFile(struct client &clt, int statusCode)
 	std::ifstream file;
 	std::stringstream responseBody;
 	
+	(void)statusCode;
 	file.open(clt.response.filePath.c_str(), std::ios::binary);
 	if (!file.is_open())
 	{

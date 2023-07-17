@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:48:15 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/13 08:47:17 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:48:51 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,25 @@
 
 std::string getContentTyp(std::string filePath)
 {
-	std::map<std::string, std::string> contentTypes;
-	std::map<std::string, std::string>::iterator iter;
-	std::string type;
-	int index;
+	(void)filePath;
+	// std::map<std::string, std::string> contentTypes;
+	// std::map<std::string, std::string>::iterator iter;
+	// std::string type;
+	// int index;
 	
-	fillMapContentTypes(contentTypes);
-	index = filePath.find_last_of('.');
-	if (index == std::string::npos)
-		return "application/octet-stream";
-	type = filePath.substr(index, filePath.size());
-	if ((iter = contentTypes.find(type)) != contentTypes.end())
-		return iter->second;
+	// fillMapContentTypes(contentTypes);
+	// index = filePath.find_last_of('.');
+	// if (index == std::string::npos)
+	// 	return "application/octet-stream";
+	// type = filePath.substr(index, filePath.size());
+	// if ((iter = contentTypes.find(type)) != contentTypes.end())
+	// 	return iter->second;
 	return "Not found";
 }
 int	post(struct webserv& web, struct client& clt)
 {
+	(void)web;
+	(void)clt;
 	// std::string path;
 	// std::string path2;
 	// std::string path3;
