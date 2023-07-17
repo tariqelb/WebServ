@@ -101,7 +101,7 @@ void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	long bitSent;
-
+	std::cout << clt.map_request["URI"];
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
 	else if (!statusCode || (statusCode >= 300 && !clt.response.body))

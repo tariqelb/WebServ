@@ -35,7 +35,7 @@ void	closeConnection(struct webserv& web, int client_i)
 			std::cerr << "Failed to remove autoindex file\n";
 	}
 	
-	while (client_i < web.clients.size()
+	while ((unsigned int)client_i < web.clients.size()
 		&& (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
 	if (it != web.clients.end())
@@ -58,21 +58,14 @@ void	handleConnection(struct webserv& web)
 	{
 		
 		j = 0;
-		while (j < web.servers[i].socketFd.size())
+		while ((unsigned long)j < web.servers[i].socketFd.size())
 		{
 			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
 			{
 					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
-					// std::cout << "ctl fd : " << newClient.fd << std::endl;
-					int flags = fcntl(newClient.fd, F_GETFL, 0);//!
-					//int status = fcntl(newClient.fd, F_SETFL, flags & O_NONBLOCK);
-					flags |= O_NONBLOCK;//!
-					int status = fcntl(newClient.fd, F_SETFL, flags);//!
-					status = fcntl(newClient.fd, F_GETFL, 0);
 
-					//fcntl(newClient, F_SETFL, O_NONBLOCK);
 					if (newClient.fd < 0)
 					{
 						std::cerr << "Error : Fail connecting to client" << std::endl;
@@ -80,6 +73,9 @@ void	handleConnection(struct webserv& web)
 					}
 					else
 					{
+						int flags = fcntl(newClient.fd, F_GETFL, 0);//!
+						flags |= O_NONBLOCK;//!
+						fcntl(newClient.fd, F_SETFL, flags);//!
 						FD_SET(newClient.fd, &web.reads);
 						web.clients.push_back(newClient);
 						size = web.servers.size();	

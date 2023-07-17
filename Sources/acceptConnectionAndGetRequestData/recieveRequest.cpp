@@ -52,7 +52,6 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	char							line[100000];
 	int 							i;
 	int			n_byte_readed;
-	int			statusCode;
 	std::string	buff;
 
 	memset(line, 0, 100000);
@@ -76,7 +75,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		if (clt.nbr_of_reads == 0)
 		{
 			std::cout << PURPLE << "--------------- 2 --------------- receiveRequest ----------- \n" << END;
-			FD_CLR(web.clients[i].fd , &web.reads);
+			FD_CLR(web.clients[clt_i].fd , &web.reads);
 			closeConnection(web, clt_i);
 			flag_fail = 0;
 		}

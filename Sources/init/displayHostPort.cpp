@@ -20,10 +20,10 @@ void	displayHostPort(struct webserv& web)
 	int				i;
 
 	i = 0;
-	while (i < web.servers.size())
+	while ((unsigned int)i < web.servers.size())
 	{
 		int j = 0;
-		while (j < web.servers[i].socket.size())
+		while ((unsigned int)j < web.servers[i].socket.size())
 		{
 		p = web.servers[i].socket[j];
 		while (p != NULL)

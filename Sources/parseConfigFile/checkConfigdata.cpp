@@ -16,7 +16,6 @@ int	DuplicatePort(std::string listen, std::vector<std::string> port)
 {
 	int j;
 	int p_size;
-	int l_size;
 
 	j = 0;
 	p_size = port.size();
@@ -137,12 +136,10 @@ int	checkConfigData(struct webserv& web)
 {
 	int 									i;
 	int 									size;
-	int 									vld;
 	std::vector<std::string> 				port;
 	std::vector<struct serverfile>::iterator it;
 
 	i = 0;
-	vld = 0;
 	it = web.config.begin();
 	size = web.config.size();
 	while (i < size)
@@ -162,7 +159,7 @@ int	checkConfigData(struct webserv& web)
 		else 
 			i++;
 	}
-	//displayServerFile(web.config);
+	displayServerFile(web.config);
 	return (0);
 }
 

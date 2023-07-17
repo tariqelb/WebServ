@@ -40,6 +40,7 @@ int	isAclosedServer(std::vector<std::string> file, int line_index)
 
 	i = line_index + 1;
 	open_bracket = 1;
+	size = file.size();
 	while (i < size && open_bracket)
 	{
 		if (isBracket(file[i]) == 1)
@@ -59,7 +60,6 @@ int	isAclosedServer(std::vector<std::string> file, int line_index)
 int	valideServersBlock(std::vector<std::string> file)
 {
 	int i;
-	int j;
 	int	size;
 	int open_brackets;
 

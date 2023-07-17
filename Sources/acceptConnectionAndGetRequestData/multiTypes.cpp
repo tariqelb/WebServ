@@ -18,14 +18,16 @@ void	getFileSize(struct uploadFiles& file)
 	if (file.file->is_open() == true)
 	{
 		file.file->seekg(0, std::fstream::end);  // Seek to the end of the file
-        std::streampos fileSize = file.file->tellg();  // Get the current position
+        	std::streampos fileSize = file.file->tellg();  // Get the current position
 		file.file->close();
+		fileSize += 0;
 	}
 }
 
 
 int		isADerective(std::string buffer, int find, int size)
 {
+	(void) size;
 	int find_name;
 	int find_cr_nl;
 	int find_filename;
@@ -95,18 +97,13 @@ void	multiTypes(std::string buffer, struct client& clt)
 	int						find_cr;
 	int						find;
 	int						size;
-	int						nbr;
 	int						i;
-	int						start;
-	int						end;
-	int						flag_postman_curl;
-	std::string				hex;
-	std::string				temp;
-	struct  uploadFiles     upload_files;
-	std::string				theEnd;
+	std::string					hex;
+	std::string					temp;
+	struct  uploadFiles     			upload_files;
+	std::string					theEnd;
 
 	theEnd = "\r\n\r\n" + clt.bodys.boundary;
-	flag_postman_curl = 1;
 	size = buffer.size();
 	i = 0;
 	if (clt.bodys.content_length_flag == 1 && clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 0)

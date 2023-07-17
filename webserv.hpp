@@ -139,11 +139,11 @@ struct Response
 		std::vector<char>	responseBody;
 		std::vector<char>	responseData;
 		std::string			uri;
-
-		Response():header(0),cgi(0), nbrFrames(-1),
-		finishReading(0), autoindex(0),generateError(0),
-		body(0), statusCode(0) {};
+		Response():header(0), cgi(0), finishReading(0),
+        	autoindex(0), generateError(0),
+        	body(0), statusCode(0), nbrFrames(-1) {};
 };
+
 
 class CGI
 {
