@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 12:51:32 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:38:10 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	executeCgi(struct client &clt,CGI &cgi, std::string &filePath)
 	int fd_out = open(cgi.outFile.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (fd_out == -1)
 		throw std::runtime_error("Error1: opening file\n");
-	if (!cgi.loop_detected)
-	{
+	// if (!cgi.loop_detected)
+	// {
 		if ((cgi.pid = fork()) == -1)
 			throw std::runtime_error("Error: fork\n");
 		if (!cgi.pid)
@@ -84,10 +84,10 @@ void	executeCgi(struct client &clt,CGI &cgi, std::string &filePath)
 		{
 			cgi.loop_detected = true;
 			cgi.time = 0;
-			std::cout << YELLOW << "LOOP DETECTED in " << cgi.time << END << std::endl;
+			std::cout << YELLOW << "LOOP DETECTED in " << cgi.time << "for client " << clt.fd << END << std::endl;
 			return;
 		}
-	}
+	// }
 }
 
 
@@ -101,9 +101,7 @@ int cgi(struct webserv &web, struct client &clt)
 		return status;
 	fill_CGI_ENV(clt, web);
 	try {
-			std::cout << RED << "be LOOP : "  << clt.cgi.loop_detected << END << std::endl;
 			executeCgi(clt,clt.cgi, clt.map_request["URI"]);
-			std::cout << RED << "af LOOP : "  << clt.cgi.loop_detected << END << std::endl;
 	}
 	catch (std::exception &e)
 	{

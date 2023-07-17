@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/16 21:10:14 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:45:09 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	closeConnection(struct webserv& web, int client_i)
 {
 	std::vector<client>::iterator it;
 
-	std::cout << RED << "-------------\nConnection Closed " << web.clients[client_i].cgi.loop_detected << " " << web.clients[client_i].fd << END << std::endl;
+	std::cout << RED << "-----------------------------\nConnection Closed " << web.clients[client_i].fd << END << std::endl;
 	it = web.clients.begin();
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
@@ -62,10 +62,13 @@ void	handleConnection(struct webserv& web)
 		{
 			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
 			{
+					if (web.clients.size() == 1)
+						std::cout << YELLOW << "fd be " << web.clients[0].fd << " loop " << web.clients[0].cgi.loop_detected << END << std::endl;
 					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
-
+					if (web.clients.size() == 1)
+						std::cout << YELLOW << "fd be " << web.clients[0].fd << " loop " << web.clients[0].cgi.loop_detected << END << std::endl;
 					if (newClient.fd < 0)
 					{
 						std::cerr << "Error : Fail connecting to client" << std::endl;
@@ -164,10 +167,12 @@ void	handleConnection(struct webserv& web)
 						web.clients[i].cgi.loop_detected = false;
 						std::cout << "status code = " << web.clients[i].response.statusCode <<std::endl; 
 					}
-					
 				}
 				if (web.clients[i].cgi.loop_detected == false)
+				{
+					std::cout << BLUE << "loop = " << web.clients[i].cgi.loop_detected << " for " << web.clients[i].fd << END << std::endl;;
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
+				}
 				//std::cout << "Response error : " << web.clients[i].response.error << std::endl; 
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
 				{

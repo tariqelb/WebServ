@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 12:51:10 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:49:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	(void)statusCode;
 	file.open(filePath.c_str(), std::ios::binary);
 	if (!file.is_open())
-		std::cerr << RED << "ERROR OPEN OUT TFO\n" << END;
+		std::cerr << RED << "ERROR OPEN OUT\n" << END;
 	
 	try {check(clt, file, filePath);}
 	catch (std::exception &e){return ;}

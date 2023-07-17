@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recieveRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 16:59:35 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/17 18:50:52 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	buff.assign("");
 	if (n_byte_readed < 0)
 	{
-		std::cout << PURPLE << "--------------- 1 --------------- receiveRequest ----------- \n" << END;
+		std::cout << PURPLE << "--------------- 1  receiveRequest  \n" << END;
 		closeConnection(web, clt_i);	
 		flag_fail = 0;
 		return ;
@@ -74,7 +74,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	{
 		if (clt.nbr_of_reads == 0)
 		{
-			std::cout << PURPLE << "--------------- 2 --------------- receiveRequest ----------- \n" << END;
+			std::cout << PURPLE << "--------------- 2 receiveRequest  \n" << END;
 			FD_CLR(web.clients[clt_i].fd , &web.reads);
 			closeConnection(web, clt_i);
 			flag_fail = 0;
@@ -90,7 +90,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		if (!clt.file->is_open())
 		{
 			std::cerr << "Can not open file." << std::endl;
-			std::cout << PURPLE << "--------------- 3 --------------- receiveRequest ----------- \n" << END;
+			std::cout << PURPLE << "--------------- 3  receiveRequest \n" << END;
 			closeConnection(web, clt_i);
 			flag_fail = 0;
 			return;
