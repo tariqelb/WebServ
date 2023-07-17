@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsRequestHeader.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:50:33 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/16 15:07:17 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ std::string	getRequestLine(std::string line, std::map<std::string, std::string> 
 void	fillRequestData(struct client& clt)
 {
 	std::string line, key, value, requestLine;
-	// std::cout << "clt.file_name = " <<  clt.file_name << std::endl;
 	clt.file->open(clt.file_name.c_str(), std::ios::in);
 	if (!clt.file->is_open())
 	{
@@ -43,7 +42,6 @@ void	fillRequestData(struct client& clt)
 		return ;
 	}
 	std::getline(*clt.file, line);
-	// std::cout << "line = " << line << std::endl;
 	getRequestLine(line, clt.map_request);
 	clt.response.uri = clt.map_request["URI"];
 	while (getline(*clt.file, line))
@@ -56,6 +54,7 @@ void	fillRequestData(struct client& clt)
 		value.erase(0, 1);
 		clt.map_request[key] = value;
 	}
+	clt.file->close();
 	// std::map<std::string, std::string>::iterator iter;
 	// int i = 0;
 	// for (iter = clt.map_request.begin(); iter != clt.map_request.end();i++, iter++) {

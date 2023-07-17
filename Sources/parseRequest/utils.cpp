@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/09 16:33:04 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/16 21:11:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int error(struct client &clt,int statusCode)
 {
 	clt.response.statusCode = statusCode;
 	clt.response.error = true;
-	return 0;
+	return statusCode;
 }
 
 std::string getStatusMessage(int statusCode)
@@ -99,7 +99,8 @@ std::string getStatusMessage(int statusCode)
 	map[404] = "Not Found\r\n";
 	map[413] = "Content Too Large\r\n";
 	map[414] = "Request-URI Too Long\r\n";
-	map[501] = "Bad Request\r\n";
+	map[501] = "Not Implemented\r\n";
+	map[508] = "Loop Detected\r\n";
 	map[423] = "Request Entity Too Large\r\n";
 	map[405] = "Method Not Allowed\r\n";
 	map[302] = "Found\r\n";
@@ -113,7 +114,7 @@ std::string getStatusMessage(int statusCode)
 void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 {
 	contentTypes[".html"] = "text/html";
-	contentTypes[".htm"] = "text/html";
+	// contentTypes[".htm"] = "text/html";
 	contentTypes[".txt"] = "text/plain";
 	contentTypes[".css"] = "text/css";
 	contentTypes[".js"] = "text/javascript";
@@ -121,7 +122,8 @@ void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 	contentTypes[".xml"] = "application/xml";
 	contentTypes[".pdf"] = "application/pdf";
 	contentTypes[".zip"] = "application/zip";
-	contentTypes[".jpeg"] = contentTypes["jpg"] = "image/jpeg";
+	contentTypes[".jpeg"] = "image/jpeg"; 
+	contentTypes[".jpg"] = "image/jpeg";
 	contentTypes[".png"] = "image/png";
 	contentTypes[".gif"] = "image/gif";
 	contentTypes[".mp3"] = "audio/mpeg";
@@ -130,4 +132,5 @@ void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 	contentTypes[".cpp"] = "text/x-c++src";
 	contentTypes[".c"] = "text/x-csrc";
 	contentTypes[".py"] = "text/x-python";
+	contentTypes[".sh"] = "text/plain";
 }

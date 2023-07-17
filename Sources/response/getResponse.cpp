@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/09 11:46:58 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/16 15:03:03 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int autoindex(struct client& clt, struct webserv &web)
 	if (!autoindex)
 	{
 		std::cerr << "Failed to create autoindex.html" << std::endl;
-		return error(clt, 500);
+		return error(clt, 404);
 	}
 
 	clt.response.autoindex = true;
@@ -69,6 +69,7 @@ int	get(struct webserv& web, struct client& clt)
 {
 	struct stat pathStat;
 	std::string path;
+	int status;
 	
 	// std::cout << "URI = " << clt.map_request["URI"] << std::endl;
 
@@ -95,9 +96,14 @@ int	get(struct webserv& web, struct client& clt)
 		}
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
 		{
-			if (cgi(web, clt) == 200)
-				return 200;
+			if ((status = cgi(web, clt)))
+		{
+			return 0;
 		}
+		std::cout << GREEN << "status = " << status << std::endl;
+			std::cout << RED << "status code = " << clt.response.statusCode << std::endl << END;
+		}
+		
 		return clt.response.statusCode = 200;
 	}
 	if (*clt.map_request["URI"].rbegin() != '/')
@@ -113,12 +119,20 @@ int	get(struct webserv& web, struct client& clt)
 	else if (clt.location < 0 && !web.config[clt.config].index.empty())
 		path = clt.map_request["URI"] + web.config[clt.config].index;
 	if (stat(path.c_str(), &pathStat))
+	{
 		path = clt.map_request["URI"] + "index.html";
-
+		// return clt.response.statusCode = 200;
+	}
 	if (!stat(path.c_str(), &pathStat))
 	{
+		// std::cout << GREEN << "\nuri -> = " << path << END << std::endl;//!
 		clt.map_request["URI"] = path;
-		// if (!clt.response.body)
+		if (cgi(web, clt))
+		{
+			std::cout << RED << "status code = " << clt.response.statusCode << std::endl << END;
+			return 0;
+		}
+		if (!clt.response.body)
 			clt.response.statusCode = 200;
 		return 0;
 	}
@@ -129,6 +143,4 @@ int	get(struct webserv& web, struct client& clt)
 			return error(clt, 403);
 	}
 	return autoindex(clt, web);
-	std::cout << "there is a problem \n";
-	return clt.response.statusCode = 500;
 }

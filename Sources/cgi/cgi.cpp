@@ -3,114 +3,110 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/17 10:55:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../webserv.hpp"
-#include <unistd.h>
 
-// void	fill_CGI_ENV(struct client &clt, struct webserv &web)
-// {
-// 	clt.cgi.env.push_back("QUERY_STRING=" + clt.map_request["QUERY_STRING"]);
-// 	clt.cgi.env.push_back(std::string("REMOTE_ADDR=" + web.config[clt.config].host));
-// 	clt.cgi.env.push_back(std::string("REQUEST_METHOD=GET"));
-// 	clt.cgi.env.push_back(std::string("SCRIPT_NAME=") + clt.map_request["URI"]);
-// 	clt.cgi.env.push_back("SERVER_PORT=" + clt.port);
-// 	clt.cgi.env.push_back(std::string("SCRIPT_FILENAME=") + clt.map_request["URI"]);
-// 	clt.cgi.env.push_back("HTTP_HOST="+clt.map_request["Host"]);
-// 	clt.cgi.env.push_back("HTTP_USER_AGENT=" + clt.map_request["User-Agent"]);
-// }
+void	generate_CGI_file(struct client &clt,std::string &filePath)
+{
+	if (clt.cgi.extention == ".php")
+	{
+		filePath = parsePHPcgi(clt.cgi.outFile, clt.cgi.header, intToString(clt.fd));
+		std::cout << PURPLE << filePath << std::endl << END ;
+	}
+	else if (clt.cgi.extention == ".py" && !clt.cgi.loop_detected)
+		filePath = "out" + intToString(clt.fd) +".html";
+	else if (clt.cgi.extention == ".py" && clt.cgi.loop_detected)
+	{
+		kill(clt.cgi.pid, SIGKILL);
+		error(clt, 508);
+		return ;
+	}
+	clt.response.statusCode = 200;
+}
 
-// void	executeCgi(CGI &cgi, std::string &filePath)
-// {
-// 	int fd[2];
-// 	pid_t pid;
-// 	if (pipe(fd))
-// 	{
-// 		std::cerr << "Error : pipe\n";
-// 		return ;
-// 	}
+void	executeCgi(struct client &clt,CGI &cgi, std::string &filePath)
+{
+	cgi.outFile = "out" +intToString(clt.fd) + ".html";
+	int fd_out = open(cgi.outFile.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd_out == -1)
+		throw std::runtime_error("Error1: opening file\n");
+	if (!cgi.loop_detected)
+	{
+		if ((cgi.pid = fork()) == -1)
+			throw std::runtime_error("Error: fork\n");
+		if (!cgi.pid)
+		{
+			dup2(fd_out, STDOUT_FILENO);
+			close(fd_out);
 
-// 	if ((pid = fork()) == -1)
-// 	{
-// 		std::cerr << "Error : fork\n";
-// 		return ;
-// 	}
-// 	if (!pid)
-// 	{
-// 		if (close (fd[0]) == -1)
-// 			std::cerr << "Error closing fd[0]\n";
-// 		dup2(fd[1], STDOUT_FILENO);
-// 		close(fd[1]);
-		
-// 		const char* arg[] = {filePath.c_str(), NULL};
-// 		char **env = new char *[cgi.env.size() + 1];
-// 		int i;
-// 		for (i = 0; i < cgi.env.size(); i++)
-// 			env[i] = const_cast<char*>(cgi.env[i].c_str());
-// 		env[i] = NULL;
-// 		if (execve(filePath.c_str(), const_cast<char**>(arg), env) == -1)
-// 		{
-// 			std::cerr << "Error: execve\n";
-// 			exit(0);
-// 		}
-// 	}
-// 	waitpid(pid, 0, 0);
-// 	std::fstream out;
-// 	out.open("out.html", std::ios::out);
-// 	if (!out.is_open())
-// 	{
-// 		std::cerr << "Error: out file\n";
-// 		return ;
-// 	}
-// 	ssize_t bytesRead;
-// 	struct stat fileState;
-// 	fstat(fd[0], &fileState);
-// 	std::cout << "fileState.st_size = " << fileState.st_size << std::endl;
-// 	std::vector<char> buffer(static_cast<int>(fileState.st_size));
-// 	if ((bytesRead = read(fd[0], buffer.data(), buffer.size())) > 0)
-// 		out << buffer.data();
-// 	else if  (bytesRead == -1) 
-// 	{
-// 		std::cerr << "Error reading from fd[0]\n";
-// 		return;
-// 	}
-// 	close(fd[0]);
-// 	out.close();
-// 	filePath = "out.html";
-// 	out.close();
-// 	close (fd[1]);
-// }
+			const char* arg[] = {cgi.interpreter.c_str() , filePath.c_str(), NULL};
+			char** env = new char*[cgi.env.size() + 2];  //!
+			int i;
+			for (i = 0; i < cgi.env.size(); i++)
+				env[i] = const_cast<char*>(cgi.env[i].c_str());
+			env[i++] = const_cast<char*>("REDIRECT_STATUS=1");  //! for php
+			env[i] = NULL;
 
-// int isCgiConfigured(struct client &clt, struct webserv &web, std::string &extention)
-// {
-// 	std::vector<std::pair<std::string, std::string> >::iterator iter;
-// 	for (iter = web.config[clt.config].location[clt.location].cgi.begin();
-// 		iter != web.config[clt.config].location[clt.location].cgi.end()
-// 		&& iter->second != clt.map_request["URI"];
-// 		iter++);
-// 	if (iter == web.config[clt.config].location[clt.location].cgi.end())
-// 	{
-// 		std::cout << "I did not find any thing\n";
-// 		return 0;
-// 	}
-// 	extention = iter->first;
-// 	return 1;
-// }
-
+			//TODO after post is ready
+			//TODOif(clt.map_request["Method"] == "POST")
+			//TODO{
+			//TODO	std::fstream in("in");
+			//TODO	in << clt.map_request["QUERY_STRING"];
+			//TODO	in.close();
+			//TODO	// int fd = open("in", O_CREAT | O_TRUNC | O_RDWR, 0644);
+			//TODO	// if (fd < 0)
+			//TODO	// 	throw std::runtime_error("Error: failed to open input file");
+			//TODO	// dup2(fd, 0);
+			//TODO}
+			if (execve(cgi.interpreter.c_str(), const_cast<char**>(arg), env) == -1)
+			{
+				std::cerr << "Error: execve\n";
+				exit(0);
+			}
+		}
+	
+		sleep(1);
+		int returnValue = waitpid(cgi.pid, NULL, WNOHANG);
+		if (returnValue < 0)
+			throw std::runtime_error("Error: wait failed");
+		else if (returnValue)
+		{
+			generate_CGI_file(clt, filePath);
+			return ;
+		}
+		else
+		{
+			cgi.loop_detected = true;
+			cgi.time = 0;
+			std::cout << YELLOW << "LOOP DETECTED in " << cgi.time << END << std::endl;
+			return;
+		}
+	}
+}
 
 
 int cgi(struct webserv &web, struct client &clt)
 {
-	// std::string extention;
+	std::string extention;
+	int			status;
 
-	// if (!isCgiConfigured(clt, web, extention))
-	// 	return 0;
-	// fill_CGI_ENV(clt, web);
-	// executeCgi(clt.cgi, clt.map_request["URI"]);
-	return clt.response.statusCode = 0;
+	clt.response.cgi = true;
+	if ((status = isCgiConfigured(clt, web, clt.map_request["URI"])) != 1)
+		return status;
+	fill_CGI_ENV(clt, web);
+	try {
+			executeCgi(clt,clt.cgi, clt.map_request["URI"]);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		return error(clt, 500);
+	}
+	return clt.response.statusCode = 200;
 }

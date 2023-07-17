@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/10 19:47:30 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 10:44:42 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@
 # include <algorithm>
 # include <cstdlib>
 #include <utility>
+#include <sys/wait.h>
+#include <signal.h>
 
 
 # define MAX_CONNECTION 355
@@ -122,6 +124,7 @@ struct Response
 	public:
 		bool				header;
 		bool				error;
+		bool				cgi;
 		bool				finishReading;
 		bool				autoindex;
 		bool				generateError;
@@ -137,17 +140,25 @@ struct Response
 		std::vector<char>	responseData;
 		std::string			uri;
 
-		Response():header(0), nbrFrames(-1),
+		Response():header(0),cgi(0), nbrFrames(-1),
 		finishReading(0), autoindex(0),generateError(0),
-		body(0), statusCode(0){};
+		body(0), statusCode(0) {};
 };
 
 class CGI
 {
 	public:
 		std::map<std::string, std::string>	cgi_ENV;
-		std::map<std::string, std::string>	query;
-		std::vector<std::string> env;
+		std::string 						extention;
+		std::string 						interpreter;
+		std::vector<std::string> 			env;
+		std::string							 header;
+		bool								loop_detected;
+		long								time;
+		pid_t								pid;
+		std::string							outFile;
+		
+	CGI():header(""), loop_detected(false), time(0){};
 };
 struct client
 {
@@ -360,7 +371,7 @@ void	activeSocket(struct webserv& web);
 // fun  name :
 int 	initServer(struct webserv& web);
 
-/*     ***********************************************     */
+//! *********************************************************************************************
 
 
 /* ************************** utils.cpp ********************************************* */
@@ -406,18 +417,29 @@ void	getResponseHeaderError(struct client &clt, int statusCode);
 void	fillRedirectResponse(struct client &clt, struct webserv &web, int statusCode);
 
 /* ************************** cgi ************************************************* */
-int cgi(struct webserv &web, struct client &clt);
+
+int 	cgi(struct webserv &web, struct client &clt);
+int 	isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePath);
+void	fill_CGI_ENV(struct client &clt, struct webserv &web);
+int 	isCgi(struct client& clt, struct webserv &web);
+void	executeCgi(struct client &clt,CGI &cgi, std::string &filePath);
+// void	generate_CGI_file(class CGI &cgi, std::string file, std::string &filePath);
+void	generate_CGI_file(struct client &clt,std::string &filePath);
+// std::string	parsePHPcgi(std::string fileName, std::string &header);
+std::string	parsePHPcgi(std::string fileName, std::string &header, std::string suffix);
+
 
 /**************************************************************************************/
 
 
 int		get(struct webserv& web, struct client& clt);
-void	post(struct webserv& web, struct client& clt);
-void	deleteResponse(struct webserv& web, struct client& clt);
+int		post(struct webserv& web, struct client& clt);
+int		deleteResponse(struct webserv& web, struct client& clt);
 
 /************************************************************************************** */
 
 
+int get_time(class CGI& cgi);
 template <typename T>
 T min(T a, T b){return (a < b) ? a : b;}
 
