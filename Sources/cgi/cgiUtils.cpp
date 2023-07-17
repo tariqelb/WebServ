@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiUtils.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 12:00:54 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 12:52:43 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/17 15:02:54 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePa
 
 std::string	parsePHPcgi(std::string fileName, std::string &header, std::string suffix)
 {
-	std::ifstream	in(fileName);
+	std::ifstream	in(fileName.c_str());
 	std::string 	responseFileName;
 	std::string		content_type;
 	std::fstream 	out;
@@ -104,7 +104,7 @@ std::string	parsePHPcgi(std::string fileName, std::string &header, std::string s
 	}
 	if (iter == contentTypes.end())
 		responseFileName = "cgi" + suffix + ".html";
-	out.open(responseFileName, std::ios::out);
+	out.open(responseFileName.c_str(), std::ios::out);
 	while (getline(in, line))
 		out << line << std::endl;
 	out.close();

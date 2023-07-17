@@ -6,7 +6,7 @@
 /*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 21:03:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/17 14:50:30 by hp               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	DuplicatePort(std::string listen, std::vector<std::string> port)
 	{
 		if (listen == port[j])
 			return (1);
-			j++;
+		j++;
 	}
 	return (0);
 }
