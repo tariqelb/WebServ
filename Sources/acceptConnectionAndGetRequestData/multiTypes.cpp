@@ -77,17 +77,17 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_
 			{
 				temp = temp.substr(find_filename + 1);
 				if (temp.size() == 0)
-					temp =  "text_" + std::to_string(file_index) + ".txt";
+					temp =  "text_" + intToString(file_index) + ".txt";
 			}
 		}
 		else
-			temp = "text_" + std::to_string(file_index) + ".txt";
-		upload_files.filename = "./www/uploads/" + std::to_string(fd) + "_Upload_" + temp;
+			temp = "text_" + intToString(file_index) + ".txt";
+		upload_files.filename = "./www/uploads/" + intToString(fd) + "_Upload_" + temp;
 	}
 	else
 	{
-		temp = "text_" + std::to_string(file_index) + ".txt";
-		upload_files.filename = "./www/uploads/" + std::to_string(fd) + "_Upload_" + temp;
+		temp = "text_" + intToString(file_index) + ".txt";
+		upload_files.filename = "./www/uploads/" + intToString(fd) + "_Upload_" + temp;
 	}
 }
 
