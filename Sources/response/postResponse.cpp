@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:48:15 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 12:50:53 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 13:50:24 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::string getContentTyp(std::string filePath)
 int	post(struct webserv& web, struct client& clt)
 {
 
-	//exit(0);
+	//return  error(clt, 500);
 	std::string path;
 	std::string path2;
 	std::string path3;
@@ -76,7 +76,7 @@ int	post(struct webserv& web, struct client& clt)
 		return error(clt,404);
 	int place = web.config[clt.config].location[clt.location].upload_store.size() - 1;
 	uploadFiles file = clt.upload_files[0];
-	exit(0);
+	// return  error(clt, 500);
 	std::cout << file.no_name <<std::endl;
 	std::cout << file.filename<<std::endl;
 	std::string temp22 = file.filename;
@@ -104,7 +104,7 @@ int	post(struct webserv& web, struct client& clt)
 		// if(file2.is_open() == 0)
 		// {
 		// 		std::cerr<< "Error Opening the file\n"<<std::endl;
-		// 		exit(0);
+		// 		return  error(clt, 500);
 		// }
 		// file2.close();
 	}	
@@ -120,15 +120,10 @@ int	post(struct webserv& web, struct client& clt)
 		std::ifstream file3;
 		file3.open(clt.map_request["URI"],std::ios::in);
 		if(!file3.is_open())
-		{
-				std::cerr<< "Error Opening the file\n"<<std::endl;
-				std::cout <<"hmm"<<std::endl;
-				exit(0);
-		}
+			return  error(clt, 500);
 		file3.close();
 	}
-	
-    std::cout << "go"<<std::endl;
+
 	if(stat(web.config[clt.config].location[clt.location].upload_store.c_str(),&pathStat1) == 0)
 	{	
 		if(clt.location >= 0 && web.config[clt.config].location[clt.location].upload == "on")
@@ -142,7 +137,7 @@ int	post(struct webserv& web, struct client& clt)
 			if(original_file.is_open() == 0)
 			{
 				std::cerr<< "Error Opening the file\n"<<std::endl;
-				exit(0);
+				return  error(clt, 500);
 			}
 			original_file.close();
 			if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),X_OK) == 0)
@@ -159,18 +154,17 @@ int	post(struct webserv& web, struct client& clt)
 					place = web.config[clt.config].location[clt.location].upload_store.size() - 1;
 				}
 				std::string destination = web.config[clt.config].location[clt.location].upload_store + "/" + extension;
-				std::cout <<destination << "is"<<std::endl;
 				out.open(destination,std::ios::out);
 				if(!out.is_open())
 				{
 					std::cerr << "Error: out file\n";
-					exit(0);
+					return  error(clt, 500);
 				}
 				input.open(file.filename,std::ios::in);
 				if(!input.is_open())
 				{
 					std::cerr << "Error: input file\n";
-					exit(0);
+					return  error(clt, 500);
 				}
 				std::string line;
 				std::string all = "";
@@ -183,9 +177,10 @@ int	post(struct webserv& web, struct client& clt)
 				out << all;
 				out.close();
 				input.close();
+				std::cerr << "I'm here"<<std::endl;
 				if (remove(file.filename.c_str()) != 0) {
         			std::cerr << "Error deleting the original file: " << file.filename << std::endl;
-        			exit(0);
+        			return  error(clt, 500);
     			}
 				return clt.response.statusCode = 201;
 			}
@@ -303,7 +298,7 @@ int	post(struct webserv& web, struct client& clt)
 			return (error(clt,403));
 		}
 		else
-		{
+	{	
 			std::cout << "Wtp"<<std::endl;
 			return cgi(web,clt);
 		}

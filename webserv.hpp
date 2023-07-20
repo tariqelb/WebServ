@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/20 12:46:48 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 14:04:00 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,7 +436,7 @@ int 	isCgi(struct client& clt, struct webserv &web);
 // void	generate_CGI_file(class CGI &cgi, std::string file, std::string &filePath);
 void	generate_CGI_file(struct client &clt,std::string &filePath);
 // std::string	parsePHPcgi(std::string fileName, std::string &header);
-std::string	parsePHPcgi(std::string fileName, std::string &header, std::string suffix);
+std::string	parsePHPcgi(std::string &fileName, std::string &header, std::string suffix);
 
 
 /**************************************************************************************/

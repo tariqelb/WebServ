@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 12:00:54 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 11:46:12 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 14:03:41 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ int isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePa
 	if (iter == web.config[clt.config].location[clt.location].cgi.end())
 		return 0;
 	clt.cgi.interpreter = iter->second;
-	std::cout << "@@@@@@@@@@@@@@ extention = |" << clt.cgi.extention << "|" << std::endl;
+	// std::cout << "@@@@@@@@@@@@@@ extention = |" << clt.cgi.extention << "|" << std::endl;
 	return 1;
 }
 
-std::string	parsePHPcgi(std::string fileName, std::string &header, std::string suffix)
+std::string	parsePHPcgi(std::string &fileName, std::string &header, std::string suffix)
 {
 	std::ifstream	in(fileName.c_str());
 	std::string 	responseFileName;
@@ -110,5 +110,6 @@ std::string	parsePHPcgi(std::string fileName, std::string &header, std::string s
 		out << line << std::endl;
 	out.close();
 	in.close();
+	fileName = responseFileName;
 	return responseFileName;
 }
