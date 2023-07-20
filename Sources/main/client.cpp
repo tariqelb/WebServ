@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 00:19:32 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 19:37:18 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/07/20 12:34:21 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 uploadFiles::uploadFiles()
 {
-	// std::cout << "Upload constructor called" << std::endl;
 	len = 0;
 	filename = "";
 	file = new std::fstream();
@@ -23,13 +22,11 @@ uploadFiles::uploadFiles()
 
 uploadFiles::~uploadFiles()
 {
-	// std::cout << "Upload destructor called" << std::endl;
 	delete file;
 }
 
 uploadFiles::uploadFiles(const uploadFiles& rhs)
 {
-	// std::cout << "Upload copy constructor called" << std::endl;
 	len = rhs.len;
 	filename = rhs.filename;
 	file = new std::fstream();
@@ -37,7 +34,6 @@ uploadFiles::uploadFiles(const uploadFiles& rhs)
 
 uploadFiles&	uploadFiles::operator=(const uploadFiles& rhs)
 {
-	// std::cout << "Upload copy assignment called" << std::endl;
 	if (this != &rhs)
 	{
 		len = rhs.len;
@@ -49,8 +45,6 @@ uploadFiles&	uploadFiles::operator=(const uploadFiles& rhs)
 
 client::client()
 {	
-	
-	 std::cout << "Client copy constructor called "  << std::endl;
 	config = -1;
 	location = -1;
 	len = 0;
@@ -78,12 +72,10 @@ client::client()
 	post_flag = 0;
 	body_data.assign("");
 	body_length = 0;
-	std::cout << "C C Cgi : " << cgi.loop_detected  << std::endl;
 }
 
 client::~client() 
 {
-	// std::cout << "C D Cgi : " << cgi.loop_detected  << std::endl;
 	delete file;
 }
 
@@ -92,11 +84,9 @@ client::client(const client& rhs)
 	int				i;
 	int				size;
 
-	// map_request = rhs.map_request;
-	// map_response = rhs.map_response;
+	map_request = rhs.map_request;
 	config = rhs.config;
 	location = rhs.location;
-	// request = rhs.request;
 	response = rhs.response;
 	addr = rhs.addr;
 	len = rhs.len;
@@ -134,7 +124,6 @@ client::client(const client& rhs)
 		i++;
 	}
 	cgi = rhs.cgi;
-	// std::cout << "C C C Cgi : " << cgi.loop_detected  << std::endl;
 }
 
 client&		client::operator=(const client& rhs)
@@ -144,11 +133,9 @@ client&		client::operator=(const client& rhs)
 
 	if (this != &rhs)
 	{
-		// map_request = rhs.map_request;
-		// map_response = rhs.map_response;
+		map_request = rhs.map_request;
 		config = rhs.config;
 		location = rhs.location;
-		// request = rhs.request;
 		response = rhs.response;
 		addr = rhs.addr;
 		len = rhs.len;
@@ -186,51 +173,44 @@ client&		client::operator=(const client& rhs)
 			i++;
 		}
 		cgi = rhs.cgi;
-		// std::cout << "C C A Cgi : " << cgi.loop_detected  << std::endl;
 	}
 	return (*this);
 }
 
 CGI::CGI() : header(""), loop_detected(false), time(0)
 {
-	 std::cout << "CGI Constructor called" << std::endl;
-	// std::cout << "Cgi C : " << loop_detected  << std::endl;
 }
 
 CGI::CGI(const CGI& rhs)
 {
-	// std::cout << "CGI Copy constructor called" << std::endl;
 	cgi_ENV = rhs.cgi_ENV;
 	interpreter = rhs.interpreter;
 	env = rhs.env;
 	header = rhs.header;
+	extention = rhs.extention;
 	loop_detected = rhs.loop_detected;
 	time = rhs.time;
 	pid = rhs.pid;
 	outFile = rhs.outFile;
-	// std::cout << "Cgi C : " << loop_detected  << std::endl;
 }
 
 CGI&	CGI::operator=(const CGI& rhs)
 {
-	// std::cout << "CGI Copy constructor called" << std::endl;
 	if (this != &rhs)
 	{
 		cgi_ENV = rhs.cgi_ENV;
 		interpreter = rhs.interpreter;
+		extention = rhs.extention;
 		env = rhs.env;
 		header = rhs.header;
 		loop_detected = rhs.loop_detected;
 		time = rhs.time;
 		pid = rhs.pid;
 		outFile = rhs.outFile;
-		// std::cout << "Cgi C A : " << loop_detected  << std::endl;
 	}
 	return (*this);
 }
 
 CGI::~CGI()
 {
-	// std::cout << "CGI Destructor called" << std::endl;
-	// std::cout << "Cgi C A : " << loop_detected  << std::endl;
 }

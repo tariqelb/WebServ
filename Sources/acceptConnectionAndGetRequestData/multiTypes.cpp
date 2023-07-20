@@ -15,23 +15,22 @@
 void	getFileSize(struct uploadFiles& file)
 {
 	file.file->open(file.filename.c_str(), std::fstream::in | std::fstream::binary );
+
 	if (file.file->is_open() == true)
 	{
 		file.file->seekg(0, std::fstream::end);  // Seek to the end of the file
-        	std::streampos fileSize = file.file->tellg();  // Get the current position
+        //std::streampos fileSize = file.file->tellg();  // Get the current position
 		file.file->close();
-		fileSize += 0;
 	}
 }
 
 
 int		isADerective(std::string buffer, int find, int size)
 {
-	(void) size;
 	int find_name;
 	int find_cr_nl;
 	int find_filename;
-
+	(void)size;
 	find_cr_nl = buffer.find("\r\n", find);
 	find_name = buffer.find("name=", find);
 	find_filename = buffer.find("filename=", find);
@@ -43,19 +42,22 @@ int		isADerective(std::string buffer, int find, int size)
 
 }
 
-void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_files, int find, int fd)
+void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_files, int find, int fd,struct client &clt)
 {
 	int 			find_filename;
 	int 			i;
 	int				size;
 	std::string		temp;
 	int 			find_cr;
-
+	(void)fd;
 	find_filename = -1;
 	size = buffer.size();
 	find_cr = buffer.find("\r\n", find);
+	temp = clt.temp_header;
+	// std::cout << clt.temp_header<<std::endl;
 	if (size && find_cr != -1)
 	{
+
 		temp = buffer.substr(find, find_cr - find);
 		find_filename = temp.find("filename=");
 		if (find_filename != -1)
@@ -77,17 +79,38 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_
 			{
 				temp = temp.substr(find_filename + 1);
 				if (temp.size() == 0)
-					temp =  "text_" + intToString(file_index) + ".txt";
+					temp =  "text_" + std::to_string(file_index) + ".txt";
 			}
 		}
 		else
-			temp = "text_" + intToString(file_index) + ".txt";
-		upload_files.filename = "./www/uploads/" + intToString(fd) + "_Upload_" + temp;
+			temp = "text_" + std::to_string(file_index) + ".txt";
+		upload_files.filename = "./www/uploads/" + temp;
+		upload_files.just_the_file = temp;
+		upload_files.no_name = "no";
 	}
-	else
+	else if(clt.temp_header[0] != 0) {
+		temp = clt.temp_header;
+		size_t content_di = temp.find("Content-Disposition");
+		(void)content_di;
+		find_filename = temp.find("filename=");
+		find_filename += 10;
+		int j = 0;
+		while ((size_t)find_filename + j < temp.size() && temp[find_filename + j] != '\"')
+			j++;
+		temp = temp.substr(find_filename,j);
+		upload_files.filename = "./www/uploads/" + temp;
+		upload_files.just_the_file = temp;
+		upload_files.no_name = "no";
+
+	}
+	else 
 	{
-		temp = "text_" + intToString(file_index) + ".txt";
-		upload_files.filename = "./www/uploads/" + intToString(fd) + "_Upload_" + temp;
+		std::cout << "Hereeee"<<std::endl;
+		temp = "text_" + std::to_string(file_index) + ".txt";
+		upload_files.filename = "./www/uploads/" + temp;
+		upload_files.just_the_file = temp;
+		upload_files.no_name = "yes";
+
 	}
 }
 
@@ -98,12 +121,14 @@ void	multiTypes(std::string buffer, struct client& clt)
 	int						find;
 	int						size;
 	int						i;
-	std::string					hex;
-	std::string					temp;
-	struct  uploadFiles     			upload_files;
-	std::string					theEnd;
+	int						flag_postman_curl;
+	std::string				hex;
+	std::string				temp;
+	struct  uploadFiles     upload_files;
+	std::string				theEnd;
 
 	theEnd = "\r\n\r\n" + clt.bodys.boundary;
+	flag_postman_curl = 1;
 	size = buffer.size();
 	i = 0;
 	if (clt.bodys.content_length_flag == 1 && clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 0)
@@ -111,7 +136,11 @@ void	multiTypes(std::string buffer, struct client& clt)
 		find = 0;
 		if (clt.nbr_of_reads == 1)
 		{
+			// std::cout << BLUE<<clt.map_request["Content-Disposition"]<<std::endl<<END;
 			find_cr = buffer.find("\r\n\r\n");
+			if(find_cr != -1)
+				clt.temp_header =  buffer.substr(0,find_cr + 4);
+			// std::cout << clt.temp_header<< std::endl;
 			if (find_cr != -1)
 			{
 				buffer = buffer.substr(find_cr + 4);
@@ -120,9 +149,20 @@ void	multiTypes(std::string buffer, struct client& clt)
 		i = clt.upload_files.size();
 		if (buffer.size() && i == 0)
 		{
-
-			getFilename(buffer, clt.upload_files.size(), upload_files, -1, clt.fd);
-			upload_files.file->open(upload_files.filename.c_str(), std::fstream::app | std::fstream::out);
+			//std::cout << clt.nbr_of_reads<<std::endl;
+			size_t founder_name = clt.temp_header.find("Content-Disposition");
+			if(founder_name != std::string::npos)
+			{	
+				size_t find_r_n = clt.temp_header.find("\n",founder_name);
+				clt.temp_header = clt.temp_header.substr(founder_name,find_r_n - founder_name);
+			}
+			else
+			{
+				clt.temp_header = "";
+			}
+			getFilename(buffer, clt.upload_files.size(), upload_files, -1, clt.fd,clt);
+			upload_files.file->open(upload_files.filename.c_str(),std::fstream::app | std::fstream::out);
+			//sleep(2);
 			if (upload_files.file->is_open() == true)
 			{
 				upload_files.file->close();
@@ -142,7 +182,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 				clt.upload_files[i - 1].file->write(buffer.c_str(), buffer.size());
 			}
 			clt.upload_files[i - 1].file->close();
-		}	
+		}
 	}
 	else if (clt.bodys.boundary_flag == 1 || clt.bodys.chunks_flag == 1)
 	{
@@ -173,7 +213,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					find = buffer.find("Content-Disposition:");
 					if (find != -1 && isADerective(buffer, find, size) == 1 && clt.bodys.content_disposition == 0)
 					{
-						getFilename(buffer, clt.upload_files.size(), upload_files, find, clt.fd);
+						getFilename(buffer, clt.upload_files.size(), upload_files, find, clt.fd,clt);
 						upload_files.file->open(upload_files.filename.c_str(), std::fstream::app | std::fstream::out);
 						if (upload_files.file->is_open() == true)
 						{
@@ -188,7 +228,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					{
 						if (clt.upload_files.size() == 0)
 						{
-							getFilename(buffer, clt.upload_files.size(), upload_files, find, clt.fd);
+							getFilename(buffer, clt.upload_files.size(), upload_files, find, clt.fd,clt);
 							upload_files.file->open(upload_files.filename.c_str(), std::fstream::app | std::fstream::out);
 							if (upload_files.file->is_open() == true)
 							{
@@ -203,7 +243,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					if (clt.bodys.content_disposition == 1)
 					{
 						find = buffer.find(bndry);
-						if (find == -1)
+						if (find == -1) // check for npos
 						{
 							find = buffer.find(clt.bodys.boundary);
 						}

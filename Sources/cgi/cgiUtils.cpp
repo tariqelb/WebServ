@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   cgiUtils.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 12:00:54 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 15:02:54 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/20 11:46:12 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../webserv.hpp"
 
-int get_time(class CGI& cgi)
+int get_time(struct client &clt)
 {
 	struct timeval current_time;
 	long time;
 
 	gettimeofday(&current_time, NULL);
-	if (!cgi.time)
-		cgi.time = current_time.tv_sec;
-	time = current_time.tv_sec - cgi.time;
+	if (!clt.cgi.time)
+		clt.cgi.time = current_time.tv_sec;
+	time = current_time.tv_sec - clt.cgi.time;
 	if (time < 0)
 		time *= -1;
 	return (time);
@@ -54,7 +54,7 @@ int isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePa
 	size_t	index = filePath.find_last_of('.');
 	if (index == std::string::npos)
 		return 0;
-	clt.cgi.extention = filePath.substr(index, filePath.size());
+	clt.cgi.extention = filePath.substr(index, filePath.size() - index);
 	for (iter = web.config[clt.config].location[clt.location].cgi.begin();
 		iter != web.config[clt.config].location[clt.location].cgi.end()
 		&& iter->first != clt.cgi.extention;
@@ -62,6 +62,7 @@ int isCgiConfigured(struct client &clt, struct webserv &web,  std::string filePa
 	if (iter == web.config[clt.config].location[clt.location].cgi.end())
 		return 0;
 	clt.cgi.interpreter = iter->second;
+	std::cout << "@@@@@@@@@@@@@@ extention = |" << clt.cgi.extention << "|" << std::endl;
 	return 1;
 }
 

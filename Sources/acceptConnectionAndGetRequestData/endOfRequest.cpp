@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   endOfRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:02:55 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/20 12:46:50 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		{
 			bodys.content_length_flag = 1;
 			bodys.get_body_type = 1;
+			bodys.binary_flag = 1;
 		}
 		else
 		{

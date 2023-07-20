@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 18:50:52 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 11:43:14 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,20 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		{
 			web.clients[clt_i].response.error = true;
 			FD_CLR(web.clients[clt_i].fd , &web.reads);
+			int n_byte_readed = 0;
+			char line[2];
+			n_byte_readed = recv(web.clients[clt_i].fd, line, 0, MSG_PEEK);
+			if (n_byte_readed < 0)
+			{
+				// std::cout << PURPLE << "--------------- 4 receiveRequest  \n" << END;
+				closeConnection(web, clt_i);
+				flag_fail = 0;
+				return ;
+			}
+			// std::cout << PURPLE <<"!!!!!!!!!!!!!!! execute cgi = |" << clt.cgi.extention << "|\n" << END;
 			sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
 
-			std::cout << PURPLE << "--------------- 4 receiveRequest  \n" << END;
+			// std::cout << PURPLE << "--------------- 5 receiveRequest  \n" << END;
 			closeConnection(web, clt_i);
 			flag_fail = 0;
 			return ;

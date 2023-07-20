@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/17 20:18:30 by tel-bouh         ###   ########.fr       */
+/*   Updated: 2023/07/20 12:01:49 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,13 +190,20 @@ void	handleConnection(struct webserv& web)
 		        n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
 				if (n_byte_readed < 0)
 				{
-					// std::cout << PURPLE << "--------------- 1--------------- handleConnection ----------- \n" << END;
+					// std::cout << PURPLE << "--------------- 1 handleConnection  \n" << END;
 					closeConnection(web, i);
 					return ;
 				}
 				if (web.clients[i].cgi.loop_detected)
 				{
-					if (get_time(web.clients[i].cgi) == 31)
+					// if (get_time(web.clients[i]) == 5){
+					// 	std::cout << SKY << get_time(web.clients[i]) << " extention = " << web.clients[i].cgi.extention
+					// 	<< " | interpreter = " << web.clients[i].cgi.interpreter
+					// 	<< "  | pid = " << web.clients[i].cgi.pid << END << std::endl;
+					// 	kill(web.clients[i].cgi.pid, SIGKILL);
+					// 	exit(0);	
+					// }
+					if (get_time(web.clients[i]) == 35)
 					{
 						generate_CGI_file(web.clients[i], web.clients[i].map_request["URI"]);
 						web.clients[i].cgi.loop_detected = false;

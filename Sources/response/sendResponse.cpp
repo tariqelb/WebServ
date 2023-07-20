@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 18:49:18 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 12:33:03 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,36 +26,29 @@ void getResponseHeader(struct client &clt, int statusCode, std::string filePath)
 		response += clt.cgi.header;
 	response += CRLF;
 	clt.response.responseData.assign(response.begin(), response.end());
-	// std::cout << GREEN << clt.response.responseData.data() << END << std::endl;
 }
 
 void check(struct client &clt, std::ifstream &file, std::string filePath)
 {
 	if (!file.is_open())
 	{
-		// std::cerr << "COULD NOT OPEN FILE\n";//!
 		error(clt, 500);//TODO
 		throw std::exception();
 	}
 	if (clt.response.nbrFrames < 0)
 	{
-		// std::cout << PURPLE << "INITTING DATA\n" << END;
 		initData(clt, filePath, file);
 		file.close();
 		throw std::exception();
 	}
 	if (clt.response.position == clt.response.fileSize)
 	{
-		// std::cout << PURPLE << "FINISH READING\n" << END;
 		clt.response.finishReading = true;
 		file.close();
 		throw std::exception();
 	}
 	if (clt.response.position < 0)
-	{
-		// std::cout << PURPLE << "POSITION < 0\n" << END;
 		throw std::exception();
-	}
 }
 
 void	readFile(int statusCode, struct client &clt, std::string filePath)
@@ -71,9 +64,6 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	try {check(clt, file, filePath);}
 	catch (std::exception &e){return ;}
 
-	// std::cout << "\033[93mFrame size = " << clt.response.sizeFrame 
-	// 	<< " | position = " <<clt.response.position
-	// 	<< " | fileSize = " << clt.response.fileSize << "\033[00m" << std::endl;//!
 
 	if (clt.response.position)
 		clt.response.sizeFrame = min(clt.response.sizeFrame,
@@ -103,17 +93,15 @@ void fillResponse(struct client &clt, struct webserv &web, int statusCode)
 int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	long bitSent;
-	std::cout << clt.map_request["URI"];
+
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
 	else if (!statusCode || (statusCode >= 300 && !clt.response.body))
 		fillRedirectResponse(clt, web, statusCode);
 	else
 		fillResponse(clt, web, statusCode);
-	if (clt.response.finishReading)
+	if (clt.response.finishReading && !clt.response.redirection)
 	{
-		// std::cout << YELLOW <<  "file len = " << clt.response.len 
-		// 		<< "| position = " << clt.response.position << END << std::endl;
 		clt.response.position = 0;
 		return statusCode;
 	}
@@ -134,13 +122,11 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 			std::cerr << "there is an error\n";
 			throw std::runtime_error("Send operation failed");
 		}
-		// std::cout << "Error code : " << bitSent << " " << n_byte_readed << std::endl; 
 	}
 	catch(std::exception &e)
 	{
 		std::cerr << e.what() << std::endl;
 	}	
-	// std::cout << "bitSent  = " << bitSent << std::endl;//!
 	if (clt.response.header && bitSent > 0)
 		clt.response.position = static_cast<std::streampos>(bitSent + clt.response.position);
 	else
