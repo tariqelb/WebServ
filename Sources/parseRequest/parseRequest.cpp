@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 15:22:55 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/20 18:00:20 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,7 @@ int parsLocation(struct client &clt, struct webserv &web)
 										 web.config[clt.config].location[clt.location].pattern,
 										 web.config[clt.config].root);
 	else
-	{
-		std::cout << "The error is generated here\n";
 		return error(clt, 404);
-	}
 	return 0;
 }
 
@@ -152,14 +149,11 @@ int parseRequestData(struct client &clt, struct webserv &web)
 
 int parseRequest(struct webserv &web, struct client &clt)
 {
-	// std::cout << "\033[91m--------------------------------------------------------\n";
-	// clt.response_is_ready = true;
 	clt.config = -1;
 	clt.location = -1;
 
 	fillRequestData(clt);
 
 	parseRequestData(clt, web);
-	//!displayServerFile(web.config);
 	return 0;
 }

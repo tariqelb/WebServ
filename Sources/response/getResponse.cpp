@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 12:11:28 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:05:57 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,7 @@ int	get(struct webserv& web, struct client& clt)
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
 		{
 			if ((cgi(web, clt)))
-			{
-				std::cout << "########## get = |" << clt.cgi.extention << "|\n";
 				return 0;
-			}
 		}
 		return clt.response.statusCode = 200;
 	}

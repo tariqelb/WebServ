@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 12:00:54 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 17:31:24 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 17:45:38 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int get_time(struct client &clt)
 
 void	fill_CGI_ENV(struct client &clt, struct webserv &web)
 {
-	// std::cout << "query string = " << clt.map_request["QUERY_STRING"] << std::endl;
 	if (clt.map_request["Method"] == "GET")
 		clt.cgi.env.push_back("QUERY_STRING=" + clt.map_request["QUERY_STRING"]);
 	clt.cgi.env.push_back(std::string("REMOTE_ADDR=" + web.config[clt.config].host));
@@ -98,8 +97,8 @@ std::string	parsePHPcgi(std::string &fileName, std::string &header, std::string 
 		if (iter->second == content_type)
 		{
 			responseFileName = "cgi" + suffix + iter->first;
-			// if (std::remove("cgi.html")< 0)
-			// 	throw std::runtime_error("Error: remove");
+			if (std::remove(fileName.c_str())< 0)
+				throw std::runtime_error("Error: remove");
 			break;
 		}
 	}

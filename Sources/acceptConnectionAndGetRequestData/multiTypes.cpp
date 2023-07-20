@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multiTypes.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 19:54:34 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/20 17:53:48 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_
 	size = buffer.size();
 	find_cr = buffer.find("\r\n", find);
 	temp = clt.temp_header;
-	// std::cout << clt.temp_header<<std::endl;
 	if (size && find_cr != -1)
 	{
 
@@ -105,7 +104,6 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_
 	}
 	else 
 	{
-		std::cout << "Hereeee"<<std::endl;
 		temp = "text_" + std::to_string(file_index) + ".txt";
 		upload_files.filename = "./www/uploads/" + temp;
 		upload_files.just_the_file = temp;
@@ -136,11 +134,9 @@ void	multiTypes(std::string buffer, struct client& clt)
 		find = 0;
 		if (clt.nbr_of_reads == 1)
 		{
-			// std::cout << BLUE<<clt.map_request["Content-Disposition"]<<std::endl<<END;
 			find_cr = buffer.find("\r\n\r\n");
 			if(find_cr != -1)
 				clt.temp_header =  buffer.substr(0,find_cr + 4);
-			// std::cout << clt.temp_header<< std::endl;
 			if (find_cr != -1)
 			{
 				buffer = buffer.substr(find_cr + 4);
@@ -149,7 +145,6 @@ void	multiTypes(std::string buffer, struct client& clt)
 		i = clt.upload_files.size();
 		if (buffer.size() && i == 0)
 		{
-			//std::cout << clt.nbr_of_reads<<std::endl;
 			size_t founder_name = clt.temp_header.find("Content-Disposition");
 			if(founder_name != std::string::npos)
 			{	
@@ -162,7 +157,6 @@ void	multiTypes(std::string buffer, struct client& clt)
 			}
 			getFilename(buffer, clt.upload_files.size(), upload_files, -1, clt.fd,clt);
 			upload_files.file->open(upload_files.filename.c_str(),std::fstream::app | std::fstream::out);
-			//sleep(2);
 			if (upload_files.file->is_open() == true)
 			{
 				upload_files.file->close();

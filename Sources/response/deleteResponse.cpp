@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:47:18 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 12:40:20 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:03:08 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int	deleteResponse(struct webserv& web, struct client& clt)
 	int a = S_ISDIR(pathStat.st_mode);
 	if (a == 0)
 	{
-		std::cout << "Here"<< std::endl;
+		// std::cout << "Here"<< std::endl;
 		if (clt.location >= 0 && !web.config[clt.config].location[clt.location].cgi.empty())
 		{
 			if (cgi(web, clt))

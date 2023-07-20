@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 17:30:51 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:04:15 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void	executeCgi(struct client &clt, std::string &filePath, struct webserv &web)
 			close(fd_out);
 			if(clt.map_request["Method"] == "POST")
 			{
-				std::cerr << YELLOW <<  "file = " << clt.upload_files[0].filename<< std::endl << END ;
 				int fd = open(clt.upload_files[0].filename.c_str(), O_RDONLY, 0777);
 				if (fd < 0)
 					throw std::runtime_error("Error: failed to open input file");
@@ -94,13 +93,12 @@ int cgi(struct webserv &web, struct client &clt)
 	clt.response.cgi = true;
 	if ((status = isCgiConfigured(clt, web, clt.map_request["URI"])) != 1)
 		return 0;
-	std::cout << YELLOW << "---------> "<< clt.map_request["Method"] << END << std::endl;
 	try {
 			executeCgi(clt, clt.map_request["URI"], web);
 	}
 	catch (std::exception &e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 		return error(clt, 500);
 	}
 	if (!clt.response.body)

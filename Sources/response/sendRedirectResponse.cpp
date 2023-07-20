@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:30:12 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 12:26:02 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:02:42 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	fillRedirectResponse(struct client &clt, struct webserv &web, int statusCod
 
 	(void)web;
 	clt.response.redirection = true;
-	std::cout << statusCode << std::endl;
 	clt.response.finishReading = true;
 	response = "HTTP/1.1 " + intToString(statusCode) + " " + getStatusMessage(statusCode);
 	if (statusCode && statusCode != 200)

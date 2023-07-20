@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:50:33 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 17:32:02 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:00:45 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	fillRequestData(struct client& clt)
 	clt.file->open(clt.file_name.c_str(), std::ios::in);
 	if (!clt.file->is_open())
 	{
-		std::cout << "i am suppose to be here in case of an error\n";
+		error(clt, 500);
 		return ;
 	}
 	std::getline(*clt.file, line);

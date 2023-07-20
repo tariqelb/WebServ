@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:48:15 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 13:50:24 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:05:07 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,14 @@ int	post(struct webserv& web, struct client& clt)
 	int place = web.config[clt.config].location[clt.location].upload_store.size() - 1;
 	uploadFiles file = clt.upload_files[0];
 	// return  error(clt, 500);
-	std::cout << file.no_name <<std::endl;
-	std::cout << file.filename<<std::endl;
+	// std::cout << file.no_name <<std::endl;
+	// std::cout << file.filename<<std::endl;
 	std::string temp22 = file.filename;
 	std::string temp33 = temp22;
 	std::string extension;
 	std::ifstream file2;
 	std::string comparitor = "no";
-	std::cout <<"here"<<std::endl;
+	// std::cout <<"here"<<std::endl;
 	if(file.no_name.compare(comparitor.c_str()) == 0)
 	{
 		// std::cout <<"Hereee 2"<<std::endl;
@@ -110,9 +110,9 @@ int	post(struct webserv& web, struct client& clt)
 	}	
 	else
 	{
-		std::cout << "here"<<std::endl;
+		// std::cout << "here"<<std::endl;
 		temp22 = clt.map_request["URI"];
-		std::cout << temp22<<std::endl;
+		// std::cout << temp22<<std::endl;
 		size_t find_last_fold = temp22.rfind("/");
 		extension = temp22.erase(0,find_last_fold + 1);
 		// std::cout << extension<<std::endl;
@@ -250,7 +250,7 @@ int	post(struct webserv& web, struct client& clt)
 	// // }
 	if(stat(clt.map_request["URI"].c_str(),&pathStat2) != 0)
 		return (error(clt,404));
-	std::cout<< clt.map_request["URI"].c_str()<<std::endl;
+	// std::cout<< clt.map_request["URI"].c_str()<<std::endl;
 	if(S_ISDIR(pathStat2.st_mode))
 	{
 		
@@ -292,14 +292,14 @@ int	post(struct webserv& web, struct client& clt)
 	}
 	if (!S_ISDIR(pathStat2.st_mode))
 	{
-		std::cout << "File"<<std::endl;
+		// std::cout << "File"<<std::endl;
 		if(web.config[clt.config].location[clt.location].cgi.empty())
 		{
 			return (error(clt,403));
 		}
 		else
 	{	
-			std::cout << "Wtp"<<std::endl;
+			// std::cout << "Wtp"<<std::endl;
 			return cgi(web,clt);
 		}
 	}
