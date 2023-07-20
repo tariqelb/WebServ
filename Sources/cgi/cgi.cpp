@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 14:17:21 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/20 17:30:51 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	generate_CGI_file(struct client &clt,std::string &filePath)
 
 void	executeCgi(struct client &clt, std::string &filePath, struct webserv &web)
 {
+	(void)web;
 	clt.cgi.outFile = "out" +intToString(clt.fd) + ".html";
 	int fd_out = open(clt.cgi.outFile.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (fd_out == -1)
@@ -44,16 +45,15 @@ void	executeCgi(struct client &clt, std::string &filePath, struct webserv &web)
 			close(fd_out);
 			if(clt.map_request["Method"] == "POST")
 			{
-				std::ifstream in(clt.upload_files[0].filename.c_str());
-				getline(in, clt.map_request["QUERY_STRING"], '\0');
-				std::cerr << YELLOW << "clt.map_request = " << clt.map_request["QUERY_STRING"] << END << std::endl;
-				in.close();
-				int fd = open(clt.upload_files[0].filename.c_str(), O_RDWR, 0644);
+				std::cerr << YELLOW <<  "file = " << clt.upload_files[0].filename<< std::endl << END ;
+				int fd = open(clt.upload_files[0].filename.c_str(), O_RDONLY, 0777);
 				if (fd < 0)
 					throw std::runtime_error("Error: failed to open input file");
-				dup2(fd, 0);
+				if (dup2(fd, 0) < 0)
+					throw std::runtime_error("Error: failed to duplicate file");
+				if (close(fd))
+					throw std::runtime_error("Error: failed to close input file");
 			}
-
 			fill_CGI_ENV(clt, web);
 			const char* arg[] = {clt.cgi.interpreter.c_str() , filePath.c_str(), NULL};
 			char** env = new char*[clt.cgi.env.size() + 2];  //!
@@ -68,7 +68,6 @@ void	executeCgi(struct client &clt, std::string &filePath, struct webserv &web)
 				exit(0);
 			}
 		}
-
 		sleep(1);
 		int returnValue = waitpid(clt.cgi.pid, NULL, WNOHANG);
 		if (returnValue < 0)
