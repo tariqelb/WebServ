@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sendErrorResponse.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/17 15:01:02 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/22 23:25:37 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,12 @@ void readeErrorFile(struct client &clt, int statusCode)
 		std::cerr << "ERROR : FAILED TO OPEN ERROR OR AUTOINDEX FILE \n";
 		return;
 	}
-	responseBody << file.rdbuf();
+	//!
+	responseBody << file.rdbuf();//TODO
 	std::copy( std::istreambuf_iterator<char>(responseBody),
 	std::istreambuf_iterator<char>(), std::back_inserter(clt.response.responseBody));
+	
+	// std::cout << "Oki"<<std::endl;
 	clt.response.error = true;
 }
 

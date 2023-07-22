@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:50:33 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 18:00:45 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/22 22:53:49 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,5 @@ void	fillRequestData(struct client& clt)
 	// for (iter = clt.map_request.begin(); iter != clt.map_request.end();i++, iter++) {
     //     std::cout << "\033[92m" <<  iter->first << " | " << iter->second << "\033[00m\n";
     // }
-	// std::cout << "request line = " << requestLine << std::endl;
 	return ;
 }

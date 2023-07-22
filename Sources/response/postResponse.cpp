@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:48:15 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 18:05:07 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/22 22:57:33 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,26 +87,26 @@ int	post(struct webserv& web, struct client& clt)
 	// std::cout <<"here"<<std::endl;
 	if(file.no_name.compare(comparitor.c_str()) == 0)
 	{
-		// std::cout <<"Hereee 2"<<std::endl;
-		// extension = temp22.erase(0,14);
-		// bool only_one = false;
-		// std::string temp_original = temp33;
-		// size_t find_last_folder = clt.map_request["URI"].rfind("/");
-		// temp33 = temp33.erase(find_last_folder,temp33.size() - find_last_folder);
-		// if(temp33.rfind("/") == std::string::npos)
-		// {
-		// 	only_one = true;
-		// 	temp33 = temp_original + '/' + extension;
-		// }
-		// if(only_one == false)
-		// 	temp33 = temp33 + '/' + extension;
-		// file2.open(temp33,std::ios::in);
-		// if(file2.is_open() == 0)
-		// {
-		// 		std::cerr<< "Error Opening the file\n"<<std::endl;
-		// 		return  error(clt, 500);
-		// }
-		// file2.close();
+		std::cout <<"Hereee 2"<<std::endl;
+		extension = temp22.erase(0,14);
+		bool only_one = false;
+		std::string temp_original = temp33;
+		size_t find_last_folder = clt.map_request["URI"].rfind("/");
+		temp33 = temp33.erase(find_last_folder,temp33.size() - find_last_folder);
+		if(temp33.rfind("/") == std::string::npos)
+		{
+			only_one = true;
+			temp33 = temp_original + '/' + extension;
+		}
+		if(only_one == false)
+			temp33 = temp33 + '/' + extension;
+		file2.open(temp33,std::ios::in);
+		if(file2.is_open() == 0)
+		{
+				std::cerr<< "Error Opening the file\n"<<std::endl;
+				return  error(clt, 500);
+		}
+		file2.close();
 	}	
 	else
 	{
@@ -248,9 +248,9 @@ int	post(struct webserv& web, struct client& clt)
 	// // 		}
 	// // 	}
 	// // }
+	std::cout<< clt.map_request["URI"].c_str()<<std::endl;
 	if(stat(clt.map_request["URI"].c_str(),&pathStat2) != 0)
 		return (error(clt,404));
-	// std::cout<< clt.map_request["URI"].c_str()<<std::endl;
 	if(S_ISDIR(pathStat2.st_mode))
 	{
 		
@@ -284,8 +284,7 @@ int	post(struct webserv& web, struct client& clt)
 		}
 		if(*clt.map_request["URI"].rbegin() != '/')
 		{
-			clt.map_request["URI"] += "/";
-			if(clt.location >= 0 && !web.config[clt.config].location[clt.location].redirect.empty())
+			clt.map_request["URI"] += "/";	
 				clt.response.body = true;
 			return clt.response.statusCode = 301;
 		}

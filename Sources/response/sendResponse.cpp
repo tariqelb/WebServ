@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 12:33:03 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/22 23:25:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	long bitSent;
 
+	// std::cout << "ghdkfjfdvls\n";
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
 	else if (!statusCode || (statusCode >= 300 && !clt.response.body))
