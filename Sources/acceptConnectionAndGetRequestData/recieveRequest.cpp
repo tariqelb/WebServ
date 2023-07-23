@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/23 18:35:59 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:29:10 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,9 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 				FD_CLR(web.clients[clt_i].fd , &web.reads);
 				if (!FD_ISSET(web.clients[clt_i].fd , &web.writes))
 				{
-					std::cout << "Is not set " << std::endl;
+					// std::cout << "Is not set " << std::endl;
 					FD_SET(web.clients[clt_i].fd, &web.writes);
 				}
-			}
-			else {
-				std::cout << "else of not" << std::endl; 
 			}
 			// FD_CLR(web.clients[clt_i].fd , &web.reads);
 			// int n_byte_readed = 0;

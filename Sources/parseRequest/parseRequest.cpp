@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 15:07:05 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:28:50 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ int getHostPort(struct client &clt, struct webserv &web)
 int isRequestWellFormed(struct client &clt, struct webserv &web)
 {
 	clt.config = getHostPort(clt, web);
+	// std::cout << "---------------------\n";
 	if ( (clt.map_request["URI"].find_first_not_of(
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%")
 		!= std::string::npos)
