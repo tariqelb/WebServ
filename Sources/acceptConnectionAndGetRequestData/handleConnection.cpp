@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/20 18:06:13 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:04:11 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,11 +151,11 @@ void	handleConnection(struct webserv& web)
 		i++;
 	}
 	i = 0;
-		size = web.clients.size();
-	while (i < size)
+	while ((unsigned long)i < web.clients.size())
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
+			std::cout << GREEN << "#############\n" << END;
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				int n_byte_readed = 0;

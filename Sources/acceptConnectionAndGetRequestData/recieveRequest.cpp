@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/20 17:57:59 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:03:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,17 +110,18 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		{
 			web.clients[clt_i].response.error = true;
 			FD_CLR(web.clients[clt_i].fd , &web.reads);
-			int n_byte_readed = 0;
-			char line[2];
-			n_byte_readed = recv(web.clients[clt_i].fd, line, 0, MSG_PEEK);
-			if (n_byte_readed < 0)
-			{
-				closeConnection(web, clt_i);
-				flag_fail = 0;
-				return ;
-			}
-			sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
-			closeConnection(web, clt_i);
+			// int n_byte_readed = 0;
+			// char line[2];
+			// n_byte_readed = recv(web.clients[clt_i].fd, line, 0, MSG_PEEK);
+			// if (n_byte_readed < 0)
+			// {
+			// 	closeConnection(web, clt_i);
+			// 	flag_fail = 0;
+			// 	return ;
+			// }
+			web.clients[clt_i].request_is_ready = true;
+			// sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
+			// closeConnection(web, clt_i);
 			flag_fail = 0;
 			return ;
 		}
