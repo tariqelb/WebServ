@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/23 15:04:11 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:59:13 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,18 +125,24 @@ void	handleConnection(struct webserv& web)
 		{
 			
 			flag_fail = 1;
-			try{
+			// try{
 				receiveRequest(web, web.clients[i], i, flag_fail);
-			}
-			catch(std::exception &e){error(web.clients[i], 500);}
-			if (flag_fail && web.clients[i].request_is_ready == true)
+			// }
+			// catch(std::exception &e){
+			// 	std::cerr << e.what() << std::endl;
+			// 	error(web.clients[i], 500);
+			// }
+			if (flag_fail && web.clients[i].request_is_ready == true && !web.clients[i].response.error)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
-				if (!web.clients[i].response.error && web.clients[i].map_request["Method"] == "GET")
+				if (web.clients[i].map_request["Method"] == "GET")
 					get(web, web.clients[i]);
 				else if (web.clients[i].response.statusCode < 400
 						&& web.clients[i].map_request["Method"] == "POST")
+				{
+					std::cout << "sending post request ...\n";
 					post(web, web.clients[i]);
+				}
 				else if (web.clients[i].response.statusCode < 400
 						&& web.clients[i].map_request["Method"] == "DELETE")
 					deleteResponse(web, web.clients[i]);
@@ -152,6 +158,7 @@ void	handleConnection(struct webserv& web)
 	}
 	i = 0;
 	std::cout << "Size : " << web.clients.size() << std::endl; 
+	std::cout << "status code = " << web.clients[i].response.statusCode << std::endl;
 	while ((unsigned long)i < web.clients.size())
 	{
 		std::cout << "clt fd : " << web.clients[i].fd << std::endl; 
@@ -179,7 +186,6 @@ void	handleConnection(struct webserv& web)
 				}
 				if (web.clients[i].cgi.loop_detected == false)
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
-				std::cout << "Here : " << std::endl;
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
 					closeConnection(web, i);
 			}
