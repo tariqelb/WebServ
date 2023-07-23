@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 18:04:15 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 21:44:47 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	executeCgi(struct client &clt, std::string &filePath, struct webserv &web)
 		if (!clt.cgi.pid)
 		{
 			dup2(fd_out, STDOUT_FILENO);
+			dup2(fd_out,2);
 			close(fd_out);
 			if(clt.map_request["Method"] == "POST")
 			{

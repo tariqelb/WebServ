@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 19:14:57 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 22:14:41 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 	 	// n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
 		// if (n_byte_read < 0)
 		// {
-		// 	clt.response.error = true;
+		// 	// clt.response.error = true;
 		// 	return 0;
 		// }
 		

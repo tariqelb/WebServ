@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/23 20:27:56 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:31:44 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void	handleConnection(struct webserv& web)
 		}
 		i++;
 	}
-	// size = ;	
 	i = 0;
 	while ((unsigned long)i < web.clients.size())
 	{
@@ -150,11 +149,6 @@ void	handleConnection(struct webserv& web)
 					deleteResponse(web, web.clients[i]);
 
 			}
-			// else if (flag_fail == 0)
-			// {
-			// 	i--;
-			// 	size = web.clients.size();
-			// }
 		}
 		i++;
 	}
