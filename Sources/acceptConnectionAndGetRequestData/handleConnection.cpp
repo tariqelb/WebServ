@@ -16,7 +16,7 @@ void	closeConnection(struct webserv& web, int client_i)
 {
 	std::vector<client>::iterator it;
 
-	// std::cout << RED << "\nConnection Closed " << web.clients[client_i].fd << END << std::endl;
+	 std::cout << RED << "\nConnection Closed " << web.clients[client_i].fd << END << std::endl;
 	it = web.clients.begin();
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
@@ -53,6 +53,7 @@ void	handleConnection(struct webserv& web)
 	
 	size = web.servers.size();	
 	i = 0;
+	std::cout << "in handle" << std::endl;
 	while (i < size)
 	{
 		
@@ -116,16 +117,16 @@ void	handleConnection(struct webserv& web)
 			j++;
 		}
 		i++;
-	}
-	size = web.clients.size();	
+	}	
 	i = 0;
-	while (i < size)
+	while ((unsigned long)i < web.clients.size())
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
 			
 			flag_fail = 1;
 			// try{
+				std::cout << "recv" << std::endl;
 				receiveRequest(web, web.clients[i], i, flag_fail);
 			// }
 			// catch(std::exception &e){
@@ -148,11 +149,11 @@ void	handleConnection(struct webserv& web)
 					deleteResponse(web, web.clients[i]);
 
 			}
-			else if (flag_fail == 0)
+			/*else if (flag_fail == 0)
 			{
 				i--;
 				size = web.clients.size();
-			}
+			}*/
 		}
 		i++;
 	}
@@ -173,6 +174,7 @@ void	handleConnection(struct webserv& web)
 		        n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
 				if (n_byte_readed < 0)
 				{
+					std::cout << "close here 1" << std::endl;
 					closeConnection(web, i);
 					return ;
 				}
@@ -187,7 +189,10 @@ void	handleConnection(struct webserv& web)
 				if (web.clients[i].cgi.loop_detected == false)
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
+				{
+					std::cout << "close here 2" << std::endl;
 					closeConnection(web, i);
+				}
 			}
 		}
 		i++;

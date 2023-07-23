@@ -62,6 +62,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 	buff.assign("");
 	if (n_byte_readed < 0)
 	{
+		std::cout << "close here 3" << std::endl;
 		closeConnection(web, clt_i);	
 		flag_fail = 0;
 		return ;
@@ -124,9 +125,17 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 			// 	flag_fail = 0;
 			// 	return ;
 			// }
-			web.clients[clt_i].request_is_ready = true;
+			//web.clients[clt_i].request_is_ready = true;
 			// sendResponse(web.clients[clt_i], web, web.clients[clt_i].response.statusCode);
 			// closeConnection(web, clt_i);
+			int endofdata = 0;
+			while (1)
+			{
+				endofdata =  recv(clt.fd, line, 99999, 0);
+				if (endofdata <= 0)
+					break;
+			}
+			clt.request_is_ready = true;	
 			flag_fail = 0;
 			return ;
 		}
@@ -152,6 +161,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		clt.request_is_ready = true;
 		if (clt.post_flag)
 			getFilesLength(clt);
-		FD_SET(clt.fd, &web.writes);
+		if (!FD_ISSET(clt.fd, &web.writes))
+			FD_SET(clt.fd, &web.writes);
 	}
 }

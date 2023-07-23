@@ -223,6 +223,7 @@ int	endOfChunks(std::string	buffer, struct body& bodys)
 int	endOfTheRequest(std::string buffer, struct body& bodys)
 {
 
+	std::cout << "start of file not detected  ------------------------------- " << std::endl;
 	if (bodys.get_body_type == 0)
 		getBodyType(buffer, bodys);
 	if (bodys.boundary_flag)
@@ -248,10 +249,12 @@ int	endOfTheRequest(std::string buffer, struct body& bodys)
 	}
 	if (bodys.cr_nl_flag)
 	{
+		std::cout << BLUE << "cr Flag set (" <<  buffer << ")" << END << std::endl;
 		if (buffer.size() > 4 &&  buffer.compare(buffer.size() - 4, 4, "\r\n\r\n") == 0)
 		{
 			return (0);
 		}
 	}
+	std::cout << "End of file not detected  ------------------------------- " << std::endl;
 	return (1);
 }
