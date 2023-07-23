@@ -110,6 +110,11 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 		{
 			web.clients[clt_i].response.error = true;
 			FD_CLR(web.clients[clt_i].fd , &web.reads);
+			if (!FD_ISSET(web.clients[clt_i].fd , &web.writes))
+			{
+				std::cout << "Is not set " << std::endl;
+				FD_SET(web.clients[clt_i].fd, &web.writes);
+			}
 			// int n_byte_readed = 0;
 			// char line[2];
 			// n_byte_readed = recv(web.clients[clt_i].fd, line, 0, MSG_PEEK);

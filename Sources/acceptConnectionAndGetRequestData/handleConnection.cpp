@@ -151,11 +151,14 @@ void	handleConnection(struct webserv& web)
 		i++;
 	}
 	i = 0;
+	std::cout << "Size : " << web.clients.size() << std::endl; 
 	while ((unsigned long)i < web.clients.size())
 	{
+		std::cout << "clt fd : " << web.clients[i].fd << std::endl; 
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
 			std::cout << GREEN << "#############\n" << END;
+			std::cout << "Req : " << web.clients[i].request_is_ready << std::endl; 
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
 				int n_byte_readed = 0;
@@ -176,6 +179,7 @@ void	handleConnection(struct webserv& web)
 				}
 				if (web.clients[i].cgi.loop_detected == false)
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
+				std::cout << "Here : " << std::endl;
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
 					closeConnection(web, i);
 			}
