@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/23 15:59:13 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 19:15:12 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,22 @@ void	closeConnection(struct webserv& web, int client_i)
 {
 	std::vector<client>::iterator it;
 
-	 std::cout << RED << "\nConnection Closed " << web.clients[client_i].fd << END << std::endl;
+	// std::cout << RED << "\nConnection Closed " << web.clients[client_i].fd << END << std::endl;
 	it = web.clients.begin();
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
 
+
+	// if (!web.clients[client_i].map_request.empty())
+	// 	std::cout << YELLOW << "map_request is not empty\n";
+	// else
+	// 	std::cout << SKY << "map_request is empty\n";
+	// if(!web.clients[client_i].response.error) 
+	// 	std::cout << YELLOW << "response is not error\n";
+	// else
+	// 	std::cout << SKY << "response is error\n" << END;
+	
 	if (!web.clients[client_i].response.error
 		|| (!web.clients[client_i].map_request.empty()))
 		std::remove(web.clients[client_i].file_name.c_str());
@@ -53,7 +63,6 @@ void	handleConnection(struct webserv& web)
 	
 	size = web.servers.size();	
 	i = 0;
-	std::cout << "in handle" << std::endl;
 	while (i < size)
 	{
 		
@@ -117,67 +126,54 @@ void	handleConnection(struct webserv& web)
 			j++;
 		}
 		i++;
-	}	
+	}
+	size = web.clients.size();	
 	i = 0;
-	while ((unsigned long)i < web.clients.size())
+	while (i < size)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_read))
 		{
 			
 			flag_fail = 1;
-			// try{
-				std::cout << "recv" << std::endl;
+			try{
 				receiveRequest(web, web.clients[i], i, flag_fail);
-			// }
-			// catch(std::exception &e){
-			// 	std::cerr << e.what() << std::endl;
-			// 	error(web.clients[i], 500);
-			// }
+			}
+			catch(std::exception &e){error(web.clients[i], 500);}
 			if (flag_fail && web.clients[i].request_is_ready == true && !web.clients[i].response.error)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
 				if (web.clients[i].map_request["Method"] == "GET")
 					get(web, web.clients[i]);
-				else if (web.clients[i].response.statusCode < 400
-						&& web.clients[i].map_request["Method"] == "POST")
-				{
-					std::cout << "sending post request ...\n";
+				else if (web.clients[i].map_request["Method"] == "POST")
 					post(web, web.clients[i]);
-				}
-				else if (web.clients[i].response.statusCode < 400
-						&& web.clients[i].map_request["Method"] == "DELETE")
+				else if (web.clients[i].map_request["Method"] == "DELETE")
 					deleteResponse(web, web.clients[i]);
 
 			}
-			/*else if (flag_fail == 0)
+			else if (flag_fail == 0)
 			{
 				i--;
 				size = web.clients.size();
-			}*/
+			}
 		}
 		i++;
 	}
 	i = 0;
-	std::cout << "Size : " << web.clients.size() << std::endl; 
-	std::cout << "status code = " << web.clients[i].response.statusCode << std::endl;
 	while ((unsigned long)i < web.clients.size())
 	{
-		std::cout << "clt fd : " << web.clients[i].fd << std::endl; 
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
-			std::cout << GREEN << "#############\n" << END;
-			std::cout << "Req : " << web.clients[i].request_is_ready << std::endl; 
+			// std::cout << GREEN << "#############\n" << END;
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
-				int n_byte_readed = 0;
-				char line[2];
-		        n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
-				if (n_byte_readed < 0)
-				{
-					std::cout << "close here 1" << std::endl;
-					closeConnection(web, i);
-					return ;
-				}
+				// int n_byte_readed = 0;
+				// char line[2];
+		        // n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
+				// if (n_byte_readed < 0)
+				// {
+				// 	closeConnection(web, i);
+				// 	return ;
+				// }
 				if (web.clients[i].cgi.loop_detected)
 				{
 					if (get_time(web.clients[i]) == 35)
@@ -189,10 +185,7 @@ void	handleConnection(struct webserv& web)
 				if (web.clients[i].cgi.loop_detected == false)
 					sendResponse(web.clients[i], web, web.clients[i].response.statusCode);
 				if (web.clients[i].response.finishReading || web.clients[i].response.error)
-				{
-					std::cout << "close here 2" << std::endl;
 					closeConnection(web, i);
-				}
 			}
 		}
 		i++;

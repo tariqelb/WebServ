@@ -54,7 +54,7 @@ int	main(int ac, char **av)
 		FD_ZERO(&web.tmp_write);
 		web.tmp_read = web.reads;
 		web.tmp_write = web.writes;
-		 std::cout << "Wait in select : " << web.clients.size() << std::endl;
+		//? // std::cout << "Wait in select : " << web.clients.size() << std::endl;
 		web.status = select(web.maxReadFd + 1, &web.tmp_read, &web.tmp_write, 0, 0);
 		if (web.status == 0)
 		{

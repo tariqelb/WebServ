@@ -119,14 +119,14 @@ void	multiTypes(std::string buffer, struct client& clt)
 	int						find;
 	int						size;
 	int						i;
-//	int						flag_postman_curl;
+	int						flag_postman_curl;
 	std::string				hex;
 	std::string				temp;
 	struct  uploadFiles     upload_files;
 	std::string				theEnd;
 
 	theEnd = "\r\n\r\n" + clt.bodys.boundary;
-//	flag_postman_curl = 1;
+	flag_postman_curl = 1;
 	size = buffer.size();
 	i = 0;
 	if (clt.bodys.content_length_flag == 1 && clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 0)

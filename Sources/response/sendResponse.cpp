@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/22 23:25:43 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 19:14:57 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 {
 	long bitSent;
 
-	 std::cout << "went here\n";
 	if (clt.response.error || clt.response.autoindex)
 		fillErrorResponse(clt, web, statusCode);
 	else if (!statusCode || (statusCode >= 300 && !clt.response.body))
@@ -106,32 +105,22 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 		clt.response.position = 0;
 		return statusCode;
 	}
-	std::cout << "and  here\n";
 	try
 	{
 		std::string str(clt.response.responseData.begin(), clt.response.responseData.end());
-		char	line[2];
-		int n_byte_read = 0;
-	 	n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
-		std::cout << n_byte_read << std::endl;
-		if (n_byte_read < 0)
-		{
-			clt.response.error = true;
-			return 0;
-		}
-			
+		// char	line[2];
+		// int n_byte_read = 0;
+	 	// n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
+		// if (n_byte_read < 0)
+		// {
+		// 	clt.response.error = true;
+		// 	return 0;
+		// }
+		
 		if ((bitSent = send(clt.fd, str.c_str(), str.size(), 0)) <= 0)
-		{
-			std::cerr << "there is an error\n";
 			throw std::runtime_error("Send operation failed");
-		}
-		std::cout << "Data : (" << str.c_str() << ") " << str.size() << std::endl; 
-		std::cout << "bitSent : " << bitSent << std::endl;
 	}
-	catch(std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-	}	
+	catch(std::exception &e){}
 	if (clt.response.header && bitSent > 0)
 		clt.response.position = static_cast<std::streampos>(bitSent + clt.response.position);
 	else

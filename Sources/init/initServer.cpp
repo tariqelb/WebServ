@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:12:36 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/20 18:02:25 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 19:02:10 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,12 @@ int	initServer(struct webserv& web)
 				if (web.servers[i].socketFd[j] > 0)
 				{
 					valide++;
+					
+					int on = 1;				
+					reuse = setsockopt(web.servers[i].socketFd[j], SOL_SOCKET, SO_NOSIGPIPE, (char *)&on, sizeof(on));
+					if (reuse < 0)
+						close(web.servers[i].socketFd[j]);
+						
 					//set file descriptor of the socket to non-blocking
 					int flags = fcntl(web.servers[i].socketFd[j], F_GETFL, 0);
 					//printf("stt : %d %d %d\n", flags, O_NONBLOCK, (flags & O_NONBLOCK) == O_NONBLOCK);
@@ -55,7 +61,7 @@ int	initServer(struct webserv& web)
 					//	printf("stt : %d %d %d %d\n", valide, status, O_NONBLOCK, (status & O_NONBLOCK) == O_NONBLOCK);
 						valide++;
 						//set bind to reuse the some local address even if she is in Time Wait mode
-						status = setsockopt(web.servers[i].socketFd[j], SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+						status = setsockopt(web.servers[i].socketFd[j], SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 						if (status < 0)
 							close(web.servers[i].socketFd[j]);
 						else

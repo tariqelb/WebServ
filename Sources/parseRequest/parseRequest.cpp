@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/20 18:00:20 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:07:05 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int getHostPort(struct client &clt, struct webserv &web)
 {
 	std::vector<std::string>::iterator	port;
 	// struct addrinfo *addrinfo;
+
 
 	size_t i = 0;
 	for (; i < web.config.size(); i++) //! handel host

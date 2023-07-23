@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:50:33 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 15:49:06 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/23 15:35:18 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	fillRequestData(struct client& clt)
 	clt.file->open(clt.file_name.c_str(), std::ios::in);
 	if (!clt.file->is_open())
 	{
-		std::cerr << "error: opening request file\n";
 		error(clt, 500);
 		return ;
 	}
