@@ -14,3 +14,6 @@ body binary
 If transfer_encoding , calcule body_length and return error if needed
 
 post request when transfer-encoding, the file is empty and return internal server error
+
+------------------------------------------------------------------------
+if more than 6 clients it hangs

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 20:28:50 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 20:18:47 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,10 @@ int isRequestWellFormed(struct client &clt, struct webserv &web)
 		&& clt.map_request["Method"] == "POST"
 	&& stringToInt(clt.map_request["Content-Length"])
 		> stringToInt(web.config[clt.config].max_body_size))
+	{
+		// std::cout << "here\n";
 		return error(clt, 413);
+	}
 	return 0;
 }
 

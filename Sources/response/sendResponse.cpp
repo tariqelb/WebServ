@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 22:14:41 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 19:49:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,21 +102,22 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 		fillResponse(clt, web, statusCode);
 	if (clt.response.finishReading && !clt.response.redirection)
 	{
+		// std::cout << "finish\n";
 		clt.response.position = 0;
 		return statusCode;
 	}
 	try
 	{
 		std::string str(clt.response.responseData.begin(), clt.response.responseData.end());
-		// char	line[2];
-		// int n_byte_read = 0;
-	 	// n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
-		// if (n_byte_read < 0)
-		// {
-		// 	// clt.response.error = true;
-		// 	return 0;
-		// }
-		
+		char	line[2];
+		int n_byte_read = 0;
+	 	n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
+		if (n_byte_read < 0)
+		{
+			// std::cout << YELLOW <<  "error receive" << clt.fd << END << std::endl;
+			clt.response.finishReading = true;
+			return 0;
+		}
 		if ((bitSent = send(clt.fd, str.c_str(), str.size(), 0)) <= 0)
 			throw std::runtime_error("Send operation failed");
 	}

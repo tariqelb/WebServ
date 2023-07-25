@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/23 20:31:44 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 19:58:29 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	closeConnection(struct webserv& web, int client_i)
 	// else
 	// 	std::cout << SKY << "response is error\n" << END;
 	
-	if (!web.clients[client_i].response.error
-		|| (!web.clients[client_i].map_request.empty()))
+	if (/*!web.clients[client_i].response.error
+		|| */(!web.clients[client_i].map_request.empty()))
 		std::remove(web.clients[client_i].file_name.c_str());
 	if (web.clients[client_i].response.autoindex
 		|| web.clients[client_i].response.generateError
@@ -165,6 +165,7 @@ void	handleConnection(struct webserv& web)
 		        // n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
 				// if (n_byte_readed < 0)
 				// {
+				// 	std::cout << "erro receive\n";
 				// 	closeConnection(web, i);
 				// 	return ;
 				// }
