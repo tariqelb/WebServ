@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/25 19:58:29 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 23:02:03 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,26 +21,17 @@ void	closeConnection(struct webserv& web, int client_i)
 	FD_CLR(web.clients[client_i].fd , &web.reads);
 	FD_CLR(web.clients[client_i].fd , &web.writes);
 	close(web.clients[client_i].fd);
-
-
-	// if (!web.clients[client_i].map_request.empty())
-	// 	std::cout << YELLOW << "map_request is not empty\n";
-	// else
-	// 	std::cout << SKY << "map_request is empty\n";
-	// if(!web.clients[client_i].response.error) 
-	// 	std::cout << YELLOW << "response is not error\n";
-	// else
-	// 	std::cout << SKY << "response is error\n" << END;
 	
-	if (/*!web.clients[client_i].response.error
-		|| */(!web.clients[client_i].map_request.empty()))
+	//
+	if (!web.clients[client_i].map_request.empty())
 		std::remove(web.clients[client_i].file_name.c_str());
+	
 	if (web.clients[client_i].response.autoindex
 		|| web.clients[client_i].response.generateError
 		|| web.clients[client_i].response.cgi)
 	{
-		if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
-			std::cerr << "Failed to remove autoindex file\n";
+		// if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
+		std::cerr << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
 	}
 	if (web.clients[client_i].map_request["Method"] == "POST"
 		&& web.clients[client_i].response.cgi)
@@ -79,7 +70,8 @@ void	handleConnection(struct webserv& web)
 					}
 					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
-					newClient.fd = accept(web.servers[i].socketFd[j], (struct sockaddr *)&newClient.addr, &newClient.len);
+					newClient.fd = accept(web.servers[i].socketFd[j],
+						(struct sockaddr *)&newClient.addr, &newClient.len);
 					if (web.clients.size() >= 1)
 					{
 						unsigned long z = 0;

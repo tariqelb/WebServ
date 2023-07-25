@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 21:57:12 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 22:21:26 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,13 @@ int	get(struct webserv& web, struct client& clt)
 	std::string path;
 	
 	// std::cout << "URI = " << clt.map_request["URI"] << std::endl;
-	// std::cout << PURPLE <<"!!!!!!!!!!!!!!! execute cgi = |" << clt.cgi.extention << "|\n" << END;
+	// std::cout << PURPLE <<"!!!!!!!!!!!!!!! location  = |" << clt.location << "|\n" << END;
 	if (stat(clt.map_request["URI"].c_str(), &pathStat))
 	{
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
 		{
+			std::cout << "redirection = " << web.config[clt.config].location[clt.location].redirect << std::endl;
 			if (clt.response.statusCode)
 				return clt.response.statusCode;
 			return clt.response.statusCode = 302;

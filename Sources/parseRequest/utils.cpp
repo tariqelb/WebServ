@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 18:25:33 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 22:09:42 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ std::string replaceLocation(std::string uri, std::string pattern, std::string ro
 {
 	std::string location(uri);
 	int position = uri.find(pattern);
+	if (root.find_last_of('/') == root.length() - 1 && uri[pattern.length()] == '/')
+		root.erase(root.length() - 1);
 	location.replace(position, pattern.length(), root);
 	return location;
 }

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/25 20:18:47 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/25 22:17:45 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int handleRedirection(struct client &clt, struct webserv &web)
 		clt.response.statusCode = stringToInt(statusCode);
 		for (; whitSpaceChar < clt.map_request["URI"].size()
 			&& std::isspace(clt.map_request["URI"][whitSpaceChar]); whitSpaceChar++);
-		clt.map_request["URI"] = clt.map_request["URI"].substr(whitSpaceChar + 1,
+		clt.map_request["URI"] = clt.map_request["URI"].substr(whitSpaceChar,
 			clt.map_request["URI"].size());
 	}
 	return 0;
@@ -50,7 +50,7 @@ int parsLocation(struct client &clt, struct webserv &web)
 		if (clt.map_request["URI"] != "/" || web.config[clt.config].root.empty())
 			return error(clt, 404);
 		clt.map_request["URI"] = web.config[clt.config].root;
-		return 0;
+		// return 0;
 	}
 	if (!web.config[clt.config].location[clt.location].redirect.empty())
 	{
