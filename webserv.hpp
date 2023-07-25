@@ -194,6 +194,7 @@ struct client
 	std::vector<struct uploadFiles>		upload_files;
 	unsigned long						body_length;
 	std::string							temp_header;
+	unsigned long						max_body;
 
 	client();
 	~client();
@@ -256,7 +257,7 @@ unsigned long	hexToDec(std::string hex);
 // file name : multiTypes.cpp
 // fun  name :
 void	multiTypes(std::string buffer, struct client& clt);
-void	getFilename(std::string buffer, int file_index, struct uploadFiles& upload_files, int find, int fd);
+void	getFilename(std::string buffer, int file_index, struct uploadFiles *upload_files, int find, int fd);
 int		isADerective(std::string buffer, int find, int size);
 void	getFileSize(struct uploadFiles& file);
 
