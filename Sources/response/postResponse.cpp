@@ -97,7 +97,6 @@ int	post(struct webserv& web, struct client& clt)
 	{
 		
 		temp_str2 =  clt.upload_files[0].filename;
-		std::cout << "here"<<std::endl;
 		temp22 = clt.map_request["URI"];
 		std::cout << temp22<<std::endl;
 		size_t find_last_fold = temp22.rfind("/");
@@ -115,7 +114,6 @@ int	post(struct webserv& web, struct client& clt)
 	{	
 		if(clt.location >= 0 && web.config[clt.config].location[clt.location].upload == "on")
 		{
-			std::cout << "here 493"<<std::endl;
 			// if(stat(clt.map_request["URI"].c_str(),&pathStat3) != 0)
 			// 	return (error(clt,404));
 			// if(S_ISDIR(pathStat3.st_mode))
@@ -208,7 +206,7 @@ int	post(struct webserv& web, struct client& clt)
 			}
 		}	
 	}
-
+	std::cout << "damn"<<std::endl;
 	if(stat(clt.map_request["URI"].c_str(),&pathStat2) != 0)
 		return (error(clt,404));
 
@@ -269,7 +267,7 @@ int	post(struct webserv& web, struct client& clt)
 			std::cout << " Here"<<std::endl;
 			if ( cgi(web,clt))
 				return 0;
-			return (clt.response.statusCode = 200);
+			return (error(clt,403));
 		}
 	}
 	return clt.response.statusCode = 500;

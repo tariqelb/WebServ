@@ -23,3 +23,4 @@ if more than 6 clients it hangs
 ------------------------------------------------------------------------
 Head request ==>Parse Error: The server returned a malformed response
 Getting a non html file should be downloaded?
+0.0.0.0:8080/file ==> no autoindex sent and the file is downloaded instead
