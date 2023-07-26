@@ -43,7 +43,36 @@ unsigned long stringToUnsignedLong(const std::string& str) {
 
     return result;
 }
-
+std::map<std::string, std::string>::iterator content_type_exist(struct client& clt,std::string pp)
+{
+	std::map<std::string, std::string>::iterator it = clt.map_request.begin();
+	for(;it != clt.map_request.end();it++)
+	{
+		if(it->first.compare(pp) != 0)
+			continue;
+		else
+			break;
+	}
+	if(it != clt.map_request.end())
+		return (it);
+	return (it);
+}
+std::map<std::string, std::string>::iterator extensionNew(std::string old,std::map<std::string,std::string> ContentTypes)
+{
+	
+	fillMapContentTypes(ContentTypes);
+	std::map<std::string, std::string>::iterator it = ContentTypes.begin();
+	for(;it != ContentTypes.end();it++)
+	{
+		if(it->second.compare(old) != 0)
+			continue;
+		else
+			break;
+	}
+	if(it != ContentTypes.end())
+		return (it);
+	return (it);
+}
 int	post(struct webserv& web, struct client& clt)
 {
 
@@ -54,7 +83,6 @@ int	post(struct webserv& web, struct client& clt)
 	struct stat pathStat1;
 	struct stat pathStat2;
 	struct stat pathStat3;
-
 	if(clt.upload_files.size() <= 0)
 		return error(clt,404);
 	int place = web.config[clt.config].location[clt.location].upload_store.size() - 1;
@@ -67,9 +95,13 @@ int	post(struct webserv& web, struct client& clt)
 	std::string comparitor = "no";
 	std::string temp_str2;
 
+	
 	if(clt.bodys.chunks_flag == 1)
 	{
-		if(clt.body_length >  stringToUnsignedLong(web.config[clt.config].max_body_size))
+		
+		std::cout << stringToUnsignedLong(web.config[clt.config].max_body_size)<<std::endl;
+		std::cout << clt.body_length<<std::endl;
+		if(clt.body_length >= stringToUnsignedLong(web.config[clt.config].max_body_size))
 			return (error(clt,413));
 	}
 	if(clt.upload_files[0].no_name.compare(comparitor.c_str()) == 0)
@@ -95,7 +127,8 @@ int	post(struct webserv& web, struct client& clt)
 	}	
 	else
 	{
-		
+		std::string CTTYPE = "Content-Type";
+		std::map<std::string,std::string> ContentTypes;
 		temp_str2 =  clt.upload_files[0].filename;
 		std::cout << "here"<<std::endl;
 		temp22 = clt.map_request["URI"];
@@ -109,6 +142,11 @@ int	post(struct webserv& web, struct client& clt)
 		file3.close();
 		extension = clt.upload_files[0].filename.erase(0,14);
 		clt.upload_files[0].filename = clt.map_request["URI"];
+		if(content_type_exist(clt,CTTYPE) != clt.map_request.end())
+		{
+			if(extensionNew(content_type_exist(clt,CTTYPE)->second,ContentTypes) != ContentTypes.end())
+				extension = extension + extensionNew(content_type_exist(clt,CTTYPE)->second,ContentTypes)->first;
+		}
 	}
 	std::cout << clt.upload_files[0].just_the_file<< std::endl;
 	if(stat(web.config[clt.config].location[clt.location].upload_store.c_str(),&pathStat1) == 0)
@@ -269,7 +307,7 @@ int	post(struct webserv& web, struct client& clt)
 			std::cout << " Here"<<std::endl;
 			if ( cgi(web,clt))
 				return 0;
-			return (clt.response.statusCode = 200);
+			return (error(clt,403));
 		}
 	}
 	return clt.response.statusCode = 500;

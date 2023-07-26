@@ -1,6 +1,3 @@
-
-
-
 NAME = webserv
 SOURCES = Sources
 
@@ -16,7 +13,7 @@ SOURCES := $(foreach dir,$(SOURCESDIRS),$(wildcard $(dir)/*.cpp))
 OBJS = ${SOURCES:.cpp=.o}
 
 CC = c++
-CPPFLAGS = -std=c++98 -Werror -Wextra -Wall 
+CPPFLAGS = -std=c++98 -Werror -Wextra -Wall
 RM = rm -rf
 
 all: $(NAME)
