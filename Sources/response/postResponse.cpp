@@ -90,7 +90,7 @@ int	post(struct webserv& web, struct client& clt)
 		file2.open(temp33,std::ios::in);
 		file2.close();
 		clt.upload_files[0].filename = extension;
-		temp_str2 = clt.upload_files[0].filename;
+		temp_str2 = "./www/uploads/" + clt.upload_files[0].filename;
 		std::cout << temp33<<std::endl;
 	}	
 	else
@@ -144,7 +144,7 @@ int	post(struct webserv& web, struct client& clt)
 				}
 				std::cout << " "<<extension<<std::endl;
 				std::string destination = web.config[clt.config].location[clt.location].upload_store + "/" + extension;
-			
+				std::cout << temp_str2<<std::endl;
 				out.open(destination,std::ios::out);
 				if(!out.is_open())
 				{
@@ -171,7 +171,31 @@ int	post(struct webserv& web, struct client& clt)
         			std::cerr << "Error deleting the original file: " << clt.upload_files[0].filename << std::endl;
         			return  error(clt, 500);
     			}
-
+				std::ofstream out2;
+				std::ifstream input2;
+				out2.open("./www/rspnse.html",std::ios::out);
+				if(!out2.is_open())
+				{
+					std::cerr << "Error: out file\n";
+					return  error(clt, 500);
+				}
+				input2.open(destination,std::ios::in);
+				if(!input2.is_open())
+				{
+					std::cerr << "Error: input file\n";
+					return  error(clt, 500);
+				}
+				std::string line2;
+				std::string all2 = "";
+				while(getline(input2,line2))
+				{
+					all2 += line2;
+					all2 += "\n";
+				}
+				out2 << all2;
+				out2.close();
+				input2.close();
+				clt.map_request["URI"] = "./www/rspnse.html";
 				return clt.response.statusCode = 201;
 			}
 			else if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),F_OK) != 0)
@@ -185,10 +209,10 @@ int	post(struct webserv& web, struct client& clt)
 		}	
 	}
 
-	std::cout<< clt.map_request["URI"].c_str()<<"Built "<<std::endl;
 	if(stat(clt.map_request["URI"].c_str(),&pathStat2) != 0)
 		return (error(clt,404));
 
+	std::cout<< clt.map_request["URI"].c_str()<<"Built "<<std::endl;
 	if(S_ISDIR(pathStat2.st_mode))
 	{
 		
@@ -211,11 +235,14 @@ int	post(struct webserv& web, struct client& clt)
 				}
 				else
 				{
-					if(!stat(path.c_str(),&pathStat3))
+					std::cout << "Wtp"<<std::endl;
+					std::cout << path2 << "  "<<std::endl;
+					if(!stat(path2.c_str(),&pathStat3))
 					{			
 						
 						if(!S_ISDIR(pathStat3.st_mode))
 						{
+							std::cout << "Wtp"<<std::endl;
 							clt.map_request["URI"] = path2;
 							if ( cgi(web,clt))
 								return 0;
@@ -239,10 +266,10 @@ int	post(struct webserv& web, struct client& clt)
 		}
 		else
 		{	
-			std::cout << "Wtp"<<std::endl;
+			std::cout << " Here"<<std::endl;
 			if ( cgi(web,clt))
 				return 0;
-			return (error(clt,403));
+			return (clt.response.statusCode = 200);
 		}
 	}
 	return clt.response.statusCode = 500;

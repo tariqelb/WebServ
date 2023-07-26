@@ -64,7 +64,6 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	try {check(clt, file, filePath);}
 	catch (std::exception &e){return ;}
 
-
 	if (clt.response.position)
 		clt.response.sizeFrame = min(clt.response.sizeFrame,
 						clt.response.fileSize - clt.response.position);

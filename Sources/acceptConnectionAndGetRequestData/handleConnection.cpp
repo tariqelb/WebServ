@@ -23,8 +23,8 @@ void	closeConnection(struct webserv& web, int client_i)
 	close(web.clients[client_i].fd);
 	
 	//
-	if (!web.clients[client_i].map_request.empty())
-		std::remove(web.clients[client_i].file_name.c_str());
+	// if (!web.clients[client_i].map_request.empty())
+	// 	std::remove(web.clients[client_i].file_name.c_str());
 	
 	if (web.clients[client_i].response.autoindex
 		|| web.clients[client_i].response.generateError
@@ -33,9 +33,9 @@ void	closeConnection(struct webserv& web, int client_i)
 		// if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
 		std::cerr << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
 	}
-	if (web.clients[client_i].map_request["Method"] == "POST"
-		&& web.clients[client_i].response.cgi)
-		std::remove(web.clients[client_i].upload_files[0].filename.c_str());
+	// if (web.clients[client_i].map_request["Method"] == "POST"
+	// 	&& web.clients[client_i].response.cgi)
+	// 	std::remove(web.clients[client_i].upload_files[0].filename.c_str());
 	while ((unsigned int)client_i < web.clients.size()
 		&& (*it).fd != web.clients[client_i].fd && it != web.clients.end())
 		it++;
