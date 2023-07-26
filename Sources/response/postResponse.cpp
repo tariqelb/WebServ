@@ -53,7 +53,7 @@ int	post(struct webserv& web, struct client& clt)
 
 	struct stat pathStat1;
 	struct stat pathStat2;
-	// struct stat pathStat3;
+	struct stat pathStat3;
 
 	if(clt.upload_files.size() <= 0)
 		return error(clt,404);
@@ -171,6 +171,7 @@ int	post(struct webserv& web, struct client& clt)
         			std::cerr << "Error deleting the original file: " << clt.upload_files[0].filename << std::endl;
         			return  error(clt, 500);
     			}
+
 				return clt.response.statusCode = 201;
 			}
 			else if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),F_OK) != 0)
@@ -191,6 +192,12 @@ int	post(struct webserv& web, struct client& clt)
 	if(S_ISDIR(pathStat2.st_mode))
 	{
 		
+		if(*clt.map_request["URI"].rbegin() != '/')
+		{
+			clt.map_request["URI"] += "/";
+			clt.response.body = true;
+			clt.response.statusCode = 301;
+		}
 		if(*clt.map_request["URI"].rbegin() == '/')
 		{
 			if(clt.location >= 0 && web.config[clt.config].location[clt.location].index.empty())
@@ -204,18 +211,23 @@ int	post(struct webserv& web, struct client& clt)
 				}
 				else
 				{
-					return cgi(web,clt);
+					if(!stat(path.c_str(),&pathStat3))
+					{			
+						
+						if(!S_ISDIR(pathStat3.st_mode))
+						{
+							clt.map_request["URI"] = path2;
+							if ( cgi(web,clt))
+								return 0;
+							return (error(clt,403));
+						}
+						else
+							return (error(clt,403));
+					}
+					else
+						return (error(clt,403));
 				}
-			}else if(clt.location < 0 && web.config[clt.config].index.empty())
-			{
-				path2 = clt.map_request["URI"] + web.config[clt.config].index;
 			}
-		}
-		if(*clt.map_request["URI"].rbegin() != '/')
-		{
-			clt.map_request["URI"] += "/";
-			clt.response.body = true;
-			return clt.response.statusCode = 301;
 		}
 	}
 	if (!S_ISDIR(pathStat2.st_mode))
@@ -226,9 +238,11 @@ int	post(struct webserv& web, struct client& clt)
 			return (error(clt,403));
 		}
 		else
-	{	
+		{	
 			std::cout << "Wtp"<<std::endl;
-			return cgi(web,clt);
+			if ( cgi(web,clt))
+				return 0;
+			return (error(clt,403));
 		}
 	}
 	return clt.response.statusCode = 500;

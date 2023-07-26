@@ -108,6 +108,9 @@ std::string getStatusMessage(int statusCode)
 	map[301] = "Moved Permanently\r\n";
 	map[200] = "OK\r\n";
 	map[500] = "Internal Server Error\r\n";
+	map[204] = "No Content\r\n";
+	map[201] = "Created\r\n";	
+	map[409] = "Conflict\r\n";
 	map[0] = "OK\r\n";
 	return map[statusCode];
 }

@@ -31,10 +31,15 @@ int deletefolders(std::string *path)
         if (entry->d_type == DT_DIR) {
             deletefolders((&entryPath));  // Recursive call for subdirectory
         } else {
-            if (std::remove(entryPath.c_str()) != 0) {
-                std::cerr << "Failed to remove file: " << entryPath << std::endl;
+			if (access(entryPath.c_str(), W_OK) == 0) 
+			{
+       			if (std::remove(entryPath.c_str()) != 0){
+                std::cerr << "Failed to remove file: " << entryPath.c_str() << std::endl;
 				return 500;
-            }
+				}
+    		} else {
+       			 return 403;
+    		}
         }
     }
     closedir(dir);
@@ -83,15 +88,20 @@ int	deleteResponse(struct webserv& web, struct client& clt)
 	if (a == 0)
 	{
 		std::cout << "Here"<< std::endl;
-		if(clt.location >= 0 && web.config[clt.config].location[clt.location].cgi.empty())
+		if(clt.location >= 0)
 		{
 			std::cout << "I'm here "<<std::endl;
-			if (std::remove(clt.map_request["URI"].c_str()) != 0){
+			if (access(clt.map_request["URI"].c_str(), W_OK) == 0) {
+       			if (std::remove(clt.map_request["URI"].c_str()) != 0){
                 std::cerr << "Failed to remove file: " << clt.map_request["URI"].c_str() << std::endl;
-				return 403;
-            }
-			return 204;
-		}
+				return error(clt,403);
+			}
+			} else {
+       			 return error(clt,403);
+    		}
+			
+			return clt.response.statusCode = 204;
+        }
 	}
 	
 	if (*clt.map_request["URI"].rbegin() != '/')
