@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 13:31:53 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 15:06:34 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ int	get(struct webserv& web, struct client& clt)
 		if (clt.location >= 0
 			&& !web.config[clt.config].location[clt.location].redirect.empty())
 		{
-			std::cout << "redirection = " << web.config[clt.config].location[clt.location].redirect << std::endl;
 			if (clt.response.statusCode)
 				return clt.response.statusCode;
 			return clt.response.statusCode = 302;

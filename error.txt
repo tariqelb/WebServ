@@ -28,7 +28,7 @@ cgi not implemented in config file;// done
 cgi the returned status code // done
 
 ------------------------------------------------------------------------
-Head request ==>Parse Error: The server returned a malformed response
+Head request ==> Parse Error: The server returned a malformed response
 Getting a non html file should be downloaded?
 If the same port and the same ip address , does not return error 
 - Check if same port but different address should work or not(it work in our case)

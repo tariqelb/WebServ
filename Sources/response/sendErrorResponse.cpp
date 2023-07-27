@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 11:31:46 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 15:01:00 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,9 @@ void	getResponseHeaderError(struct client &clt, int statusCode)
 	response += "Connection: close\r\nServer: webserver-c\r\n ";
 	response += "Content-Type: " + getContentType(clt.response.filePath) + "\r\n";
 	response += "Content-Length:" + intToString(clt.response.responseBody.size()) +"\r\n\r\n";
-		clt.response.responseData.assign(response.begin(), response.begin() + response.size());
-	clt.response.responseData.insert(clt.response.responseData.end(),
+	clt.response.responseData.assign(response.begin(), response.begin() + response.size());
+	if (clt.map_request["Method"] != "HEAD")
+		clt.response.responseData.insert(clt.response.responseData.end(),
 						clt.response.responseBody.begin(), clt.response.responseBody.end());
 }
 

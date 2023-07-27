@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 13:02:24 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 15:06:15 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int isRequestWellFormed(struct client &clt, struct webserv &web)
 	if (clt.map_request.find("Transfer-Encoding") != clt.map_request.end()
 		&& clt.map_request["Transfer-Encoding"] != "chunked")
 	{
-		std::cout << "returning 501\n";
 		return error(clt, 501);
 	}
 		
