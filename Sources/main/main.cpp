@@ -58,8 +58,7 @@ int	main(int ac, char **av)
 	{
 		// system("leaks webserv");
 		web.status = -1;
-		FD_ZERO(&web.tmp_read);
-		FD_ZERO(&web.tmp_write);
+		clearFdTmp(web);
 		web.tmp_read = web.reads;
 		web.tmp_write = web.writes;
 		//? // std::cout << "Wait in select : " << web.clients.size() << std::endl;

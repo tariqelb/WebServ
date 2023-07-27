@@ -374,6 +374,7 @@ void    displayHostPort(struct webserv& web);
 // repo name : init
 // file name : activeSocket.cpp
 // fun  name :
+void	clearFdTmp(struct webserv& web);
 void	activeReadSocket(struct webserv& web);
 void	activeWriteSocket(struct webserv& web);
 void	activeSocket(struct webserv& web);
