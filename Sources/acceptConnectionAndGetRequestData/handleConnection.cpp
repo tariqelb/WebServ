@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/25 23:02:03 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 13:27:53 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,17 @@ void	closeConnection(struct webserv& web, int client_i)
 	close(web.clients[client_i].fd);
 	
 	//
-	// if (!web.clients[client_i].map_request.empty())
-	// 	std::remove(web.clients[client_i].file_name.c_str());
+	if (!web.clients[client_i].map_request.empty())
+		std::remove(web.clients[client_i].file_name.c_str());
 	
-	if (web.clients[client_i].response.autoindex
-		|| web.clients[client_i].response.generateError
-		|| web.clients[client_i].response.cgi)
-	{
-		// if (std::remove(web.clients[client_i].map_request["URI"].c_str()))
-		std::cerr << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
-	}
+	// if (web.clients[client_i].response.autoindex
+	// 	|| web.clients[client_i].response.generateError
+	// 	|| web.clients[client_i].response.cgi)
+	// {
+		if (web.clients[client_i].response.remove)
+			std::remove(web.clients[client_i].map_request["URI"].c_str());
+		// std::cerr << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+	// }
 	// if (web.clients[client_i].map_request["Method"] == "POST"
 	// 	&& web.clients[client_i].response.cgi)
 	// 	std::remove(web.clients[client_i].upload_files[0].filename.c_str());

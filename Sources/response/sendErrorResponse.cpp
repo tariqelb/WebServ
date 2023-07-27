@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:01:11 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/22 23:25:37 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 11:31:46 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ std::string	generateErrorFile(struct client &clt, struct webserv &web, int statu
 				<< "</p></center></h1>"
 				<< "</body>\n</html>";
 	clt.map_request["URI"] = filePath;
+	clt.response.remove = true;
 	return filePath;
 }
 

@@ -18,7 +18,14 @@ post request when transfer-encoding, the file is empty and return internal serve
 ------------------------------------------------------------------------
 if more than 6 clients it hangs
 
+leaks
 
+-----------------------
+status code > 599 && < 100 //done
+
+cgi not implemented in config file;// done
+
+cgi the returned status code // done
 
 ------------------------------------------------------------------------
 Head request ==>Parse Error: The server returned a malformed response
@@ -48,3 +55,7 @@ the file uploaded when boundary string is "----------------------------631254724
 
 											print(html_text)
 											----------------------------631254724589857935214018--"
+
+
+
+-----------------------------------------------------------------

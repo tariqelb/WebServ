@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/25 19:49:43 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 13:30:10 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	readFile(int statusCode, struct client &clt, std::string filePath)
 	try {check(clt, file, filePath);}
 	catch (std::exception &e){return ;}
 
+
 	if (clt.response.position)
 		clt.response.sizeFrame = min(clt.response.sizeFrame,
 						clt.response.fileSize - clt.response.position);
@@ -113,7 +114,6 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 	 	n_byte_read = recv(clt.fd, line, 0, MSG_PEEK);
 		if (n_byte_read < 0)
 		{
-			// std::cout << YELLOW <<  "error receive" << clt.fd << END << std::endl;
 			clt.response.finishReading = true;
 			return 0;
 		}

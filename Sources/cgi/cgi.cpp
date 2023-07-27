@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/23 21:44:47 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 13:09:05 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,13 @@
 void	generate_CGI_file(struct client &clt,std::string &filePath)
 {
 	if (clt.cgi.extention == ".php")
+	{
+		clt.response.remove = true;
 		filePath = parsePHPcgi(clt.cgi.outFile, clt.cgi.header, intToString(clt.fd));
+	}
 	else if (clt.cgi.extention == ".py" && !clt.cgi.loop_detected)
 	{
+		clt.response.remove = true;
 		clt.cgi.outFile = "out" + intToString(clt.fd) +".html";
 		filePath = clt.cgi.outFile;
 	}
@@ -93,7 +97,9 @@ int cgi(struct webserv &web, struct client &clt)
 
 	clt.response.cgi = true;
 	if ((status = isCgiConfigured(clt, web, clt.map_request["URI"])) != 1)
+	{
 		return 0;
+	}
 	try {
 			executeCgi(clt, clt.map_request["URI"], web);
 	}

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 20:01:49 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/20 14:04:00 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 12:27:29 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ struct uploadFiles
 struct Response
 {
 	public:
+		bool				remove;
 		bool				redirection;
 		bool				header;
 		bool				error;
@@ -144,7 +145,7 @@ struct Response
 		std::vector<char>	responseBody;
 		std::vector<char>	responseData;
 		std::string			uri;
-		Response():redirection(0), header(0),error(0), cgi(0), finishReading(0),
+		Response():remove(0), redirection(0), header(0),error(0), cgi(0), finishReading(0),
         	autoindex(0), generateError(0),
         	body(0), statusCode(0), nbrFrames(-1){};
 };
