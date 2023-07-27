@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 06:56:52 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 15:06:15 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 15:46:25 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,10 @@ int getHostPort(struct client &clt, struct webserv &web)
 	size_t i = 0;
 	for (; i < web.config.size(); i++) //! handel host
 	{
-		if (clt.map_request["Host"].substr(0,clt.map_request["Host"].find(":"))
-			== host(web.config[i].host))
+		if ((clt.map_request["Host"].substr(0,clt.map_request["Host"].find(":"))
+			== web.config[i].host)
+			|| host(clt.map_request["Host"].substr(0,clt.map_request["Host"].find(":")))
+			== web.config[i].host)
 		{
 			port = std::find(web.config[i].listen.begin(), web.config[i].listen.end(),
 				clt.map_request["Host"].substr(clt.map_request["Host"].find(":") + 1));
