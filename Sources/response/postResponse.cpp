@@ -167,6 +167,56 @@ int	post(struct webserv& web, struct client& clt)
 			// 	return  error(clt, 500);
 			// }
 			// original_file.close();
+
+			if(clt.bodys.boundary_flag == 1)
+			{
+				std::string new_file_body = "";
+				std::ifstream input3;
+				std::ofstream out3;
+				std::string line3;
+				std::string CTTYPE = "Content-Type";
+				std::map<std::string,std::string> ContentTypes;
+				if(content_type_exist(clt,CTTYPE) != clt.map_request.end())
+				{
+					input3.open(temp_str2,std::ios::in);
+					if(!input3.is_open())
+					{
+						std::cerr << "Error: input file\n";
+						return  error(clt, 500);
+					}
+					std::string temp_content_type = clt.map_request["Content-Type"].erase(0,30);
+					//std::cout << temp_content_type<<std::endl;
+					int find_first = 0;
+					while(getline(input3,line3))
+					{
+						if(line3.compare(temp_content_type) == 0 && find_first == 0)
+						{
+							find_first = 1;
+							temp_content_type = temp_content_type + "--";
+							continue;
+						}
+						if(line3.compare(temp_content_type) == 0)
+						{
+							continue;
+						}
+						new_file_body += line3;
+						new_file_body += "\n";
+					}
+					std::cout << new_file_body << std::endl;
+					input3.close();
+					out3.open(temp_str2,std::ios::in);
+					if(!out3.is_open())
+					{
+						std::cerr << "Error: input file\n";
+						return  error(clt, 500);
+					}
+					out3 << new_file_body;
+					out3.close();
+				}
+				else
+					error(clt,403);
+
+			}
 			if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),X_OK) == 0)
 			{
 				
