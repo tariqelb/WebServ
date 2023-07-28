@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 html_text = '<!DOCTYPE html>\n<html>\n<head>\n'

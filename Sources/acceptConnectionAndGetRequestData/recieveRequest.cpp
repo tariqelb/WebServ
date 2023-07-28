@@ -56,16 +56,15 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 
 	memset(line, 0, 100000);
 	n_byte_readed = 0;
-	if ((n_byte_readed = recv(clt.fd, line, 99999, 0)) < 0)
-		throw std::runtime_error("Error: receive");
-	line[n_byte_readed] = 0;
-	buff.assign("");
+	n_byte_readed = recv(clt.fd, line, 99999, 0);
 	if (n_byte_readed < 0)
 	{
 		closeConnection(web, clt_i);	
 		flag_fail = 0;
 		return ;
 	}
+	line[n_byte_readed] = 0;
+	buff.assign("");
 	if (n_byte_readed == 0)
 	{
 		if (clt.nbr_of_reads == 0)

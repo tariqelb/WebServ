@@ -257,10 +257,12 @@ unsigned long	hexToDec(std::string hex);
 // repo name : acceptConnectionAndGetRequestData
 // file name : multiTypes.cpp
 // fun  name :
-void	multiTypes(std::string buffer, struct client& clt);
+void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt);
 void	getFilename(std::string buffer, int file_index, struct uploadFiles *upload_files, int find, int fd);
 int		isADerective(std::string buffer, int find, int size);
 void	getFileSize(struct uploadFiles& file);
+
+
 
 // repo name : acceptConnectionAndGetRequestData
 // file name : splitBody.cpp

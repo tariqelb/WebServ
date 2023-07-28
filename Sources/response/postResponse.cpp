@@ -94,14 +94,14 @@ int	post(struct webserv& web, struct client& clt)
 	std::ifstream file2;
 	std::string comparitor = "no";
 	std::string temp_str2;
-
 	
 	if(clt.bodys.chunks_flag == 1)
 	{
 		
-		std::cout << stringToUnsignedLong(web.config[clt.config].max_body_size)<<std::endl;
+		std::cout << stringToInt(web.config[clt.config].max_body_size)<<std::endl;
 		std::cout << clt.body_length<<std::endl;
-		if(clt.body_length >= stringToUnsignedLong(web.config[clt.config].max_body_size))
+		std::cout << clt.upload_files[0].len << std::endl;
+		if(clt.upload_files[0].len >= stringToInt(web.config[clt.config].max_body_size))
 			return (error(clt,413));
 	}
 	if(clt.upload_files[0].no_name.compare(comparitor.c_str()) == 0)
@@ -280,10 +280,12 @@ int	post(struct webserv& web, struct client& clt)
 					all2 += line2;
 					all2 += "\n";
 				}
+				std::cout << all2;
 				out2 << all2;
 				out2.close();
 				input2.close();
 				clt.map_request["URI"] = "./www/rspnse.html";
+				exit(0);
 				return clt.response.statusCode = 201;
 			}
 			else if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),F_OK) != 0)

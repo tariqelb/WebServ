@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 15:06:34 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 17:07:47 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 int autoindex(struct client& clt, struct webserv &web)
 {
-	std::ofstream autoindex((clt.map_request["URI"] + "autoindex.html").c_str());
+	std::string file = clt.map_request["URI"] + intToString(clt.fd) + std::string("autoindex.html");
+	std::ofstream autoindex(file.c_str());
 	DIR* directory;
 	struct dirent* en;
 	std::string pattern;
@@ -42,7 +43,7 @@ int autoindex(struct client& clt, struct webserv &web)
 			clt.response.uri += "/";
 		while ((en = readdir(directory)) != NULL)
 		{
-			if (!strcmp(en->d_name, "autoindex.html"))
+			if (!strcmp(en->d_name, file.c_str()))
 				continue;
 			autoindex	<< "<li>" << "<a href=\""
 						<< "http://"
@@ -60,7 +61,7 @@ int autoindex(struct client& clt, struct webserv &web)
 
 	autoindex.close();
 
-	clt.map_request["URI"] +=  "autoindex.html";
+	clt.map_request["URI"] = file;
 	clt.response.remove = true;
 	if (!clt.response.body)
 		clt.response.statusCode = 200;

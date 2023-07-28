@@ -12,6 +12,7 @@
 
 #include "../../webserv.hpp"
 
+
 void	getFileSize(struct uploadFiles& file)
 {
 	file.file->open(file.filename.c_str(), std::fstream::in | std::fstream::binary );
@@ -23,7 +24,239 @@ void	getFileSize(struct uploadFiles& file)
 		file.file->close();
 	}
 }
+std::map<std::string, std::string>::iterator content_type_dexist2(struct client& clt,std::string pp)
+{
+	std::map<std::string, std::string>::iterator it = clt.map_request.begin();
+	for(;it != clt.map_request.end();it++)
+	{
+		if(it->first.compare(pp) != 0)
+			continue;
+		else
+			break;
+	}
+	if(it != clt.map_request.end())
+		return (it);
+	return (it);
+}
+void new_string_without_boundary2(std::string &buffer, struct client &clt)
+{
+	
+	std::string CTTYPE = "Content-Type";
+	//size_t j = 0;
+	std::string temp_content_type;
+	std::map<std::string,std::string> ContentTypes;
+	if(content_type_dexist2(clt,CTTYPE) != clt.map_request.end())
+	{
+		temp_content_type = clt.map_request["Content-Type"];
+		temp_content_type = temp_content_type.erase(0,30);
+		buffer.erase(0,buffer.find(temp_content_type));
+		buffer = buffer.substr(52,buffer.size());
+	}
+	else
+	{
+		error(clt,403);
+	}
+}
+void new_string_without_last_boundary2(std::string &buffer,struct client &clt)
+{
+	std::string CTTYPE = "Content-Type";
+	//size_t j = 0;
+	std::string temp_content_type;
+	std::map<std::string,std::string> ContentTypes;
+	
 
+	if(content_type_dexist2(clt,CTTYPE) != clt.map_request.end())
+	{
+		temp_content_type = clt.map_request["Content-Type"];
+		temp_content_type = temp_content_type.erase(0,30);
+		temp_content_type = temp_content_type + "--" ;
+		//std::cout << temp_content_type<<std::endl;
+		size_t find;
+		find = buffer.find(temp_content_type,0);
+		if(buffer[find - 1] == '-' && buffer[find - 2] == '-')
+			find = find - 2;
+		
+		//std::cout << buffer;
+		// std::cout<< find<<std::endl;
+		if(find != std::string::npos)
+			buffer = buffer.erase(find,buffer.size());
+	}
+	else
+	{
+		error(clt,403);
+	}
+}
+void new_string_without_last_hexa2(std::string &buffer)
+{
+	std::string fill = "";
+	for(size_t i = 0;i < buffer.size();i++)
+	{
+		fill += buffer[i];
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				break;
+			}
+		}
+	}
+	fill += '\n';
+	buffer = fill;
+}
+void new_string_show2(std::string &buffer)
+{
+	size_t	i = 0, j = 0;
+	for(;i < buffer.size();i++)
+	{
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				//std::cout << buffer<<std::endl;
+				buffer.erase(0,i + 1);
+				//std::cout << buffer<<std::endl;
+				j+= 1;
+				if(j > 0)
+					break;
+			}
+		}
+
+	}
+}
+void new_string_without_first_hexa2(std::string &buffer)
+{
+	size_t	i = 0;
+	std::string fill = "";
+	for(;i < buffer.size();i++)
+	{
+		fill += buffer[i];
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				buffer[i] = '\n';
+				break;
+			}
+		}
+	}
+	int find = buffer.find(fill.c_str(),0);
+	std::cout << find<<std::endl;
+	buffer = buffer.substr(fill.size(),buffer.size());
+}
+void new_string_without_first_and_last_v22(std::string &buffer)
+{
+	size_t	i = 0;
+	for(;i < buffer.size();i++)
+	{
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				if(buffer[i + 2] == '\r')
+				{
+					if(buffer[i + 3] == '\n')
+					{
+						buffer.erase(0,i + 3);
+					}
+				}
+			}
+		}
+
+	}
+}
+void new_string_without_first_and_last2(std::string &buffer)
+{
+	size_t	i = 0;
+	for(;i < buffer.size();i++)
+	{
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				if(buffer[i + 2] == '\r')
+				{
+					if(buffer[i + 3] == '\n')
+					{
+						buffer[i + 3] = ' ';
+					}
+				}
+			}
+		}
+
+	}
+}
+std::string extractFieldName2(const std::string& header) {
+    std::string name;
+    size_t nameStart = header.find("name=\"");
+    if (nameStart != std::string::npos) {
+        nameStart += 6; // Move to the first character after "name=\""
+        size_t nameEnd = header.find("\"", nameStart);
+        if (nameEnd != std::string::npos) {
+            name = header.substr(nameStart, nameEnd - nameStart);
+        }
+    }
+    return name;
+}
+std::string extractFieldFileName2(const std::string& header) {
+    std::string name;
+    size_t nameStart = header.find("ilename=\"");
+    if (nameStart != std::string::npos) {
+        nameStart += 9; // Move to the first character after "name=\""
+        size_t nameEnd = header.find("\"", nameStart);
+        if (nameEnd != std::string::npos) {
+            name = header.substr(nameStart, nameEnd - nameStart);
+        }
+    }
+    return name;
+}
+void new_string_erase_content_disposition2(std::string &buffer)
+{
+	//size_t	i = 0;
+	//int found_n = 0;
+	if(buffer.find("filename") == std::string::npos)
+		buffer = buffer.erase(0,34);
+	else
+		buffer = buffer.erase(0,32);
+	std::string name = extractFieldName2(buffer);
+	size_t i = 6 + name.size() + 1;
+	// std::cout << buffer<<std::endl;
+	buffer = buffer.erase(0,i);
+	// std::cout << buffer<<std::endl;
+	if(buffer.find("ilename",0) != std::string::npos)
+	{
+		std::string ilename = extractFieldFileName2(buffer);
+		i = 10 + ilename.size() + 3;
+		buffer.erase(0, i);
+		// std::cout << buffer<<std::endl;
+
+	}
+}
+void new_string_erase_content_type2(std::string &buffer)
+{
+	size_t find = buffer.find("Content-Type");
+	if(find != std::string::npos)
+	{
+		size_t find_n = buffer.find("\n",find);
+		buffer.erase(find,find_n - find + 1);
+	}
+}
+void new_string_buff_12(std::string &buffer)
+{
+	size_t	i = 0;
+	for(;i < buffer.size();i++)
+	{
+		if(buffer[i] == '\r')
+		{
+			if(buffer[i + 1] == '\n')
+			{
+				buffer[i] = 'f';
+				buffer[i + 1] = 'o';
+				return;
+			}
+		}
+
+	}
+}
 
 int		isADerective(std::string buffer, int find, int size)
 {
@@ -92,7 +325,6 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles* upload_
 	}
 	else if(clt.temp_header[0] != 0) {
 		temp = clt.temp_header;
-		std::cout << temp <<" "<<std::endl;
 		size_t content_di = temp.find("Content-Disposition");
 		(void)content_di;
 		find_filename = temp.find("filename=");
@@ -101,7 +333,6 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles* upload_
 		while ((size_t)find_filename + j < temp.size() && temp[find_filename + j] != '\"')
 			j++;
 		temp = temp.substr(find_filename,j);
-		std::cout << temp <<" show 2 "<<std::endl;
 		upload_files->filename = "./www/uploads/" + temp;
 		upload_files->just_the_file = temp;
 		upload_files->no_name = "no";
@@ -109,7 +340,6 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles* upload_
 	}
 	else 
 	{
-		std::cout << "Hereeee"<<std::endl;
 		std::srand(static_cast<unsigned>(std::time(nullptr)));
 		int a = std::rand();
 		char r[1000000];
@@ -122,7 +352,7 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles* upload_
 }
 
 
-void	multiTypes(std::string buffer, struct client& clt)
+void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 {
 	int						find_cr;
 	int						find;
@@ -151,6 +381,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 			if (find_cr != -1)
 			{
 				buffer = buffer.substr(find_cr + 4);
+				buffer2 = buffer;
 			}
 		}
 		i = clt.upload_files.size();
@@ -200,9 +431,11 @@ void	multiTypes(std::string buffer, struct client& clt)
 
 		flag = 1;
 		bndry = clt.bodys.boundary.substr(0, clt.bodys.boundary.size() - 2);
+		// std::cout << buffer<<"    ll"<< std::endl;
 		while (buffer.size())
 		{
 			find = 0;
+
 			if (clt.nbr_of_reads == 1 && flag)
 			{
 				find_cr = buffer.find("\r\n\r\n");
@@ -210,8 +443,18 @@ void	multiTypes(std::string buffer, struct client& clt)
 				if (find != -1)
 				{
 					buffer = buffer.substr(find);
+					buffer2 = buffer;
+					//std::cout << buffer<<std::endl;
 				}
 				flag = 0;
+				// new_string_without_boundary2(buffer,clt);
+				// new_string_without_last_boundary2(buffer,clt);
+				// new_string_erase_content_type2(buffer);
+				// new_string_erase_content_disposition2(buffer);
+				// new_string_without_first_and_last_v22(buffer);
+				//new_string_show2(buffer);
+				//std::cout <<buffer;
+				//exit(0);
 			}
 			else
 			{
@@ -221,6 +464,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					find = buffer.find("Content-Disposition:");
 					if (find != -1 && isADerective(buffer, find, size) == 1 && clt.bodys.content_disposition == 0)
 					{
+						//std::cout << "Enter 1"<<std::endl;
 						getFilename(buffer, clt.upload_files.size(), &upload_files, find, clt.fd,clt);
 						upload_files.file->open(upload_files.filename.c_str(), std::fstream::app | std::fstream::out);
 						if (upload_files.file->is_open() == true)
@@ -235,6 +479,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					}
 					else if (clt.bodys.content_disposition == 0)
 					{
+						//std::cout << "Enter 2"<<std::endl;
 						if (clt.upload_files.size() == 0)
 						{
 							getFilename(buffer, clt.upload_files.size(), &upload_files, find, clt.fd,clt);
@@ -252,6 +497,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					}
 					if (clt.bodys.content_disposition == 1)
 					{
+						//std::cout << "Enter 5"<<std::endl;
 						find = buffer.find(bndry);
 						if (find == -1) // check for npos
 						{
@@ -273,6 +519,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 						}
 						else if (buffer.size() && i)
 						{
+							//std::cout << "Enter 6"<<std::endl;
 							temp.assign("");
 							temp = clt.upload_files[i - 1].filename;
 							clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::app | std::fstream::out);
@@ -286,6 +533,7 @@ void	multiTypes(std::string buffer, struct client& clt)
 					i = buffer.find(clt.bodys.boundary);
 					if (i >= 0 && i < 3)
 					{
+						//std::cout << "Enter 7"<<std::endl;
 						buffer.assign("");
 					}
 				}

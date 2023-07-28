@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:04:07 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/27 13:27:53 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/27 18:50:25 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	closeConnection(struct webserv& web, int client_i)
 	close(web.clients[client_i].fd);
 	
 	//
-	if (!web.clients[client_i].map_request.empty())
-		std::remove(web.clients[client_i].file_name.c_str());
+	// if (!web.clients[client_i].map_request.empty())
+	// 	std::remove(web.clients[client_i].file_name.c_str());
 	
 	// if (web.clients[client_i].response.autoindex
 	// 	|| web.clients[client_i].response.generateError
@@ -63,22 +63,11 @@ void	handleConnection(struct webserv& web)
 		{
 			if (FD_ISSET(web.servers[i].socketFd[j], &web.tmp_read))
 			{
-					if (web.clients.size() >= 1)
-					{
-						unsigned long z = 0;
-						while (z < web.clients.size())
-							z++;
-					}
 					struct client 	newClient;
 					newClient.len = sizeof(newClient.addr);
 					newClient.fd = accept(web.servers[i].socketFd[j],
 						(struct sockaddr *)&newClient.addr, &newClient.len);
-					if (web.clients.size() >= 1)
-					{
-						unsigned long z = 0;
-						while (z < web.clients.size())
-							z++;
-					}
+					
 					if (newClient.fd < 0)
 					{
 						std::cerr << "Error : Fail connecting to client" << std::endl;
@@ -103,16 +92,11 @@ void	handleConnection(struct webserv& web)
 						web.clients[k].bodys.n_chunks = 0;
 						web.clients[k].bodys.cr_index = -1;
 						web.clients[k].bodys.get_body_type = 0;
-						web.clients[k].file_name = "req" + intToString(web.req_nbr) + ".txt";
+						web.clients[k].file_name = "Requests/.req" + intToString(web.req_nbr) + ".txt";
 						web.clients[k].body_length = 0;
 						web.req_nbr++;
 						maxFd(web);
-						if (web.clients.size() >= 1)
-						{
-							unsigned long z = 0;
-							while (z < web.clients.size())
-								z++;
-						}
+						
 						return ;
 					}
 			}
@@ -127,10 +111,10 @@ void	handleConnection(struct webserv& web)
 		{
 			
 			flag_fail = 1;
-			try{
+			// try{
 				receiveRequest(web, web.clients[i], i, flag_fail);
-			}
-			catch(std::exception &e){error(web.clients[i], 500);}
+			// }
+			// catch(std::exception &e){error(web.clients[i], 500);}
 			if (flag_fail && web.clients[i].request_is_ready == true && !web.clients[i].response.error)
 			{
 				FD_CLR(web.clients[i].fd , &web.reads);
@@ -150,18 +134,12 @@ void	handleConnection(struct webserv& web)
 	{
 		if (FD_ISSET(web.clients[i].fd, &web.tmp_write) )
 		{
+			//TODO rm req files
 			// std::cout << GREEN << "#############\n" << END;
 			if (web.clients[i].request_is_ready == true)// * && web.clients[i].response_is_ready == true *//*)
 			{
-				// int n_byte_readed = 0;
-				// char line[2];
-		        // n_byte_readed = recv(web.clients[i].fd, line, 0, MSG_PEEK);
-				// if (n_byte_readed < 0)
-				// {
-				// 	std::cout << "erro receive\n";
-				// 	closeConnection(web, i);
-				// 	return ;
-				// }
+				// if (!web.clients[i].map_request.empty())
+				// 	std::remove(web.clients[i].file_name.c_str());
 				if (web.clients[i].cgi.loop_detected)
 				{
 					if (get_time(web.clients[i]) == 35)
