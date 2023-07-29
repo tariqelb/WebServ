@@ -256,11 +256,11 @@ void new_string_buff_1(std::string &buffer)
 
 	}
 }
-void	splitBody(std::string buffer, struct client& clt)
+void	splitBody(std::string buffer, struct client& clt, int n_byte_readed)
 {
 	int 					size;
 	int 					find;
-	size_t						find_filename;
+	// size_t						find_filename;
 
 	find = -1;
 	size = buffer.size();
@@ -282,59 +282,58 @@ void	splitBody(std::string buffer, struct client& clt)
 		if (clt.bodys.get_body_type == 0)
 			getBodyType(buffer, clt.bodys);
 		//std::cout << "the buffer is ="<< buffer<<std::endl;
-		multiTypes(buffer,buffer2,clt);
+		multiTypes(buffer,buffer2,clt,n_byte_readed);
 	}
-	find_filename = buffer2.find("filename",0);
-	// std::cout << clt.bodys.chunks_flag <<std::endl;
-	// std::cout << clt.bodys.boundary_flag <<std::endl;
-	// std::cout << clt.bodys.content_length_flag <<std::endl;
-	if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 0 && clt.bodys.binary_flag == 0) || (clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 1 && clt.bodys.binary_flag == 0))
-	{				
-		new_string_without_first_and_last(buffer2);
-		new_string_buff_1(buffer2);
-		new_string_without_first_hexa(buffer2);
-		new_string_without_last_hexa(buffer2);
-	}
-	else if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 1) || ((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 0)))
-	{		
-			new_string_without_boundary(buffer2,clt);
-			new_string_without_last_boundary(buffer2,clt);
-			new_string_erase_content_type(buffer2);
-			new_string_erase_content_disposition(buffer2);
-			 new_string_without_first_and_last(buffer2);
-			new_string_buff_1(buffer2);
-			new_string_without_first_hexa(buffer2);
-			if(find_filename != std::string::npos)
-				new_string_show(buffer2);
-			else
-				new_string_without_last_hexa(buffer2);
-	}
-	else if((clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 0 ) || ( clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 1 ))
-	{	
-			new_string_without_boundary(buffer2,clt);
-			new_string_without_last_boundary(buffer2,clt);
-			new_string_erase_content_type(buffer2);
-			new_string_erase_content_disposition(buffer2);
-			new_string_without_first_and_last_v2(buffer2);
-			//new_string_show(buffer2);
-	}
-	else if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 0 && clt.bodys.binary_flag == 1) || (clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 1 && clt.bodys.binary_flag == 1))
-	{
-		new_string_without_first_and_last(buffer2);
-		new_string_buff_1(buffer2);
-		new_string_without_first_hexa(buffer2);
-		new_string_without_last_hexa(buffer2);
-	}
-	std::cout << buffer2;
-	std::ofstream out;
-	out.open(clt.upload_files[0].filename,std::ios::out);
-	if(!out.is_open())
-	{
-		std::cerr << "Error: input file\n";
-	}
-	out << buffer2;
-	clt.upload_files[0].len = buffer2.size();
-	out.close();
-	exit(0);
-	std::cout << "go" << std::endl;
+	// find_filename = buffer2.find("filename",0);
+	// // std::cout << clt.bodys.chunks_flag <<std::endl;
+	// // std::cout << clt.bodys.boundary_flag <<std::endl;
+	// // std::cout << clt.bodys.content_length_flag <<std::endl;
+	// if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 0 && clt.bodys.binary_flag == 0) || (clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 1 && clt.bodys.binary_flag == 0))
+	// {				
+	// 	new_string_without_first_and_last(buffer2);
+	// 	new_string_buff_1(buffer2);
+	// 	new_string_without_first_hexa(buffer2);
+	// 	new_string_without_last_hexa(buffer2);
+	// }
+	// else if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 1) || ((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 0)))
+	// {		
+	// 		// new_string_without_boundary(buffer2,clt);
+	// 		// new_string_without_last_boundary(buffer2,clt);
+	// 		// new_string_erase_content_type(buffer2);
+	// 		// new_string_erase_content_disposition(buffer2);
+	// 		//  new_string_without_first_and_last(buffer2);
+	// 		// new_string_buff_1(buffer2);
+	// 		// new_string_without_first_hexa(buffer2);
+	// 		// if(find_filename != std::string::npos)
+	// 		// 	new_string_show(buffer2);
+	// 		// else
+	// 		// 	new_string_without_last_hexa(buffer2);
+	// }
+	// else if((clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 0 ) || ( clt.bodys.chunks_flag == 0 && clt.bodys.boundary_flag == 1 && clt.bodys.content_length_flag == 1 ))
+	// {	
+	// 		new_string_without_boundary(buffer2,clt);
+	// 		new_string_without_last_boundary(buffer2,clt);
+	// 		new_string_erase_content_type(buffer2);
+	// 		new_string_erase_content_disposition(buffer2);
+	// 		new_string_without_first_and_last_v2(buffer2);
+	// 		//new_string_show(buffer2);
+	// }
+	// else if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 0 && clt.bodys.binary_flag == 1) || (clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 1 && clt.bodys.binary_flag == 1))
+	// {
+	// 	new_string_without_first_and_last(buffer2);
+	// 	new_string_buff_1(buffer2);
+	// 	new_string_without_first_hexa(buffer2);
+	// 	new_string_without_last_hexa(buffer2);
+	// }
+	// std::cout << buffer2;
+	// std::ofstream out;
+	// out.open(clt.upload_files[0].filename,std::ios::app | std::ios::out);
+	// if(!out.is_open())
+	// {
+	// 	std::cerr << "Error: input file\n";
+	// }
+	// out << buffer2;
+	// clt.upload_files[0].len = buffer2.size();
+	// out.close();
+	// std::cout << "go" << std::endl;
 }

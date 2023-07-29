@@ -76,6 +76,12 @@ struct body
 	unsigned long	chunks_len;
 	unsigned long	chunks_con_len;
 	unsigned long	content_len;
+	unsigned long int len_chunk;
+	bool			has_read_all_chunk;
+	bool			has_read_all_body_chnk;
+	int	first_hexa;
+	std::string returnaa;
+	unsigned long int how_much_read_stay;
 	int				content_disposition;
 	int				binary_flag;
 	std::string		boundary;
@@ -257,7 +263,7 @@ unsigned long	hexToDec(std::string hex);
 // repo name : acceptConnectionAndGetRequestData
 // file name : multiTypes.cpp
 // fun  name :
-void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt);
+void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt,int n_byte_readed);
 void	getFilename(std::string buffer, int file_index, struct uploadFiles *upload_files, int find, int fd);
 int		isADerective(std::string buffer, int find, int size);
 void	getFileSize(struct uploadFiles& file);
@@ -268,7 +274,7 @@ void	getFileSize(struct uploadFiles& file);
 // file name : splitBody.cpp
 // fun  name :
 void	addHeaders(std::string buffer, struct client& clt, int pos);
-void	splitBody(std::string buffer, struct client& clt);
+void	splitBody(std::string buffer, struct client& clt, int n_byte_readed);
 
 // repo name : acceptConnectionAndGetRequestData
 // file name : getFilesLength.cpp

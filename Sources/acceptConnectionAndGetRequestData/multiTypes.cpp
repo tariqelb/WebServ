@@ -12,6 +12,25 @@
 
 #include "../../webserv.hpp"
 
+size_t FindStringInBuffer(const char *buffer, size_t buffer_size, const char *str, int pos)
+{
+    size_t str_len = strlen(str);
+    if (buffer_size < str_len)
+        return std::string::npos;
+    if (pos == 0)
+    {
+        for (size_t i = 0; i < buffer_size - str_len + 1; i++)
+            if (strncmp(buffer + i, str, str_len) == 0)
+                return i;
+    }
+    else
+    {
+        for (size_t i = pos; i < buffer_size - str_len + 1; i++)
+            if (strncmp(buffer + i, str, str_len) == 0)
+                return i;
+    }
+    return std::string::npos;
+}
 
 void	getFileSize(struct uploadFiles& file)
 {
@@ -240,6 +259,79 @@ void new_string_erase_content_type2(std::string &buffer)
 		buffer.erase(find,find_n - find + 1);
 	}
 }
+unsigned long int convert_hexa(std::string hexa)
+{
+	char* endPtr; // Used to detect invalid conversions
+    unsigned long int result = strtoul(hexa.c_str(), &endPtr, 16);
+	return result;
+}
+bool isHexadecimal(const std::string &str)
+{
+    std::stringstream ss(str); // to read integer(hexa) from a string
+    int n;
+    ss >> std::hex >> n; // to extract the integers one by one
+    return !ss.fail() && ss.eof();
+    // we use func fail() to check the extration opr performed by ss >> ..; was succ or not
+}
+//find hexadecimal
+void find_hexa(std::string &buffer, std::string &returnaa)
+{
+	std::cout <<"----------------------------------------------------\n"
+	<< buffer;
+	std::cout << "##########################################\n" ;
+	size_t pos = 0;
+	std::string token;
+	returnaa = " ";
+	while ((pos = buffer.find("\r\n")) != std::string::npos)
+	{
+		token = buffer.substr(0, pos);
+		//std::cout << token<<std::endl;
+		if (isHexadecimal(token))
+		{
+			if (token == "0")
+			{
+				// requestbuffer.close();
+				// set_has_request(true);
+				std::cout << "show yourself"<<std::endl;
+				returnaa = token;
+				return ;
+			}
+			returnaa = buffer.substr(0,pos);
+			buffer = buffer.erase(0, pos + 2);
+			return ;
+		}
+		buffer = buffer.erase(0, pos + 2);	
+	}
+}
+void find_hexa_v2(std::string &buffer, std::string &returnaa)
+{
+	size_t pos = 0;
+	std::string token;
+	returnaa = " ";
+	while ((pos = buffer.find("\r\n")) != std::string::npos)
+	{
+		token = buffer.substr(0, pos);
+		//std::cout << token<<std::endl;
+		if (isHexadecimal(token))
+		{
+			if (token == "0")
+			{
+				// requestbuffer.close();
+				// set_has_request(true);
+				std::cout << "show yourself"<<std::endl;
+				returnaa = token;
+				return ;
+			}
+			returnaa = buffer.substr(0,pos);
+			buffer = buffer.erase(0, pos + 2);
+			return ;
+		}
+		buffer = buffer.erase(0, pos + 2);	
+	}
+}
+// check hexadecimal
+
+
 void new_string_buff_12(std::string &buffer)
 {
 	size_t	i = 0;
@@ -352,7 +444,7 @@ void	getFilename(std::string buffer, int file_index, struct uploadFiles* upload_
 }
 
 
-void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
+void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt , int n)
 {
 	int						find_cr;
 	int						find;
@@ -363,7 +455,7 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 	std::string				temp;
 	struct  uploadFiles     upload_files;
 	std::string				theEnd;
-
+	(void)n;
 	theEnd = "\r\n\r\n" + clt.bodys.boundary;
 	flag_postman_curl = 1;
 	size = buffer.size();
@@ -414,6 +506,8 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 			temp.assign("");
 			temp = clt.upload_files[i - 1].filename;
 			clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::app | std::fstream::out);
+			std::cout << "   "<<clt.bodys.content_len;
+			std::cout << "   "<<buffer.size();
 			if (buffer.size() >= clt.bodys.content_len)
 				clt.upload_files[i - 1].file->write(buffer.c_str(), clt.bodys.content_len);
 			else
@@ -423,7 +517,7 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 			clt.upload_files[i - 1].file->close();
 		}
 	}
-	else if (clt.bodys.boundary_flag == 1 || clt.bodys.chunks_flag == 1)
+	else if  (clt.bodys.boundary_flag == 1)
 	{
 		int 			flag;
 		std::string		bndry;
@@ -444,17 +538,8 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 				{
 					buffer = buffer.substr(find);
 					buffer2 = buffer;
-					//std::cout << buffer<<std::endl;
 				}
 				flag = 0;
-				// new_string_without_boundary2(buffer,clt);
-				// new_string_without_last_boundary2(buffer,clt);
-				// new_string_erase_content_type2(buffer);
-				// new_string_erase_content_disposition2(buffer);
-				// new_string_without_first_and_last_v22(buffer);
-				//new_string_show2(buffer);
-				//std::cout <<buffer;
-				//exit(0);
 			}
 			else
 			{
@@ -514,7 +599,7 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 							temp = buffer.substr(0, find);
 							clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
 							clt.upload_files[i - 1].file->close();
-								buffer = buffer.substr(find + 2);
+							buffer = buffer.substr(find + 2);
 							clt.bodys.content_disposition = 0;
 						}
 						else if (buffer.size() && i)
@@ -540,4 +625,172 @@ void	multiTypes(std::string buffer,std::string &buffer2, struct client& clt)
 			}
 		}
 	}
+	else if(clt.bodys.chunks_flag == 1)
+	{
+		int 			flag;
+		std::string		bndry;
+		std::string		tmp;
+		std::string		temp;
+
+		flag = 1;
+		bndry = clt.bodys.boundary.substr(0, clt.bodys.boundary.size() - 2);
+		
+
+		while (buffer.size() > 0)
+		{
+			find = 0;
+			if (clt.nbr_of_reads == 1 && flag)
+			{
+				find_cr = buffer.find("\r\n\r\n");
+				find = buffer.find(bndry, find_cr);
+				if (find != -1)
+				{
+					buffer = buffer.substr(find);
+					buffer2 = buffer;
+				}
+				flag = 0;
+			}
+			else
+			{
+				if(clt.bodys.first_hexa == 0)
+				{
+					find_hexa(buffer,clt.bodys.returnaa);
+					if(clt.bodys.returnaa == "")
+						return ;
+					clt.bodys.len_chunk = convert_hexa(clt.bodys.returnaa);
+					std::cout << clt.bodys.len_chunk<<std::endl;
+					clt.bodys.first_hexa = 1;
+					clt.bodys.how_much_read_stay = clt.bodys.len_chunk;
+					getFilename(buffer, clt.upload_files.size(), &upload_files, find, clt.fd,clt);
+					upload_files.file->open(upload_files.filename.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+					if (upload_files.file->is_open() == true)
+					{
+						upload_files.file->close();
+						clt.upload_files.push_back(upload_files);
+						clt.upload_files[0].no_name = upload_files.no_name;
+					}
+				}
+				else if(clt.bodys.first_hexa == 1)
+				{
+					if(clt.bodys.has_read_all_chunk == true)
+					{
+						tmp = buffer;
+						find_hexa(tmp,clt.bodys.returnaa);
+						clt.bodys.has_read_all_chunk = false;
+					}
+					if(clt.bodys.how_much_read_stay == 0)
+						clt.bodys.how_much_read_stay = clt.bodys.len_chunk;
+					i = clt.upload_files.size();
+					if(clt.bodys.returnaa == "0")
+					{
+						std::cout << "give me some sign"<<std::endl;
+						temp.assign("");
+						temp = clt.upload_files[i - 1].filename;
+						temp = buffer.substr(0,buffer.size());
+						clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+						clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
+						clt.upload_files[i - 1].file->close();
+						buffer.erase(0,clt.bodys.len_chunk);
+						//buffer.erase(0,buffer.size());
+						std::cout << buffer.size();
+						clt.bodys.len_chunk = 0;
+					}
+					else if (buffer.size() && clt.bodys.how_much_read_stay == clt.bodys.len_chunk)
+					{
+						//std::cout << "Enter 6"<<std::endl;
+						std::cout << "Enter here"<<std::endl;
+						temp.assign("");
+						temp = clt.upload_files[i - 1].filename;
+						clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+						if(buffer.size() >  clt.bodys.len_chunk)
+						{
+							temp = buffer.substr(0, clt.bodys.len_chunk);
+							buffer.erase(0,clt.bodys.len_chunk);
+							clt.bodys.has_read_all_chunk = true;
+							tmp = buffer;
+							find_hexa(tmp,clt.bodys.returnaa);
+						}
+						else
+						{
+							temp = buffer.substr(0, buffer.size());
+							clt.bodys.how_much_read_stay = clt.bodys.len_chunk - buffer.size();
+							buffer.erase(0,buffer.size());
+						}
+						std::cout << "size = " << buffer.size()<<std::endl;
+						clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
+						clt.upload_files[i - 1].file->close();
+					}
+					else if(buffer.size() && clt.bodys.how_much_read_stay != clt.bodys.len_chunk && clt.bodys.how_much_read_stay != 0)
+					{
+						std::cout << "Enter here2"<<std::endl;
+
+						temp.assign("");
+						temp = clt.upload_files[i - 1].filename;
+						clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+						if(buffer.size() >  clt.bodys.how_much_read_stay)
+						{
+							temp = buffer.substr(0, clt.bodys.how_much_read_stay);
+							buffer.erase(0,clt.bodys.how_much_read_stay);
+							clt.bodys.has_read_all_chunk = true;
+							tmp = buffer;
+							find_hexa(tmp,clt.bodys.returnaa);
+						}
+						else
+						{
+							temp = buffer.substr(0, buffer.size());
+							clt.bodys.how_much_read_stay = clt.bodys.how_much_read_stay - buffer.size();
+							buffer.erase(0,buffer.size());
+							buffer.assign("");
+						}
+						clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
+						clt.upload_files[i - 1].file->close();
+						buffer.erase(0,clt.bodys.how_much_read_stay);
+						clt.bodys.has_read_all_chunk = true;
+						tmp = buffer;
+						find_hexa(tmp,clt.bodys.returnaa);
+					}
+
+				}
+				// //std::cout << buffer<<std::endl;
+				// //sleep(10);
+
+			// 				if (buffer.size() >= clt.bodys.content_len)
+			// 	clt.upload_files[i - 1].file->write(buffer.c_str(), clt.bodys.content_len);
+			// else
+			// {
+			// 	clt.upload_files[i - 1].file->write(buffer.c_str(), buffer.size());
+			// }
+				// if(i)
+				// {
+				// 	if(clt.bodys.len_chunk == 0)
+				// 		return ;
+				// 	std::cout << "give me some sign"<<std::endl;
+				// 	temp.assign("");
+				// 	temp = clt.upload_files[i - 1].filename;
+				// 	clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+				// 	temp = buffer.substr(0, clt.bodys.len_chunk);
+				// 	clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
+				// 	clt.upload_files[i - 1].file->close();
+				// 	// buffer = buffer.erase(0,clt.bodys.len_chunk);
+				// 	// std::cout << buffer.size();
+				// 	// clt.bodys.len_chunk = 0;
+				// }
+				// else if (buffer.size() && i)
+				// {
+				// 		//std::cout << "Enter 6"<<std::endl;
+				// 	std::cout << "Enter here"<<std::endl;
+				// 	temp.assign("");
+				// 	temp = clt.upload_files[i - 1].filename;
+				// 	clt.upload_files[i - 1].file->open(temp.c_str(), std::fstream::binary | std::fstream::app | std::fstream::out);
+				// 	temp = buffer.substr(0, buffer.size());
+				// 	clt.upload_files[i - 1].file->write(temp.c_str(), temp.size());
+				// 	clt.upload_files[i - 1].file->close();
+				// 	buffer = buffer.assign("");
+				// }
+			 
+		}
+	}
+	
+}
+//std::cout <<"here"<<std::endl;
 }

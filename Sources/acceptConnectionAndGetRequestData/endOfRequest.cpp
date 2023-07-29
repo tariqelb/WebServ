@@ -181,6 +181,7 @@ void	getBodyType(std::string buffer, struct body& bodys)
 		while (i + j < size && (buffer[i + j] >= '0' && buffer[i + j] <= '9'))
 			j++;
 		bodys.content_len = toInt(buffer.substr(i, j));
+		// std::cout<< bodys.content_len<<std::endl;
 		if (bodys.content_len > 0)
 		{
 			bodys.content_length_flag = 1;

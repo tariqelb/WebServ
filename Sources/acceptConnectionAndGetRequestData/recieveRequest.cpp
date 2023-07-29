@@ -136,7 +136,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 
 	web.clients[clt_i].response.error = false;
 	if (clt.post_flag == 1)
-		splitBody(buff, clt);
+		splitBody(buff, clt,n_byte_readed);
 	else
 	{
 		i = buff.find("\r\n\r\n");

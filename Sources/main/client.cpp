@@ -62,7 +62,13 @@ client::client()
 	bodys.cr_index = -1;
 	bodys.chunks_len = 0;
 	bodys.chunks_con_len = 0;
+	bodys.first_hexa = 0;
+	bodys.len_chunk = 0;
+	bodys.returnaa = "";
+	bodys.has_read_all_chunk = false;
+	bodys.has_read_all_body_chnk = false;
 	bodys.content_len = 0;
+	bodys.how_much_read_stay = 0;
 	bodys.content_disposition = 0;
 	bodys.boundary.assign("");
 	headers.assign("");
@@ -110,6 +116,8 @@ client::client(const client& rhs)
 	bodys.content_len = rhs.bodys.content_len;
 	bodys.content_disposition = rhs.bodys.content_disposition;
 	bodys.boundary = rhs.bodys.boundary;
+	bodys.first_hexa = rhs.bodys.first_hexa;
+	bodys.len_chunk = rhs.bodys.len_chunk;
 	headers = rhs.headers;
 	file = new std::fstream();
 	file_name = rhs.file_name;

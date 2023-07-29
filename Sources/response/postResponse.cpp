@@ -83,6 +83,7 @@ int	post(struct webserv& web, struct client& clt)
 	struct stat pathStat1;
 	struct stat pathStat2;
 	struct stat pathStat3;
+	exit(0);
 	if(clt.upload_files.size() <= 0)
 		return error(clt,404);
 	int place = web.config[clt.config].location[clt.location].upload_store.size() - 1;
@@ -285,7 +286,7 @@ int	post(struct webserv& web, struct client& clt)
 				out2.close();
 				input2.close();
 				clt.map_request["URI"] = "./www/rspnse.html";
-				exit(0);
+				//exit(0);
 				return clt.response.statusCode = 201;
 			}
 			else if(access(web.config[clt.config].location[clt.location].upload_store.c_str(),F_OK) != 0)
