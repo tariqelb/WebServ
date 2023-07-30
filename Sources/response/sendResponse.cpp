@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 19:31:25 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/29 22:01:22 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,6 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 		}
 		if ((bitSent = send(clt.fd, str.c_str(), str.size(), 0)) <= 0)
 			clt.response.finishReading = 1;
-			// throw std::runtime_error("Send operation failed");
 	}
 	catch(std::exception &e){}
 	if (clt.response.header && bitSent > 0)

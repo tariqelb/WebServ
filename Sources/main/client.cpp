@@ -52,6 +52,8 @@ client::client()
 	fd = -1;
 	request_is_ready = false;
 	response_is_ready = false;
+	bodys.plan_hex = false;
+	bodys.left_bytes = 0;
 	bodys.get_body_type = 0;
 	bodys.rd_bytes = 0;
 	bodys.chunks_flag = 0;
@@ -62,13 +64,7 @@ client::client()
 	bodys.cr_index = -1;
 	bodys.chunks_len = 0;
 	bodys.chunks_con_len = 0;
-	bodys.first_hexa = 0;
-	bodys.len_chunk = 0;
-	bodys.returnaa = "";
-	bodys.has_read_all_chunk = false;
-	bodys.has_read_all_body_chnk = false;
 	bodys.content_len = 0;
-	bodys.how_much_read_stay = 0;
 	bodys.content_disposition = 0;
 	bodys.boundary.assign("");
 	headers.assign("");
@@ -79,6 +75,7 @@ client::client()
 	post_flag = 0;
 	body_data.assign("");
 	body_length = 0;
+	bodys.index = 0;
 }
 
 client::~client() 
@@ -103,6 +100,8 @@ client::client(const client& rhs)
 	nbr_of_reads = rhs.nbr_of_reads;
 	post_flag = rhs.post_flag;
 	body_data = rhs.body_data;
+	bodys.plan_hex = rhs.bodys.plan_hex;
+	bodys.left_bytes = rhs.bodys.left_bytes;
 	bodys.get_body_type = rhs.bodys.get_body_type;
 	bodys.rd_bytes = rhs.bodys.rd_bytes;
 	bodys.chunks_flag = rhs.bodys.chunks_flag;
@@ -116,8 +115,7 @@ client::client(const client& rhs)
 	bodys.content_len = rhs.bodys.content_len;
 	bodys.content_disposition = rhs.bodys.content_disposition;
 	bodys.boundary = rhs.bodys.boundary;
-	bodys.first_hexa = rhs.bodys.first_hexa;
-	bodys.len_chunk = rhs.bodys.len_chunk;
+	bodys.index = 0;
 	headers = rhs.headers;
 	file = new std::fstream();
 	file_name = rhs.file_name;
@@ -154,6 +152,8 @@ client&		client::operator=(const client& rhs)
 		nbr_of_reads = rhs.nbr_of_reads;
 		post_flag = rhs.post_flag;
 		body_data = rhs.body_data;
+		bodys.plan_hex = rhs.bodys.plan_hex;
+		bodys.left_bytes = rhs.bodys.left_bytes;
 		bodys.get_body_type = rhs.bodys.get_body_type;
 		bodys.rd_bytes = rhs.bodys.rd_bytes;
 		bodys.chunks_flag = rhs.bodys.chunks_flag;
@@ -167,6 +167,7 @@ client&		client::operator=(const client& rhs)
 		bodys.content_len = rhs.bodys.content_len;
 		bodys.content_disposition = rhs.bodys.content_disposition;
 		bodys.boundary = rhs.bodys.boundary;
+		bodys.index = 0;
 		headers = rhs.headers;
 		delete file;
 		file = new std::fstream();

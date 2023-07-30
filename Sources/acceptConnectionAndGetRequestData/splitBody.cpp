@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   splitBody.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hp <hp@student.42.fr>                      +#+  +:+       +#+        */
+/*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 22:54:29 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/06/29 12:50:30 by hp               ###   ########.fr       */
+/*   Updated: 2023/07/29 13:19:56 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,14 @@ void new_string_without_last_boundary(std::string &buffer,struct client &clt)
 		temp_content_type = clt.map_request["Content-Type"];
 		temp_content_type = temp_content_type.erase(0,30);
 		temp_content_type = temp_content_type + "--" ;
-		//std::cout << temp_content_type<<std::endl;
+		////std::cout << temp_content_type<<std::endl;
 		size_t find;
 		find = buffer.find(temp_content_type,0);
 		if(buffer[find - 1] == '-' && buffer[find - 2] == '-')
 			find = find - 2;
 		
-		//std::cout << buffer;
-		// std::cout<< find<<std::endl;
+		////std::cout << buffer;
+		// //std::cout<< find<<std::endl;
 		if(find != std::string::npos)
 			buffer = buffer.erase(find,buffer.size());
 	}
@@ -111,9 +111,9 @@ void new_string_show(std::string &buffer)
 		{
 			if(buffer[i + 1] == '\n')
 			{
-				//std::cout << buffer<<std::endl;
+				////std::cout << buffer<<std::endl;
 				buffer.erase(0,i + 1);
-				//std::cout << buffer<<std::endl;
+				////std::cout << buffer<<std::endl;
 				j+= 1;
 				if(j > 0)
 					break;
@@ -218,15 +218,15 @@ void new_string_erase_content_disposition(std::string &buffer)
 		buffer = buffer.erase(0,32);
 	std::string name = extractFieldName(buffer);
 	size_t i = 6 + name.size() + 1;
-	// std::cout << buffer<<std::endl;
+	// //std::cout << buffer<<std::endl;
 	buffer = buffer.erase(0,i);
-	// std::cout << buffer<<std::endl;
+	// //std::cout << buffer<<std::endl;
 	if(buffer.find("ilename",0) != std::string::npos)
 	{
 		std::string ilename = extractFieldFileName(buffer);
 		i = 10 + ilename.size() + 3;
 		buffer.erase(0, i);
-		// std::cout << buffer<<std::endl;
+		// //std::cout << buffer<<std::endl;
 
 	}
 }
@@ -268,7 +268,7 @@ void	splitBody(std::string buffer, struct client& clt, int n_byte_readed)
 	std::string buffer2 = buffer;
 	if (size == 0)
 		return ;
-	// std::cout << buffer <<"   "<<std::endl;
+	// //std::cout << buffer <<"   "<<std::endl;
 	if (clt.nbr_of_reads == 1 && clt.headers.size() == 0)
 	{
 		find = buffer.find("\r\n\r\n");
@@ -281,13 +281,14 @@ void	splitBody(std::string buffer, struct client& clt, int n_byte_readed)
 	{
 		if (clt.bodys.get_body_type == 0)
 			getBodyType(buffer, clt.bodys);
-		//std::cout << "the buffer is ="<< buffer<<std::endl;
+		////std::cout << "the buffer is ="<< buffer<<std::endl;
+		// //std::cout << "###############\n";
 		multiTypes(buffer,buffer2,clt,n_byte_readed);
 	}
 	// find_filename = buffer2.find("filename",0);
-	// // std::cout << clt.bodys.chunks_flag <<std::endl;
-	// // std::cout << clt.bodys.boundary_flag <<std::endl;
-	// // std::cout << clt.bodys.content_length_flag <<std::endl;
+	// // //std::cout << clt.bodys.chunks_flag <<std::endl;
+	// // //std::cout << clt.bodys.boundary_flag <<std::endl;
+	// // //std::cout << clt.bodys.content_length_flag <<std::endl;
 	// if((clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 0 && clt.bodys.binary_flag == 0) || (clt.bodys.chunks_flag == 1 && clt.bodys.boundary_flag == 0 && clt.bodys.content_length_flag == 1 && clt.bodys.binary_flag == 0))
 	// {				
 	// 	new_string_without_first_and_last(buffer2);
@@ -325,7 +326,7 @@ void	splitBody(std::string buffer, struct client& clt, int n_byte_readed)
 	// 	new_string_without_first_hexa(buffer2);
 	// 	new_string_without_last_hexa(buffer2);
 	// }
-	// std::cout << buffer2;
+	// //std::cout << buffer2;
 	// std::ofstream out;
 	// out.open(clt.upload_files[0].filename,std::ios::app | std::ios::out);
 	// if(!out.is_open())
@@ -335,5 +336,5 @@ void	splitBody(std::string buffer, struct client& clt, int n_byte_readed)
 	// out << buffer2;
 	// clt.upload_files[0].len = buffer2.size();
 	// out.close();
-	// std::cout << "go" << std::endl;
+	// //std::cout << "go" << std::endl;
 }

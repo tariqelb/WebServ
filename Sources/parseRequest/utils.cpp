@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 19:45:42 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 13:24:40 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/29 23:26:27 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,14 @@ unsigned long stringToInt(std::string str)
 
 	for (; iter != str.end() && std::isdigit(*iter); iter++)
 		n = n * 10 + *iter - '0';
-	if (iter != str.end() || str.empty())
-	{
-		if (*iter == 'M')
-			n *= 1000000;
-		else if (*iter == 'k')
-			n *= 1000;
-		//! else if (G)
-	}
 	return n;
 }
 std::string intToString(int n)
 {
 	std::string str;
 	char c;
+	if (!n)
+		return "0";
 	while (n > 0)
 	{
 		c = (n % 10 + '0');
@@ -77,7 +71,6 @@ int search(struct client &clt, struct webserv &web)
 	}
 	vec_iter = std::max_element(vec.begin(), vec.end());
 	for (j = 0; j < vec.size() && vec[j] != *vec_iter; j++);
-	// std::cout << "max = " << *vec_iter << " => " << j << std::endl;
 	if (!j && !vec[j])
 		return -1;
 	return j;
@@ -111,6 +104,7 @@ std::string getStatusMessage(int statusCode)
 	map[204] = "No Content\r\n";
 	map[201] = "Created\r\n";	
 	map[409] = "Conflict\r\n";
+	map[308] = "Permanent Redirect\r\n";
 	map[0] = "OK\r\n";
 	return map[statusCode];
 }
@@ -121,7 +115,7 @@ void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 	// contentTypes[".htm"] = "text/html";
 	contentTypes[".txt"] = "text/plain";
 	contentTypes[".css"] = "text/css";
-	contentTypes[".js"] = "text/javascript";
+	contentTypes[".js"] = "application/javascript";
 	contentTypes[".json"] = "application/json";
 	contentTypes[".xml"] = "application/xml";
 	contentTypes[".pdf"] = "application/pdf";
@@ -132,10 +126,10 @@ void fillMapContentTypes(std::map<std::string, std::string> &contentTypes)
 	contentTypes[".gif"] = "image/gif";
 	contentTypes[".mp3"] = "audio/mpeg";
 	contentTypes[".mp4"] = "video/mp4";
-	contentTypes[".hpp"] = "text/plain";
-	contentTypes[".cpp"] = "text/plain";
-	contentTypes[".c"] = "text/plain";
+	contentTypes[".hpp"] = "text/x-c++hdr";
+	contentTypes[".cpp"] = "text/x-c++src";
+	contentTypes[".c"] = "text/x-c";
 	contentTypes[".py"] = "text/x-python";
-	contentTypes[".sh"] = "text/plain";
-	contentTypes[".php"] = "text/plain";
+	// contentTypes[".sh"] = "text/plain";
+	// contentTypes[".php"] = "text/plain";
 }

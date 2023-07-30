@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:05:26 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/27 13:09:05 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/29 23:24:08 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int cgi(struct webserv &web, struct client &clt)
 		return 0;
 	}
 	try {
-			executeCgi(clt, clt.map_request["URI"], web);
+		executeCgi(clt, clt.map_request["URI"], web);
 	}
 	catch (std::exception &e)
 	{
