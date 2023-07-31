@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 16:04:39 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/29 22:01:22 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/30 13:32:35 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int sendResponse(struct client &clt, struct webserv &web, int statusCode)
 	else
 	{
 		fillResponse(clt, web, statusCode);
-		if (clt.response.error || clt.response.autoindex)
+		if ((clt.response.error || clt.response.autoindex)) 
 			fillErrorResponse(clt, web, statusCode);
 		
 	}

@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:49:06 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/29 23:30:28 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/30 13:31:11 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int autoindex(struct client& clt, struct webserv &web)
 			clt.response.uri += "/";
 		while ((en = readdir(directory)) != NULL)
 		{
-			if (!strcmp(en->d_name, file.c_str()))
+			if (!strcmp(en->d_name, (intToString(clt.fd) + std::string("_autoindex.html")).c_str()))
 				continue;
 			autoindex	<< "<li>" << "<a href=\""
 						<< "http://"
@@ -105,6 +105,8 @@ int	get(struct webserv& web, struct client& clt)
 	if (*clt.map_request["URI"].rbegin() != '/')
 	{
 		clt.response.uri += "/";
+		if (clt.response.uri.find_first_not_of("/") ==  std::string::npos)
+			return error(clt, 501);
 		clt.map_request["URI"] = clt.response.uri;
 		clt.response.body = false;
 		return clt.response.statusCode = 301;

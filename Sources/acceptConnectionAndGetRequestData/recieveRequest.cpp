@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 11:40:12 by tel-bouh          #+#    #+#             */
-/*   Updated: 2023/07/29 23:30:04 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/30 12:54:28 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,7 @@ void	receiveRequest(struct webserv& web, struct client& clt, int clt_i, int& fla
 			flag_fail = 0;
 			return;
 		}
-		std::string split_dash = "____________________________________________________";
 		clt.file->write((char *) line, n_byte_readed); //	clt.buffer << line;
-		clt.file->write((char *) split_dash.c_str(), 91); //    clt.buffer << line;
 		clt.file->close();
 		clt.bodys.rd_bytes = clt.bodys.rd_bytes + n_byte_readed;
 		buff.assign(line, n_byte_readed);

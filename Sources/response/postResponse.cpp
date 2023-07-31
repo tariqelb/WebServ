@@ -6,7 +6,7 @@
 /*   By: hasabir <hasabir@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 16:48:15 by hasabir           #+#    #+#             */
-/*   Updated: 2023/07/29 23:28:36 by hasabir          ###   ########.fr       */
+/*   Updated: 2023/07/30 12:03:43 by hasabir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int post(struct webserv& web, struct client& clt)
 			if(clt.body_length > stringToInt(web.config[clt.config].max_body_size))
 				return (error(clt,413));
 		}
-		if(!clt.upload_files.empty() <= 0)
+		if(clt.upload_files.empty())
 			return error(clt, 400);
 		if (clt.map_request["Content-Type"].find("multipart/form-data") != std::string::npos)
 			source = clt.upload_files[0].filename;
@@ -55,7 +55,6 @@ int post(struct webserv& web, struct client& clt)
 			|| std::rename(source.c_str(), destination.c_str()))
 			return error(clt, 500);
 		return error(clt, 201);
-		exit(0);
 	}
 	else
 	{
